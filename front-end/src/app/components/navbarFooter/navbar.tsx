@@ -10,45 +10,44 @@ const Navbar = () => {
         w-[90%] max-w-7xl rounded-2xl shadow-xl 
       backdrop-blur-lg bg-opacity-80 font-poppins"
       >
-        <div className=" max-w-7xl mx-auto px-6 flex justify-between items-center h-20">
+        <div className="flex items-center justify-between h-20 px-6 mx-auto max-w-7xl">
           <div>
             {" "}
             <Link href={routes.home}>
               <img
                 alt="logo"
-                className="h-28 w-auto animate-pulse transition-transform duration-300 hover:scale-110"
+                className="w-auto transition-transform duration-300 h-28 animate-pulse hover:scale-110"
               ></img>
             </Link>
           </div>
 
-          {/* Links de navegación */}
           <div className="flex space-x-6">
-            <Link href={routes.home} className="hover:text-verde transition">
+            <Link href={routes.home} className="transition hover:text-verde">
               Inicio
             </Link>
             <Link
               href={routes.nosotros}
-              className="hover:text-verde transition"
+              className="transition hover:text-verde"
             >
-              Quienes Somos
+              Nosotros
             </Link>
 
             <Link
               href={routes.planesRutinas}
-              className="hover:text-verde transition"
+              className="transition hover:text-verde"
             >
               Planes y Rutinas
             </Link>
             <Link
               href={routes.casosExito}
-              className="hover:text-verde transition"
+              className="transition hover:text-verde"
             >
               Casos de Exito
             </Link>
-            <Link href={routes.tarifas} className="hover:text-verde transition">
+            <Link href={routes.tarifas} className="transition hover:text-verde">
               Tarifas
             </Link>
-            <Link href={routes.eventos} className="hover:text-verde transition">
+            <Link href={routes.eventos} className="transition hover:text-verde">
               Eventos
             </Link>
           </div>
