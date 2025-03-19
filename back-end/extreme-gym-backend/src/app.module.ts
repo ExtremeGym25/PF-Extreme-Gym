@@ -9,22 +9,56 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { TrainingRouteModule } from './training-route/training-route.module';
 import { EventModule } from './event/event.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-import { MultimediaModule } from './multimedia/multimedia.module';
 import { ChatBotModule } from './chat-bot/chat-bot.module';
 import { ChatModule } from './chat/chat.module';
-import { NotificationModule } from './notifications/notifications.module';
-import { PayModule } from './pay/pay.module';
 import { CommunityModule } from './community/community.module';
-import { TrainingPlanModule } from './training-plan/training-plan.module';
-import { ClassModule } from './class/class.module';
-import { ClaseModule } from './clase/clase.module';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users/users.module';
-import { UsersModule } from './users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import typeormConfig from './config/typeorm'
+
+
 
 @Module({
-  imports: [UsersModule, AuthModule, ClaseModule, ClassModule, TrainingPlanModule, CommunityModule, PayModule, NotificationModule, ChatModule, ChatBotModule, MultimediaModule, FileUploadModule, EventModule, TrainingRouteModule, NotificationsModule, BookingsModule, PlansModule, PaymentsModule],
+  imports: [
+    
+    UsersModule, 
+    AuthModule, 
+    CommunityModule, 
+    ChatModule, 
+    ChatBotModule,
+    FileUploadModule, 
+    EventModule, 
+    TrainingRouteModule, 
+    NotificationsModule,
+    BookingsModule, 
+    PlansModule, 
+    PaymentsModule,
+    
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeormConfig], // Cargar configuración de TypeORM
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => {
+        const dbConfig = config.get('typeorm');
+        console.log('📡 Intentando conectar a la base de datos...');
+        return dbConfig;
+      },
+    }),
+  
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+
+  constructor(
+    private readonly configService: ConfigService) {}
+
+  async onModuleInit() {
+    console.log('✅ Módulo iniciado correctamente.');
+    console.log('🔗 Configuración actual de la BD:', this.configService.get('typeorm')); 
+  }
+}
