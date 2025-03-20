@@ -53,10 +53,6 @@ export class CreateUserDto {
     @Length(5, 20)
     city: string;
 
-    isAdmin: boolean
-
-    subscriptionType: boolean
-
     profileImage: URL
 }
 

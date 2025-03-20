@@ -35,4 +35,17 @@ export class User {
         default: false,
     })
     isAdmin: boolean;
+
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+    premium: boolean;
+
+    @Column({
+        type: 'varchar',
+        nullable: true,
+        default: "",
+    })
+    profileImage: string;
 }
