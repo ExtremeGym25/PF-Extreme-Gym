@@ -8,6 +8,7 @@ import {
   IsNumber,
   Validate,
   IsDateString,
+  IsOptional,
 } from 'class-validator';
 import { MatchPassword } from '../../helpers/matchPassword';
 
@@ -56,9 +57,11 @@ export class CreateUserDto {
   @MinLength(5)
   @MaxLength(20)
   city: string;
-
+  
+  @IsOptional()  
   @IsString()
-  profileImage: string;
+  profileImage: string = ' ';
+  
 }
 
 export class LoginUserDto {

@@ -34,8 +34,11 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: true })
   city: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar',
+      nullable: true,
+      default: "" })
   profileImage?: string;
+  
 
   @Column({
     type: 'boolean',
