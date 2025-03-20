@@ -1,34 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { BadRequestException, Controller, InternalServerErrorException, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
-import { CreateFileUploadDto } from './dto/create-file-upload.dto';
-import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('file-upload')
+@Controller('upload')
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Post()
-  create(@Body() createFileUploadDto: CreateFileUploadDto) {
-    return this.fileUploadService.create(createFileUploadDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.fileUploadService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileUploadService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileUploadDto: UpdateFileUploadDto) {
-    return this.fileUploadService.update(+id, updateFileUploadDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileUploadService.remove(+id);
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }),
+  )
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if(!file) {
+      throw new BadRequestException('No se ha recibido ningún archivo.'); 
+    }
+    try {
+      console.log('Archivo recibido:', file);
+      const result = await this.fileUploadService.uploadFile(file);
+      return {
+        message: 'Archivo subido exitosamente',
+        url: result.secure_url,
+      };
+    } catch (error) {
+      console.error('Error al subir el archivo:', error);
+      throw new InternalServerErrorException(
+        'Error al subir el archivo. Intenta nuevamente más tarde.'
+      );  
+    }
   }
 }
