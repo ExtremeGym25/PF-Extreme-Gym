@@ -30,21 +30,4 @@ export class AuthService {
     const { password: _, isAdmin, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
   }
-
-  async signIn(credentials: LoginUserDto) {
-    const { email, password } = credentials;
-    const existingUser = await this.usersRepository.findOne({
-      where: { email },
-    });
-    if (!existingUser) {
-      throw new BadRequestException('Error en las credenciales');
-    }
-
-    const passwordEqual = await bcrypt.compare(password, existingUser.password);
-    if (!passwordEqual) {
-      throw new BadRequestException('Error en las credenciales');
-    }
-    const { password: _, isAdmin, ...userWithoutPassword } = existingUser;
-    return userWithoutPassword;
-  }
 }
