@@ -33,7 +33,10 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.remove(id);
+  async deleteUser(@Param('id') userId: string): Promise<{ message: string }> {
+    await this.usersService.remove(userId);
+    return {
+      message: `El usuario con ID "${userId}" ha sido marcado como inactivo.`,
+    };
   }
 }

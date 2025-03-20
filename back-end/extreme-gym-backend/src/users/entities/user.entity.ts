@@ -37,12 +37,21 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   profileImage?: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  subcriptionType?: string;
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  subscriptionType: string;
 
   @Column({
     type: 'boolean',
     default: false,
   })
   isAdmin: boolean;
+
+  @Column({
+    type: 'boolean',
+    default: true,
+  })
+  isActive: boolean;
 }

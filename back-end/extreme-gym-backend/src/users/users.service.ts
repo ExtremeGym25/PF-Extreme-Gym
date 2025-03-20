@@ -14,7 +14,9 @@ export class UsersService {
 
   async findAll() {
     const users = await this.userRepository.find();
-    return users.map(({ password, isAdmin, ...user }) => user);
+    return users.map(
+      ({ password, isAdmin, subscriptionType, ...user }) => user,
+    );
   }
 
   async findOne(id: string) {
@@ -31,7 +33,10 @@ export class UsersService {
   async update(
     userId: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<{ message: string; user: User }> {
+  ): Promise<{
+    message: string;
+    user: Omit<User, 'password' | 'isAdmin' | 'subscriptionType'>;
+  }> {
     const existingUser = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -56,28 +61,25 @@ export class UsersService {
     Object.assign(existingUser, updateUserDto);
 
     const savedUser = await this.userRepository.save(existingUser);
+    const { password, isAdmin, subscriptionType, ...userWithoutSensitiveData } =
+      savedUser;
 
     return {
       message: `El usuario "${savedUser.name}" ha sido actualizado correctamente.`,
-      user: savedUser,
+      user: userWithoutSensitiveData,
     };
   }
 
-  async remove(userId: string): Promise<{ message: string }> {
-    const existingUser = await this.userRepository.findOne({
+  async remove(userId: string): Promise<void> {
+    const user = await this.userRepository.findOne({
       where: { id: userId },
     });
 
-    if (!existingUser) {
-      throw new NotFoundException(
-        `El usuario con ID "${userId}" no existe en la BDD.`,
-      );
+    if (!user) {
+      throw new NotFoundException(`El usuario con ID "${userId}" no existe.`);
     }
 
-    await this.userRepository.remove(existingUser);
-
-    return {
-      message: `El usuario "${existingUser.name}" ha sido eliminado correctamente.`,
-    };
+    user.isActive = false;
+    await this.userRepository.save(user);
   }
 }

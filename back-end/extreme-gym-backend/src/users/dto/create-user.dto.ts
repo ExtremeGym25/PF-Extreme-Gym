@@ -57,10 +57,30 @@ export class CreateUserDto {
   @MaxLength(20)
   city: string;
 
-  @IsNotEmpty()
-  @IsString()
-  subcriptionType: string;
-
   @IsString()
   profileImage: string;
+}
+
+export class LoginUserDto {
+  /**
+   * @example juanma2011@hotmail.com
+   */
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  /**
+   * @example Juanma2011#
+   */
+
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$^&*])/, {
+    message:
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+  })
+  @MinLength(8)
+  @MaxLength(15)
+  password: string;
 }

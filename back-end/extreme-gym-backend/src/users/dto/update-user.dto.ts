@@ -59,9 +59,5 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
-  subcriptionType?: string;
-
-  @IsOptional()
-  @IsString()
   profileImage?: string;
 }
