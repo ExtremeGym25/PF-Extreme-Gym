@@ -4,7 +4,7 @@ import { routes } from "../../routes/routes";
 
 const Navbar = () => {
   return (
-    <div className="sticky flex justify-center pt-6 bg-fondo ">
+    <div className="sticky flex justify-center pt-6 bg-fondo font-poppins ">
       <nav
         className="bg-fondo text-blanco ring-4 ring-azul ring-opacity-100 
         w-[90%] max-w-7xl rounded-2xl shadow-xl 

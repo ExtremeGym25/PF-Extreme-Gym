@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { trainers } from "../../helpers/arreglotrainers";
+import { opinionesUsuarios } from "../../helpers/arregloOpiniones";
 
-const TrainersCarousel = () => {
+const GridCasosExito = () => {
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
 
   const handleCardClick = (index: number) => {
@@ -12,10 +12,10 @@ const TrainersCarousel = () => {
   return (
     <div className="md:pl-16 font-poppins">
       <div className="grid items-center grid-cols-2 gap-4 px-4 py-4 md:px-8 md:grid-cols-3">
-        {trainers.map((trainer, index) => (
+        {opinionesUsuarios.map((opinion, index) => (
           <div
             key={index}
-            className="w-48 h-48 overflow-hidden transition-transform duration-300 rounded-lg shadow-md md:w-64 md:h-64 bg-naranja hover:scale-105 "
+            className="w-48 h-48 overflow-hidden transition-transform duration-300 rounded-lg shadow-md md:w-64 md:h-64 bg-verde hover:scale-105 "
             onClick={() => handleCardClick(index)}
             style={{ perspective: "1000px" }}
           >
@@ -31,8 +31,8 @@ const TrainersCarousel = () => {
                 style={{ backfaceVisibility: "hidden" }}
               >
                 <img
-                  src={trainer.image}
-                  alt={`Trainer ${index + 1}`}
+                  src={opinion.image}
+                  alt={`review ${index + 1}`}
                   className="object-cover w-full h-full p-2 rounded-lg"
                 />
               </div>
@@ -43,7 +43,7 @@ const TrainersCarousel = () => {
                 }`}
                 style={{ backfaceVisibility: "hidden" }}
               >
-                <p className="text-center">{trainer.text}</p>
+                <p className="text-center">{opinion.text}</p>
               </div>
             </div>
           </div>
@@ -53,4 +53,4 @@ const TrainersCarousel = () => {
   );
 };
 
-export default TrainersCarousel;
+export default GridCasosExito;

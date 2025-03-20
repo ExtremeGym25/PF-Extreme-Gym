@@ -12,8 +12,7 @@ const Nosotros = () => {
     <div className="font-poppins bg-fondo">
       <motion.div
         initial={{ opacity: 0, x: 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
       >
         <div className="py-4">
@@ -33,10 +32,10 @@ const Nosotros = () => {
             distintos lugares para practicar deportes extremos, surgió la idea:
             <br />
             ¿Por qué no crear un espacio donde el fitness y la adrenalina se
-            encuentren? Así nació Extreme Gym & Sports: un concepto innovador
-            que reúne lo mejor de ambos mundos en un solo lugar. Un centro
-            integral donde cualquiera puede entrenar de manera convencional y,
-            al mismo tiempo, prepararse para desafíos extremos. <br />
+            encuentren? Así nació Xtreme Gym : un concepto innovador que reúne
+            lo mejor de ambos mundos en un solo lugar. Un centro integral donde
+            cualquiera puede entrenar de manera convencional y, al mismo tiempo,
+            prepararse para desafíos extremos. <br />
             <br />
             El propósito era claro: romper con la rutina monótona y ofrecer una
             experiencia completa y motivadora. Además, querían que el espíritu
@@ -74,11 +73,12 @@ const Nosotros = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
+        className="flex-col"
       >
         <TrainersCarousel />
       </motion.div>
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
