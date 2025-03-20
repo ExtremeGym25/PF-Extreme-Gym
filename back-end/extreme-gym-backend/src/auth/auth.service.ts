@@ -1,14 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto, UserLogInDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginUserDto } from '../users/dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt/dist';
 
+import { User } from '../users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
+  
 
   constructor(@InjectRepository(User) private readonly usersRepository : Repository<User>, private jwtService : JwtService ){}
 
@@ -34,7 +35,7 @@ export class AuthService {
     return userWithoutPassword;
     }
 
-    async signIn(credentials : UserLogInDto){
+    async signIn(credentials : LoginUserDto){
       const {email, password,} = credentials
 
       const finduser = await this.usersRepository.findOneBy({email})
@@ -56,7 +57,6 @@ export class AuthService {
           token,
           message : 'Success'
       }
-  }
-
   
+}
 }

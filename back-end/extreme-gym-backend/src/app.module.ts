@@ -15,27 +15,24 @@ import { CommunityModule } from './community/community.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import typeormConfig from './config/typeorm'
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
-
-
+import typeormConfig from './config/typeorm';
 
 @Module({
   imports: [
-    
-    UsersModule, 
-    AuthModule, 
-    CommunityModule, 
-    ChatModule, 
+    UsersModule,
+    AuthModule,
+    CommunityModule,
+    ChatModule,
     ChatBotModule,
-    FileUploadModule, 
-    EventModule, 
-    TrainingRouteModule, 
+    FileUploadModule,
+    EventModule,
+    TrainingRouteModule,
     NotificationsModule,
-    BookingsModule, 
-    PlansModule, 
+    BookingsModule,
+    PlansModule,
     PaymentsModule,
-    
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeormConfig], 
@@ -49,24 +46,24 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
       
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => {
-        const dbConfig = config.get('typeorm');
+      useFactory: (config: ConfigService) => {
+        const dbConfig = config.get('typeorm') || {};
         console.log('📡 Intentando conectar a la base de datos...');
         return dbConfig;
       },
     }),
-  
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
+  constructor(private readonly configService: ConfigService) {}
 
-  constructor(
-    private readonly configService: ConfigService) {}
-
-  async onModuleInit() {
+  onModuleInit() {
     console.log('✅ Módulo iniciado correctamente.');
-    console.log('🔗 Configuración actual de la BD:', this.configService.get('typeorm')); 
+    console.log(
+      '🔗 Configuración actual de la BD:',
+      this.configService.get('typeorm'),
+    );
   }
 }

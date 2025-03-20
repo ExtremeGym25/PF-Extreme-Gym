@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect } from "react";
 import { GoChevronLeft } from "react-icons/go";
 import { GoChevronRight } from "react-icons/go";
 import { routes } from "../routes/routes";
@@ -121,9 +121,8 @@ const Homeview = () => {
   return (
     <div className="pb-2 space-y-10 font-poppins bg-fondo">
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
       >
         <Carousel />
@@ -139,98 +138,120 @@ const Homeview = () => {
       <div>
         <TestimonialCarousel />
       </div>
-      <div className="flex items-center justify-center pb-4 mx-auto space-x-4">
-        <ButtonPrimary> Registrate</ButtonPrimary>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, x: +50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-4">
+          <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
+            ¿Estas Listo?
+          </h2>
+          <p className="text-gray-600 transition-transform duration-300 hover:scale-110">
+            ¡Forma parte de nuestra familia!
+          </p>
+          <div>
+            <ButtonPrimary> Registrate</ButtonPrimary>
+          </div>
+        </div>
+      </motion.div>
 
       <div className="text-center">
-        <h2 className="text-3xl font-bold transition-transform duration-300 hover:scale-110 ">
-          ¿Porque entrenar con nosostro?
+        <h2 className="py-2 text-3xl font-bold transition-transform duration-300 hover:scale-110">
+          ¿Porque entrenar con nosostros?
         </h2>
       </div>
-      <div className="grid grid-cols-2 gap-4 px-4 pb-10 md:grid-cols-5 md:px-8 ">
-        <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-          <div className="flex items-center h-40">
-            <img
-              src="/home1.png"
-              alt="imagenhome1"
-              className="object-cover w-full h-full pb-2"
-            />
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="grid grid-cols-2 gap-4 px-4 pb-10 md:grid-cols-5 md:px-8 ">
+          <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
+            <div className="flex items-center h-40">
+              <img
+                src="/home1.png"
+                alt="imagenhome1"
+                className="object-cover w-full h-full pb-2"
+              />
+            </div>
+            <h3 className="pb-2 font-bold text-center ">
+              Entrenamiento Integral en un Solo Lugar
+            </h3>
+            <p className="text-sm text-justify">
+              Combina lo mejor del fitness convencional con deportes extremos
+              como escalada, triatlón y ciclismo de montaña. ¡Nunca más
+              necesitarás múltiples plataformas para entrenar!
+            </p>
+            <p></p>
           </div>
-          <h3 className="pb-2 font-bold text-center ">
-            Entrenamiento Integral en un Solo Lugar
-          </h3>
-          <p className="text-sm text-justify">
-            Combina lo mejor del fitness convencional con deportes extremos como
-            escalada, triatlón y ciclismo de montaña. ¡Nunca más necesitarás
-            múltiples plataformas para entrenar!
-          </p>
-          <p></p>
-        </div>
-        <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-          <div className="flex items-center h-40">
-            <img
-              src="/home2.png"
-              alt="Imagen 2 home 2"
-              className="object-cover w-full h-full pb-2"
-            />
+          <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
+            <div className="flex items-center h-40">
+              <img
+                src="/home2.png"
+                alt="Imagen 2 home 2"
+                className="object-cover w-full h-full pb-2"
+              />
+            </div>
+            <h3 className="pb-2 font-bold text-center">
+              Planes Personalizados y Desafiantes
+            </h3>
+            <p className="text-sm text-justify">
+              Recibe rutinas adaptadas a tus objetivos personales, ya sea
+              mejorar tu resistencia, ganar masa muscular o prepararte para
+              deportes extremos.
+            </p>
+            <p></p>
           </div>
-          <h3 className="pb-2 font-bold text-center">
-            Planes Personalizados y Desafiantes
-          </h3>
-          <p className="text-sm text-justify">
-            Recibe rutinas adaptadas a tus objetivos personales, ya sea mejorar
-            tu resistencia, ganar masa muscular o prepararte para deportes
-            extremos.
-          </p>
-          <p></p>
-        </div>
-        <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-          <div className="flex items-center h-40">
-            <img
-              src="/home3.png"
-              alt="imagen home 3"
-              className="object-cover w-full h-full pb-2"
-            />
+          <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
+            <div className="flex items-center h-40">
+              <img
+                src="/home3.png"
+                alt="imagen home 3"
+                className="object-cover w-full h-full pb-2"
+              />
+            </div>
+            <h3 className="pb-2 font-bold text-center">
+              Comunidad de Apasionados del Deporte
+            </h3>
+            <p className="text-sm text-justify">
+              Conéctate con otros entusiastas del fitness y deportes extremos,
+              comparte logros y encuentra compañeros de entrenamiento que te
+              motiven a dar lo mejor de ti.
+            </p>
+            <p></p>
           </div>
-          <h3 className="pb-2 font-bold text-center">
-            Comunidad de Apasionados del Deporte
-          </h3>
-          <p className="text-sm text-justify">
-            Conéctate con otros entusiastas del fitness y deportes extremos,
-            comparte logros y encuentra compañeros de entrenamiento que te
-            motiven a dar lo mejor de ti.
-          </p>
-          <p></p>
-        </div>
-        <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-          <img src="/home4.png" alt="imagen home 4" className="h-40 pb-0" />
-          <h3 className="pt-0 pb-2 font-bold text-center ">
-            Acceso a Clases Exclusivas y Eventos Extremos
-          </h3>
-          <p className="text-sm text-justify">
-            Reserva clases de deportes intensos o sesiones de entrenamiento
-            personalizadas con los mejores instructores y participa en eventos
-            especiales.
-          </p>
-          <p></p>
-        </div>
-        <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-          <div className="flex items-center h-40">
-            <img
-              src="/home5.png"
-              alt="imagen home 5"
-              className="object-cover w-full h-full pb-2"
-            />
+          <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
+            <img src="/home4.png" alt="imagen home 4" className="h-40 pb-0" />
+            <h3 className="pt-0 pb-2 font-bold text-center ">
+              Acceso a Clases Exclusivas y Eventos Extremos
+            </h3>
+            <p className="text-sm text-justify">
+              Reserva clases de deportes intensos o sesiones de entrenamiento
+              personalizadas con los mejores instructores y participa en eventos
+              especiales.
+            </p>
+            <p></p>
           </div>
-          <h3 className="pb-2 font-bold text-center">
-            Soporte en Tiempo Real y Asistencia Personalizada
-          </h3>
-          <p className="text-sm text-justify">
-            Chatea con nosotros para resolver dudas o recibir consejos.
-          </p>
+          <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
+            <div className="flex items-center h-40">
+              <img
+                src="/home5.png"
+                alt="imagen home 5"
+                className="object-cover w-full h-full pb-2"
+              />
+            </div>
+            <h3 className="pb-2 font-bold text-center">
+              Soporte en Tiempo Real y Asistencia Personalizada
+            </h3>
+            <p className="text-sm text-justify">
+              Chatea con nosotros para resolver dudas o recibir consejos.
+            </p>
+          </div>
         </div>
-      </div>
+      </motion.div>
       <div>
         <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
           Mira una de nuestras rutinas
