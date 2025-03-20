@@ -17,5 +17,18 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        ".input-field": {
+          "@apply w-full p-3 rounded-lg bg-white text-gray-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500": {},
+        },
+        ".error-message": {
+          "@apply text-red-500 text-sm mt-1": {},
+        },
+      });
+    },
+
+  ],
+  
 };
