@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { routes } from "../../routes/routes";
+import UserAuth from "./authUser";
 
 const Navbar = () => {
   return (
@@ -51,6 +52,9 @@ const Navbar = () => {
               Eventos
             </Link>
           </div>
+        </div>
+        <div>
+          <UserAuth />
         </div>
       </nav>
     </div>
