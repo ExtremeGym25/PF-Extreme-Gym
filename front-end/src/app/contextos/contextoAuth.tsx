@@ -40,18 +40,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("user");
   };
   useEffect(() => {
-    const mockUser = { name: "Carlos García", email: "carlosg@hotmail.com" };
-    const mockToken = "fakeToken123";
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ user: mockUser, token: mockToken })
-    );
+    // const mockUser = { name: "Carlos García", email: "carlosg@hotmail.com" };
+    // const mockToken = "fakeToken123";
+    // localStorage.setItem(
+    //   "user",
+    //   JSON.stringify({ user: mockUser, token: mockToken })
+    // );
 
-    setUser(mockUser);
-    setToken(mockToken);
-    setIsAuth(true);
+    // setUser(mockUser);
+    // setToken(mockToken);
+    // setIsAuth(true);
 
-    console.log("Autenticación forzada para pruebas");
+    // console.log("Autenticación forzada para pruebas");
     const storage = localStorage.getItem("user");
 
     if (!storage) {
