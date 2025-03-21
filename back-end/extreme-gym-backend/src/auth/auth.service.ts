@@ -9,54 +9,49 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  
-
-  constructor(@InjectRepository(User) private readonly usersRepository : Repository<User>, private jwtService : JwtService ){}
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
 
   async createUser(user: CreateUserDto) {
-    
-    const {email, password, confirmPassword, ...userWithoutConfirmation} = user
-    
-    const finduser = await this.usersRepository.findOneBy({email})
-    if (finduser) throw new BadRequestException('user already registered')
+    const { email, password, confirmPassword, ...userWithoutConfirmation } =
+      user;
 
+    const finduser = await this.usersRepository.findOneBy({ email });
+    if (finduser) throw new BadRequestException('user already registered');
 
-
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersRepository.save({
-        ...userWithoutConfirmation, 
-        password : hashedPassword,
-        email: email,
-        isAdmin: false,
-        premium: false,
-        
-    }); 
+      ...userWithoutConfirmation,
+      password: hashedPassword,
+      email: email,
+      isAdmin: false,
+      premium: false,
+    });
     const { password: _, isAdmin, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
-    }
+  }
 
-    async signIn(credentials : LoginUserDto){
-      const {email, password,} = credentials
+  async signIn(credentials: LoginUserDto) {
+    const { email, password } = credentials;
 
-      const finduser = await this.usersRepository.findOneBy({email})
-      if (!finduser) throw new BadRequestException('bad credentials')
+    const finduser = await this.usersRepository.findOneBy({ email });
+    if (!finduser) throw new BadRequestException('bad credentials');
 
-      const passwordMatch = await bcrypt.compare(password, finduser.password)
-      if (!passwordMatch) throw new BadRequestException('bad credentials')
-      
-          const userPayload = {
-              id : finduser.id,
-              email: finduser.email,
-              isAdmin: finduser.isAdmin,
-              
-              
-          }
-      const token = this.jwtService.sign(userPayload)
+    const passwordMatch = await bcrypt.compare(password, finduser.password);
+    if (!passwordMatch) throw new BadRequestException('bad credentials');
 
-      return {
-          token,
-          message : 'Success'
-      }
-  
-}
+    const userPayload = {
+      id: finduser.id,
+      email: finduser.email,
+      isAdmin: finduser.isAdmin,
+    };
+    const token = this.jwtService.sign(userPayload);
+
+    return {
+      token,
+      message: 'Success',
+    };
+  }
 }
