@@ -23,7 +23,7 @@ export const loginService = async (userData: {
 
 export const registerService = async (userData: Partial<IUser>) => {
   try {
-    await axiosApiBack.post("AQUI VARUTA", userData);
+    await axiosApiBack.post("/auth/signup", userData);
     return "Registro exitoso";
   } catch (error) {
     console.log("Error al registrarse", error);
