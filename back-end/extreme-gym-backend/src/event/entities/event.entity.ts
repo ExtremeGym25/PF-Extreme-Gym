@@ -1,34 +1,43 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Event {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-    
-    @Column()
-    name: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    description: string;
+  @Column()
+  name: string;
 
-    @Column()
-    location: string;
+  @Column()
+  description: string;
 
-    @Column()
-    date: Date;
+  @Column()
+  location: string;
 
-    @Column()
-    time: Date;
+  @Column()
+  date: Date;
 
-    @Column()
-    capacity: number;
+  @Column()
+  time: string;
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    createdAt: Date;
+  @Column()
+  capacity: number;
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", nullable: true })
-    updatedAt: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-    @Column({ default: false })
-    isCancelled: boolean;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
+  updatedAt: Date;
+
+  @Column({ default: false })
+  isCancelled: boolean;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updatedAt = new Date();
+  }
 }
