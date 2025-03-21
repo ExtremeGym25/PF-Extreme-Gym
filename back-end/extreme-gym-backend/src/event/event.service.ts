@@ -77,7 +77,7 @@ export class EventService {
   ): Promise<Event> {
     try {
       const event = await this.getEventById(id);
-      Object.assign(event, updateEventDto);
+      this.eventRepository.merge(event, updateEventDto);
       return await this.eventRepository.save(event);
     } catch (error) {
       if (error instanceof NotFoundException) {

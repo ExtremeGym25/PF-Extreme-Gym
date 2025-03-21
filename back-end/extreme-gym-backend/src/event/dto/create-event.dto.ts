@@ -1,4 +1,5 @@
-import { IsString, IsDate, IsBoolean, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsDate, IsBoolean, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -11,14 +12,13 @@ export class CreateEventDto {
   location: string;
 
   @IsDate()
+  @Type(() => Date)
   date: Date;
 
   @IsString()
   time: string;
 
   @IsNumber()
+  @IsPositive()
   capacity: number;
-
-  @IsBoolean()
-  isCancelled?: boolean; // Este campo es opcional
 }
