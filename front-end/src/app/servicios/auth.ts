@@ -1,17 +1,14 @@
 "use server";
 import axios from "axios";
-import { IUser } from "../tipos";
+import { IUserLogin , IUser } from "../tipos";
 
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-export const loginService = async (userData: {
-  email: string;
-  password: string;
-}) => {
+export const loginService = async (userData: Partial<IUserLogin> ) => {
   try {
-    const user = await axiosApiBack.post("AQUI VA RUTA", userData);
+    const user = await axiosApiBack.post("/auth/signin", userData);
     console.log("user en servicio", user.data);
 
     return user.data;
