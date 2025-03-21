@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "../app/styles/globals.css";
+import { Bounce, ToastContainer } from "react-toastify";
 import Navbar from "./components/navbarFooter/navbar";
 import Footer from "./components/navbarFooter/footer";
 import { AuthProvider } from "./contextos/contextoAuth";
@@ -41,6 +42,19 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            transition={Bounce}
+          />
         </AuthProvider>
       </body>
     </html>
