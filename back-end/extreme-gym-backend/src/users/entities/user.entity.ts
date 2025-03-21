@@ -1,15 +1,19 @@
+import { IsDateString } from 'class-validator';
+import { Subscription } from 'src/payments/entities/payment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity({
   name: 'USER',
 })
 export class User {
+  [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,12 +43,13 @@ export class User {
       default: "" })
   profileImage?: string;
   
+  @ManyToOne(() => Subscription)
+  @JoinColumn({ name: 'planId' })
+  plan: Subscription; 
 
-  @Column({
-    type: 'boolean',
-    default: false,
-  })
-  subscriptionType: string;
+  @Column({ nullable: true })
+  @IsDateString()
+  subscriptionExpirationDate: string; 
 
   @Column({
     type: 'boolean',
@@ -57,4 +62,5 @@ export class User {
     default: true,
   })
   isActive: boolean;
+  user: any;
 }
