@@ -13,9 +13,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Post('image') // Endpoint para cargar imágenes generales
+  @Post('image')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }), // Límite de 5 MB
+    FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }),
   )
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -29,6 +29,9 @@ export class FileUploadController {
         url: result.secure_url,
       };
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       console.error('Error al subir la imagen:', error);
       throw new InternalServerErrorException(
         'Error al subir la imagen. Intenta nuevamente más tarde.',
@@ -36,9 +39,9 @@ export class FileUploadController {
     }
   }
 
-  @Post('profile') // Endpoint para cargar imágenes de perfil
+  @Post('profile')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }), // Límite de 2 MB
+    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
   )
   async uploadProfilePicture(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -52,6 +55,9 @@ export class FileUploadController {
         url: result.secure_url,
       };
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       console.error('Error al subir la foto de perfil:', error);
       throw new InternalServerErrorException(
         'Error al subir la foto de perfil. Intenta nuevamente más tarde.',
@@ -59,9 +65,9 @@ export class FileUploadController {
     }
   }
 
-  @Post('video') // Endpoint para cargar videos
+  @Post('video')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 15 * 1024 * 1024 } }), // Límite de 10 MB
+    FileInterceptor('file', { limits: { fileSize: 15 * 1024 * 1024 } }),
   )
   async uploadVideo(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -75,6 +81,9 @@ export class FileUploadController {
         url: result.secure_url,
       };
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       console.error('Error al subir el video:', error);
       throw new InternalServerErrorException(
         'Error al subir el video. Intenta nuevamente más tarde.',

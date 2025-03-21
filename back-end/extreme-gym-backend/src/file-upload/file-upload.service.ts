@@ -1,13 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { FileUpload } from './entities/file-upload.entity';
 
 @Injectable()
 export class FileUploadService {
   private allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
   private allowedVideoTypes = ['video/mp4', 'video/webm', 'video/avi'];
 
-  constructor() {
+  constructor(
+    @InjectRepository(FileUpload)
+    private readonly fileUploadRepository: Repository<FileUpload>,
+  ) {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -25,7 +31,6 @@ export class FileUploadService {
     }
   }
 
-  // Este método valida los tipos de video permitidos.
   private validateVideoType(file: Express.Multer.File): void {
     const { mimetype } = file;
 
@@ -35,36 +40,42 @@ export class FileUploadService {
       );
     }
   }
-  // Método para cargar imágenes generales.
-  // Método para cargar imágenes generales.
+
   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    this.validateImageType(file); // Validación para imágenes generales
+    this.validateImageType(file);
     return this.uploadFile(file, 'images');
   }
 
-  // Método para cargar imágenes de perfil.
   async uploadProfilePicture(
     file: Express.Multer.File,
   ): Promise<UploadApiResponse> {
-    this.validateImageType(file); // Validación para imágenes de perfil
-    return this.uploadFile(file, 'profile_pictures');
+    this.validateImageType(file); 
+    const result = await this.uploadFile(file, 'profile_pictures');
+
+    const fileUpload = this.fileUploadRepository.create({
+      url: result.secure_url, 
+      type: 'image', 
+      createdAt: new Date(),
+    });
+    
+    await this.fileUploadRepository.save(fileUpload);
+
+    return result;
   }
 
-  // Método para cargar videos.
   async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
-    this.validateVideoType(file); // Validación para videos
+    this.validateVideoType(file); 
     return this.uploadFile(file, 'videos', 'video');
   }
 
-  // Método común para subir archivos a Cloudinary.
   private uploadFile(
     file: Express.Multer.File,
     folder: string,
-    resourceType: 'image' | 'video' = 'image', // Por defecto es 'image'
+    resourceType: 'image' | 'video' = 'image',
   ): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { resource_type: resourceType, folder: `extremegym/${folder}` }, // Carpeta específica
+        { resource_type: resourceType, folder: `extremegym/${folder}` },
         (error, result) => {
           if (error) {
             console.log(`Error al subir el ${resourceType}`, error);
@@ -73,12 +84,12 @@ export class FileUploadService {
             );
           }
           if (!result) {
-            // Si result es undefined, rechaza la promesa
+
             return reject(
               new Error('No se recibió un resultado válido de Cloudinary.'),
             );
           }
-          resolve(result); // Resolviendo la promesa solo si result es válido
+          resolve(result);
         },
       );
 
