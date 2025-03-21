@@ -6,11 +6,11 @@ export class Subscription {
     id: number;
 
     @Column()
-    name: string; // 'Free' o 'Premium'
+    name: string;
 
     @Column('decimal', { nullable: true })
-    pricePerMonth: number; // Precio mensual para Premium (simulado)
+    pricePerMonth: number;
 
     @Column('decimal', { nullable: true })
-    pricePerYear: number; // Precio anual para Premium (simulado)
+    pricePerYear: number;
 }
