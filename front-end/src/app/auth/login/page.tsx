@@ -3,8 +3,33 @@ import React from "react";
 import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { IUserLogin } from "@/app/tipos";
+import { useAuth } from "@/app/contextos/contextoAuth";
+import { toast } from "react-toastify";
+import { routes } from "@/app/routes/routes";
+import { loginService } from "@/app/servicios/auth";
+import { useRouter } from "next/navigation";
 
-const LoginView = () => {
+
+const Login = () => {
+  const { saveUserData } = useAuth();
+  const router = useRouter();
+
+  const handleOnSubmit = async (values: IUserLogin) => {
+    try {
+      const res = await loginService(values);
+      toast.success("Login Exitoso");
+      //persiste los datos
+      saveUserData(res);
+      setTimeout(() => router.push(routes.miPerfil), 1000);
+    } catch (error) {
+      console.warn("error al Login", error);
+      toast.error("El Login no pudo completarse ");
+    }
+  }
+
+  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-fondo font-poppins">
       <div className="flex w-full max-w-4xl bg-grisP rounded-lg shadow-lg overflow-hidden">
@@ -26,9 +51,7 @@ const LoginView = () => {
                 .min(6, "La contraseña debe tener al menos 6 caracteres")
                 .required("La contraseña es obligatoria"),
             })}
-            onSubmit={(values) => {
-              console.log("Datos enviados:", values);
-            }}
+            onSubmit={handleOnSubmit}
           >
             {({ isSubmitting }) => (
               <Form className="space-y-4">
@@ -84,4 +107,5 @@ const LoginView = () => {
   );
 };
 
-export default LoginView;
+
+export default Login;
