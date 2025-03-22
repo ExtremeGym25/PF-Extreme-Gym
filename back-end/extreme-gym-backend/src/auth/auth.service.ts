@@ -49,8 +49,6 @@ export class AuthService {
               id : finduser.id,
               email: finduser.email,
               isAdmin: finduser.isAdmin,
-              
-              
           }
       const token = this.jwtService.sign(userPayload)
 
