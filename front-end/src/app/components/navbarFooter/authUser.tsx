@@ -15,7 +15,7 @@ const UserAuth = () => {
   //const { total } = useCart();
   const { user } = useAuth();
   //cuando esta logueado
-
+  console.log(user);
   if (isAuth === null) {
     return <div>loading</div>;
   }
@@ -29,7 +29,7 @@ const UserAuth = () => {
           href={routes.miPerfil}
           className="font-semibold transition text-foreground hover:text-blueP"
         >
-          {user?.name || "Usuario"}
+          {user?.email || "Usuario"}
         </Link>
         <div className="transition hover:text-blueP">total</div>
         {/* <Link href={routes.cart} className="transition hover:text-blueP">

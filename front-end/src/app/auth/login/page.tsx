@@ -10,7 +10,6 @@ import { routes } from "@/app/routes/routes";
 import { loginService } from "@/app/servicios/auth";
 import { useRouter } from "next/navigation";
 
-
 const Login = () => {
   const { saveUserData } = useAuth();
   const router = useRouter();
@@ -18,21 +17,26 @@ const Login = () => {
   const handleOnSubmit = async (values: IUserLogin) => {
     try {
       const res = await loginService(values);
-      toast.success("Login Exitoso");
-      //persiste los datos
-      saveUserData(res);
-      setTimeout(() => router.push(routes.miPerfil), 1000);
-    } catch (error) {
-      console.warn("error al Login", error);
-      toast.error("El Login no pudo completarse ");
-    }
-  }
+      console.log("Respuesta al iniciar sesión:", res);
 
-  
+      if (res?.token) {
+        toast.success("Login Exitoso");
+        // Persiste solo el token
+        saveUserData(res.token);
+        setTimeout(() => router.push(routes.miPerfil), 1000);
+      } else {
+        console.error("Token no encontrado en la respuesta");
+        toast.error("Token no encontrado en la respuesta");
+      }
+    } catch (error) {
+      console.warn("Error al iniciar sesión", error);
+      toast.error("El Login no pudo completarse");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-fondo font-poppins">
-      <div className="flex w-full max-w-4xl bg-grisP rounded-lg shadow-lg overflow-hidden">
+      <div className="flex w-full max-w-4xl overflow-hidden rounded-lg shadow-lg bg-grisP">
         {/* Sección del formulario */}
         <div className="w-1/2 p-8">
           <h2 className="mb-6 text-2xl font-bold text-center text-blanco">
@@ -62,7 +66,11 @@ const Login = () => {
                     placeholder="Correo electrónico"
                     className="input-field"
                   />
-                  <ErrorMessage name="email" component="div" className="error-message" />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="error-message"
+                  />
 
                   <Field
                     type="password"
@@ -70,12 +78,16 @@ const Login = () => {
                     placeholder="Contraseña"
                     className="input-field"
                   />
-                  <ErrorMessage name="password" component="div" className="error-message" />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="error-message"
+                  />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full mt-4 p-2 bg-verde text-blanco font-bold rounded hover:bg-opacity-90 transition"
+                  className="w-full p-2 mt-4 font-bold transition rounded bg-verde text-blanco hover:bg-opacity-90"
                   disabled={isSubmitting}
                 >
                   Iniciar Sesión
@@ -87,16 +99,18 @@ const Login = () => {
 
         {/* Sección de imagen y mensaje */}
         <div
-          className="w-1/2 flex flex-col items-center justify-center p-8 bg-cover bg-center"
+          className="flex flex-col items-center justify-center w-1/2 p-8 bg-center bg-cover"
           style={{ backgroundImage: "url('/tu-imagen.jpg')" }}
         >
-          <div className="bg-black bg-opacity-60 p-6 rounded-lg text-center">
-            <h2 className="text-2xl font-bold text-blanco mb-4">
+          <div className="p-6 text-center bg-black rounded-lg bg-opacity-60">
+            <h2 className="mb-4 text-2xl font-bold text-blanco">
               ¿Aún no tienes cuenta?
             </h2>
-            <p className="text-blanco mb-4">Regístrate y únete a nuestra comunidad.</p>
+            <p className="mb-4 text-blanco">
+              Regístrate y únete a nuestra comunidad.
+            </p>
             <Link href="/registro">
-              <button className="px-6 py-2 bg-verde text-blanco font-bold rounded hover:bg-opacity-90 transition">
+              <button className="px-6 py-2 font-bold transition rounded bg-verde text-blanco hover:bg-opacity-90">
                 Registrarse
               </button>
             </Link>
@@ -106,6 +120,5 @@ const Login = () => {
     </div>
   );
 };
-
 
 export default Login;

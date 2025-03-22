@@ -52,8 +52,6 @@ const Navbar = () => {
               Eventos
             </Link>
           </div>
-        </div>
-        <div>
           <UserAuth />
         </div>
       </nav>

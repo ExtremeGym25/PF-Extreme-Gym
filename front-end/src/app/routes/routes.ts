@@ -2,7 +2,7 @@ export const routes = {
   login: "/auth/login",
   registro: "/auth/registro",
   //landing: "/landing",
-  miPerfil: "/miperfil",
+  miPerfil: "/miPerfil",
   carroCompras: "/carroCompra",
   home: "/",
   nosotros: "/nosotros",
