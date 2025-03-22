@@ -49,17 +49,18 @@ export class AuthService {
     const finduser = await this.usersRepository.findOneBy({ email });
     if (!finduser) throw new BadRequestException('bad credentials');
 
-    const passwordMatch = await bcrypt.compare(password, finduser.password);
-    if (!passwordMatch) throw new BadRequestException('bad credentials');
-
-    const userPayload = {
-      id: finduser.id,
-      email: finduser.email,
-      isAdmin: finduser.isAdmin,
-    };
-    const token = this.jwtService.sign(userPayload);
-    const { password: _, ...userWithoutPassword } = finduser;
-
+      const passwordMatch = await bcrypt.compare(password, finduser.password)
+      if (!passwordMatch) throw new BadRequestException('bad credentials')
+      
+          const userPayload = {
+              id : finduser.id,
+              email: finduser.email,
+              isAdmin: finduser.isAdmin,
+              
+              
+          }
+      const token = this.jwtService.sign(userPayload)
+          const { password: _, ...userWithoutPassword } = finduser;
     return {
       token,
       user : userWithoutPassword,
