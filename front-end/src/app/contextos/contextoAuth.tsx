@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -7,69 +8,116 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { IUser } from "../tipos";
-//Que queremos guardar en el contexto
+import { jwtDecode } from "jwt-decode"; // Importación corregida
 
+import { IResponseBack, IUser } from "../tipos";
+
+// Que queremos guardar en el contexto
 interface AuthContextType {
   user: IUser | null;
   isAuth: boolean | null;
-  token?: string | null; //
-  //actions
-  saveUserData: (data: { user: IUser; token: string }) => void;
+  token?: string | null;
+  // action
+  saveUserData: (token: string) => void;
   resetUserData: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-// Un componente que recibe un children que genera otro componente y retorna nuestroi provider con el children de hijo
+
+// Un componente que recibe un children, que genera otro componente y retorna nuestro provider con el children de hijo
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
   const [token, setToken] = useState<string | null>(null);
-  //Estado actual, se puede cambiar el valor actualizar estado =inicializa el estado
   const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const saveUserData = (data: { user: IUser; token: string }) => {
-    setUser(data.user);
-    setIsAuth(true);
-    setToken(data.token);
-    //persistir datos EL LOCAL STROGA SOLO GUARDA STRINGS PARA PODER GUARDAR EL OBJETO USER SE USA JSON Y STRIGFLY QUE LO CONVIRTE EN UN STRING
-    localStorage.setItem("user", JSON.stringify(data));
+  const saveUserData = (token: string) => {
+    try {
+      console.log("Token recibido en saveUserData:", token);
+      if (typeof token !== "string" || !token) {
+        throw new Error("Token inválido o nulo");
+      }
+
+      const decodedToken: any = jwtDecode(token);
+      console.log("Token decodificado en saveUserData:", decodedToken);
+
+      const user: IResponseBack = {
+        email: decodedToken.email,
+      };
+
+      setUser(user);
+      setIsAuth(true);
+      setToken(token);
+
+      // Guardar en localStorage
+      const userData = JSON.stringify({ user, token });
+      localStorage.setItem("userData", userData);
+      console.log("Datos guardados en el almacenamiento:", userData);
+    } catch (error) {
+      console.error("Error al decodificar el token en saveUserData:", error);
+      setIsAuth(false);
+    }
   };
+
   const resetUserData = () => {
     setUser(null);
     setIsAuth(false);
-    localStorage.removeItem("user");
+    setToken(null);
+    localStorage.removeItem("userData");
   };
+
   useEffect(() => {
-    // const mockUser = { name: "Carlos García", email: "carlosg@hotmail.com" };
-    // const mockToken = "fakeToken123";
-    // localStorage.setItem(
-    //   "user",
-    //   JSON.stringify({ user: mockUser, token: mockToken })
-    // );
+    if (typeof window !== "undefined") {
+      // Asegurar que solo se ejecute en el cliente
+      const storageData = localStorage.getItem("userData");
 
-    // setUser(mockUser);
-    // setToken(mockToken);
-    // setIsAuth(true);
+      console.log("Datos en localStorage:", storageData);
+      if (!storageData) {
+        setIsAuth(false);
+        setLoading(false);
+        return;
+      }
 
-    // console.log("Autenticación forzada para pruebas");
-    const storage = localStorage.getItem("user");
+      try {
+        const parsedData: { token: string } = JSON.parse(storageData);
+        console.log("Datos parseados correctamente:", parsedData);
 
-    if (!storage) {
-      setIsAuth(false);
-      return;
-    }
+        const decodedToken: any = jwtDecode(parsedData.token);
+        console.log("Token decodificado:", decodedToken);
 
-    try {
-      const parsedData: { user: IUser; token: string } = JSON.parse(storage);
-      console.log("Datos parseados correctamente:", parsedData);
-      setUser(parsedData.user || null); // Evita errores si el user no existe
-      setToken(parsedData.token || null);
-      setIsAuth(!!parsedData.user); // Solo autentica si hay un usuario válido
-    } catch (error) {
-      console.error("Error al parsear datos del usuario:", error);
-      setIsAuth(false);
+        if (decodedToken) {
+          const user: IUser = {
+            email: decodedToken.email,
+            name: decodedToken.name,
+            address: decodedToken.address,
+            phone: decodedToken.phone,
+            password: decodedToken.password,
+            confirmPassword: decodedToken.confirmPassword,
+            country: decodedToken.country,
+            city: decodedToken.city,
+            profileImage: decodedToken.profileImage,
+          };
+
+          setUser(user);
+          setToken(parsedData.token);
+          setIsAuth(true);
+        } else {
+          setIsAuth(false);
+        }
+      } catch (error) {
+        console.error("Error al parsear datos del usuario:", error);
+        setIsAuth(false);
+      }
+
+      setLoading(false);
     }
   }, []);
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
+
+  console.log("Contexto de autenticación:", { user, isAuth, token });
 
   return (
     <AuthContext.Provider
@@ -79,6 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

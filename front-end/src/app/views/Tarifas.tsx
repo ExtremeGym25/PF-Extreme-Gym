@@ -1,5 +1,4 @@
 import React from "react";
-import Beneficios from "../components/viewcomponents/beneficios";
 
 const Tarifas = () => {
   return (
@@ -29,7 +28,6 @@ const Tarifas = () => {
           ></iframe>
         </div>
       </div>
-      <Beneficios />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import Navbar from "./components/navbarFooter/navbar";
 import Footer from "./components/navbarFooter/footer";
 import { AuthProvider } from "./contextos/contextoAuth";
+import VisibleWrapper from "./wrapper/visibleWrapper";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -39,9 +40,13 @@ export default function RootLayout({
       >
         {" "}
         <AuthProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <VisibleWrapper>
+            <Navbar />
+          </VisibleWrapper>
+          <div>{children}</div>
+          <VisibleWrapper>
+            <Footer />
+          </VisibleWrapper>
           <ToastContainer
             position="top-center"
             autoClose={3000}
