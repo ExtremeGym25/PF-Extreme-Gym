@@ -37,6 +37,8 @@ export class AuthService {
       newUser.email,
       newUser.name,
     );
+
+
     const { password: _, isAdmin, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
   }
@@ -56,9 +58,11 @@ export class AuthService {
       isAdmin: finduser.isAdmin,
     };
     const token = this.jwtService.sign(userPayload);
+    const { password: _, ...userWithoutPassword } = finduser;
 
     return {
       token,
+      user : userWithoutPassword,
       message: 'Success',
     };
   }
