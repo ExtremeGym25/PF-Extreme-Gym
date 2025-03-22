@@ -5,11 +5,14 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
 import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule,
+    TypeOrmModule.forFeature([User]),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

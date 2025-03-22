@@ -33,7 +33,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     BookingsModule,
     PlansModule,
     PaymentsModule,
-    ScheduleModule.forRoot(), // Activa la funcionalidad de tareas programadas
+    ScheduleModule.forRoot(),
 
     ConfigModule.forRoot({
       isGlobal: true,
