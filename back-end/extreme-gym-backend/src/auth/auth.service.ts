@@ -60,7 +60,7 @@ export class AuthService {
               
           }
       const token = this.jwtService.sign(userPayload)
-
+          const { password: _, ...userWithoutPassword } = finduser;
     return {
       token,
       user : userWithoutPassword,
