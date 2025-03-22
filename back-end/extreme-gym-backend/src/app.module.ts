@@ -17,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -32,18 +33,19 @@ import typeormConfig from './config/typeorm';
     BookingsModule,
     PlansModule,
     PaymentsModule,
+    ScheduleModule.forRoot(),
 
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeormConfig], 
+      load: [typeormConfig],
     }),
 
     JwtModule.register({
-        global : true,
-        secret: process.env.JWT_SECRET,
-        signOptions:{expiresIn: process.env.JWT_EXPIRES}
-      }),
-      
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRES },
+    }),
+
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
