@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { routes } from "../routes/routes";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { registerService } from "@/app/servicios/auth";
+import {
+  registerService,
+  uploadProfileImageService,
+} from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 
 export interface IForm {
@@ -55,7 +58,18 @@ const validationSchema = Yup.object().shape({
 
 const Registro = () => {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string>("");
 
+  const handleImageUpload = async (file: File) => {
+    try {
+      const uploadedUrl = await uploadProfileImageService(file);
+      setImageUrl(uploadedUrl);
+      toast.success("Imagen subida correctamente");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error("Error al subir la imagen");
+    }
+  };
   const handleOnSubmit = async (values: IForm) => {
     console.log("Datos enviados:", values);
     try {
@@ -69,7 +83,7 @@ const Registro = () => {
         phone: Number(values.phone),
         country: values.country,
         city: values.city,
-        profileImage: values.profileImage || " ",
+        profileImage: imageUrl || " ",
       };
       console.log("Datos enviados al backend:", formattedUserData);
 
@@ -198,11 +212,15 @@ const Registro = () => {
               component="div"
               className="text-sm text-red-500"
             />
-            <Field
-              name="profileImage"
-              type="text"
-              placeholder="Imagen"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  handleImageUpload(e.target.files[0]);
+                }
+              }}
+              className="w-full p-2 text-black bg-white rounded-lg"
             />
             <ErrorMessage
               name="profileImage"
