@@ -6,7 +6,7 @@ import { MdEmail } from "react-icons/md";
 
 const Footer = () => {
   return (
-    <footer className="py-8 font-poppins bg-fondo text-blanco ring-2 ring-verde ring-opacity-100">
+    <footer className="py-8 font-poppins bg-fondo text-foreground ring-2 ring-verde ring-opacity-100">
       <div className="grid grid-cols-1 gap-8 px-6 mx-auto transition max-w-7xl md:grid-cols-3">
         <div className=" hover:text-verde">
           <h3 className="mb-3 text-lg font-semibold ">Quienes Somos</h3>
