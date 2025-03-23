@@ -43,7 +43,7 @@ const CarouselHome = () => {
               <img
                 src={images[currentIndex]}
                 alt={`Slide ${currentIndex + 1}`}
-                className="object-cover w-full transition-transform duration-500 h-96"
+                className="object-cover w-full h-screen transition-transform duration-500"
               />
             </Link>
           </div>

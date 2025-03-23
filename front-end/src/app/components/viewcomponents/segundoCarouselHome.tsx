@@ -26,12 +26,12 @@ const SegundoCarouselHome = () => {
   }, []);
 
   return (
-    <div className="flex justify-center gap-4 py-4">
+    <div className="flex flex-wrap justify-center gap-4 py-4 text">
       {testimonials.map((image, index) => (
         <motion.div
           onClick={() => setCurrentIndex(index)}
           key={index}
-          className={`w-48 h-48 md:w-64 md:h-64 bg-verde shadow-md rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
+          className={`w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 bg-verde shadow-md rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
             index === currentIndex ? "opacity-100" : "opacity-50"
           }`}
         >

@@ -14,10 +14,10 @@ const Homeview = () => {
       </div>
       <div className="text-center">
         <h2 className="text-2xl font-bold transition-transform duration-300 hover:scale-110">
-          🔥 Nuestros Testimonios 🔥
+          🔥 Nuestros Eventos 🔥
         </h2>
         <p className="text-gray-600 transition-transform duration-300 hover:scale-110">
-          ¡Tu puedes ser uno de ellos!
+          ¡Tu puedes ser parte de ellos!
         </p>
       </div>
       <div>

@@ -26,8 +26,8 @@ html {
 body {
   font-family: sans-serif;
   line-height: 1.6;
-  background-color: #0d1f2d;
-  color: #f2f2f2;
+  background-color: #f2f2f2;
+  color: #0d1f2d;
   min-height: 100vh;
   text-rendering: optimizeSpeed;
 }

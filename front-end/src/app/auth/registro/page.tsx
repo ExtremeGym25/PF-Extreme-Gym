@@ -16,7 +16,7 @@ const registroView = () => {
           <ButtonPrimary>inicia Sesion</ButtonPrimary>
         </Link>
         <img
-          src="Holi"
+          src="/logo.png"
           alt="Logo"
           className="h-40 transition-transform duration-300 animate-pulse hover:scale-110"
         ></img>
