@@ -1,58 +1,87 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ButtonPrimary from "../buttons/buttonPrimary";
 import { routes } from "@/app/routes/routes";
 import { useAuth } from "@/app/contextos/contextoAuth";
-//import { useCart } from "@/app/context/cartContext";
-//import { MdOutlineShoppingCart } from "react-icons/md";
 import { FaRegUserCircle } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
-import { PiHeartBold } from "react-icons/pi";
 
 const UserAuth = () => {
-  const { isAuth, resetUserData } = useAuth();
-  //const { total } = useCart();
-  const { user } = useAuth();
-  //cuando esta logueado
-  console.log(user);
+  const { isAuth, resetUserData, user } = useAuth();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const authRef = useRef<HTMLDivElement>(null);
+
+  // Cerrar el dropdown si se hace clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (authRef.current && !authRef.current.contains(event.target as Node)) {
+        setIsAuthOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   if (isAuth === null) {
-    return <div>loading</div>;
+    return <div>loading...</div>;
   }
-  if (isAuth) {
-    return (
-      <div className="flex items-center gap-3 ">
-        <Link className="transition hover:text-blueP" href={routes.favoritos}>
-          <PiHeartBold />
-        </Link>
-        <Link
-          href={routes.miPerfil}
-          className="font-semibold capitalize transition text-foreground hover:text-blueP"
-        >
-          {user?.name || "Usuario"}
-        </Link>
-        <div className="transition hover:text-blueP">total</div>
-        {/* <Link href={routes.cart} className="transition hover:text-blueP">
-          <MdOutlineShoppingCart />
-        </Link> */}
-        <Link href={routes.miPerfil} className="transition hover:text-blueP">
-          <FaRegUserCircle />
-        </Link>
-        <span onClick={resetUserData} className="transition hover:text-blueP">
-          <IoIosLogOut />
-        </span>
-      </div>
-    );
-  }
-  //cuando no
+
   return (
-    <div className="flex items-center justify-center pb-4 mx-auto space-x-4 ">
-      <Link href={routes.login}>
-        <ButtonPrimary>Iniciar Sesión</ButtonPrimary>
-      </Link>
-      <Link href={routes.registro}>
-        <ButtonPrimary>Registrarse</ButtonPrimary>
-      </Link>
+    <div className="relative z-50 py-4" ref={authRef}>
+      {isAuth ? (
+        <>
+          <button
+            className="flex items-center gap-2 transition hover:text-verde"
+            onClick={() => setIsAuthOpen(!isAuthOpen)}
+          >
+            <FaRegUserCircle className="text-xl" />
+            {user?.name || "Usuario"}
+          </button>
+          {isAuthOpen && (
+            <div className="absolute right-0 z-50 p-4 mt-2 transition-transform origin-top-right transform rounded-lg shadow-lg w-80 bg-azul text-blanco animate-slide-down">
+              <h3 className="text-xl font-bold">Perfil de Usuario</h3>
+              <hr className="my-2 border-verde" />
+              <div className="flex flex-col space-y-2">
+                <Link href={routes.miPerfil} className="hover:text-verde">
+                  Ver Perfil
+                </Link>
+                <Link href={routes.miPerfil} className="hover:text-verde">
+                  Configuración
+                </Link>
+                <Link href={routes.miPerfil} className="hover:text-verde">
+                  Mensajes
+                </Link>
+                <Link href={routes.miPerfil} className="hover:text-verde">
+                  Notificaciones
+                </Link>
+                <Link href={routes.miPerfil} className="hover:text-verde">
+                  Ayuda y Soporte
+                </Link>
+                <hr className="my-2 border-verde" />
+                <span
+                  onClick={resetUserData}
+                  className="flex items-center gap-2 transition cursor-pointer hover:text-verde"
+                >
+                  <IoIosLogOut />
+                  Cerrar Sesión
+                </span>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="flex items-center gap-4">
+          <Link href={routes.login}>
+            <ButtonPrimary>Iniciar Sesión</ButtonPrimary>
+          </Link>
+          <Link href={routes.registro}>
+            <ButtonPrimary>Registrarse</ButtonPrimary>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
