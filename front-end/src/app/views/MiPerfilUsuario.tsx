@@ -4,10 +4,11 @@ import { useAuth } from "../contextos/contextoAuth";
 
 const MiPerfilUsuario = () => {
   const { user } = useAuth();
+  console.log("Imagen de perfil:", user?.profileImage);
 
   return (
     <div>
-      <div className="p-4 mx-auto transition-transform duration-300 rounded-lg shadow-md bg-blackP w-96 hover:scale-110">
+      <div className="h-auto py-8 mx-auto transition-transform duration-300 rounded-lg shadow-md w-96">
         <h3 className="text-xl font-bold text-center capitalize">
           Usuario: {user?.name}
         </h3>
@@ -16,7 +17,7 @@ const MiPerfilUsuario = () => {
             <img
               src={user.profileImage}
               alt="Imagen de Perfil"
-              className="object-cover w-24 h-24 rounded-full"
+              className="object-cover w-40 h-40 m-1 border-2 rounded-full hover:scale-110 border-verde"
             />
           </div>
         )}

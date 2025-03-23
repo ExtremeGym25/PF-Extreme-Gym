@@ -17,17 +17,39 @@ const UpdatePerfilUsuario = () => {
     address: user?.address || "",
     phone: Number(user?.phone) || 0,
     email: user?.email || "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  // Validación de la contraseña
+  const validatePassword = (password: string) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y un carácter especial."
+      );
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validación de la contraseña
+    if (!validatePassword(formData.password)) {
+      return;
+    }
+
     if (!user || !user.id) {
       toast.error("Usuario no definido");
       return;
     }
+
     try {
       const updatedUser = await updateUser(user.id, formData);
       saveUserData({
@@ -43,8 +65,10 @@ const UpdatePerfilUsuario = () => {
   };
 
   return (
-    <div className="p-4 mx-auto transition-transform duration-300 rounded-lg shadow-md w-96">
-      <h3 className="text-xl font-bold text-center capitalize">Mi Perfil</h3>
+    <div className="p-4 mx-auto transition-transform duration-300 rounded-lg shadow-md text-foreground w-96">
+      <h3 className="text-xl font-bold text-center capitalize text-foreground">
+        Mi Perfil
+      </h3>
       <form onSubmit={handleSubmit} className="space-y-2">
         <input
           type="text"
@@ -60,7 +84,7 @@ const UpdatePerfilUsuario = () => {
           value={formData.country}
           onChange={handleChange}
           placeholder="País"
-          className="w-full p-2 capitalize border border-gray-300 rounded "
+          className="w-full p-2 capitalize border border-gray-300 rounded shadow-md "
         />
         <input
           type="text"
@@ -68,7 +92,7 @@ const UpdatePerfilUsuario = () => {
           value={formData.city}
           onChange={handleChange}
           placeholder="Ciudad"
-          className="w-full p-2 capitalize rounded"
+          className="w-full p-2 capitalize border-gray-300 rounded shadow-md"
         />
         <input
           type="text"
@@ -76,7 +100,7 @@ const UpdatePerfilUsuario = () => {
           value={formData.address}
           onChange={handleChange}
           placeholder="Dirección"
-          className="w-full p-2 capitalize rounded"
+          className="w-full p-2 capitalize border-gray-300 rounded shadow-md"
         />
         <input
           type="number"
@@ -84,7 +108,7 @@ const UpdatePerfilUsuario = () => {
           value={formData.phone}
           onChange={handleChange}
           placeholder="Teléfono"
-          className="w-full p-2 rounded"
+          className="w-full p-2 border-gray-300 rounded shadow-md "
         />
         <input
           type="email"
@@ -92,20 +116,20 @@ const UpdatePerfilUsuario = () => {
           value={formData.email}
           onChange={handleChange}
           placeholder="Email"
-          className="w-full p-2 rounded"
+          className="w-full p-2 border-gray-300 rounded shadow-md"
         />
         <input
-          type="password"
-          name="Contraseña"
-          value={"contraseña"}
+          type="text"
+          name="password"
+          value={formData.password}
           onChange={handleChange}
-          placeholder="Contraseña"
-          className="w-full p-2 rounded"
+          placeholder="Nueva Contraseña"
+          className="w-full p-2 border-gray-300 rounded shadow-md"
         />
 
         <button
           type="submit"
-          className="w-full p-2 mt-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
+          className="w-full p-2 mt-2 font-bold border-gray-300 rounded shadow-md bg-azul1 text-blanco hover:bg-verde"
         >
           Actualizar Perfil
         </button>

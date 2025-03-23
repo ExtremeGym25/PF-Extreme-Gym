@@ -16,7 +16,7 @@ const Acordeon: React.FC<AcordeonProps> = ({ title, children }) => {
     <div className="mb-4 border border-gray-300 rounded-lg shadow-md">
       <button
         onClick={toggleAccordion}
-        className="flex items-center justify-between w-full px-4 py-2 rounded-lg text-blanco bg-azul focus:outline-none"
+        className="flex items-center justify-between w-full px-4 py-2 rounded-lg text-foreground bg-azul focus:outline-none"
       >
         <span>{title}</span>
         <span>{isOpen ? "▲" : "▼"}</span>

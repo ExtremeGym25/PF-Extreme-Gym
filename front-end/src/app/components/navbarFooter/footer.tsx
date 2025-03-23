@@ -6,10 +6,12 @@ import { MdEmail } from "react-icons/md";
 
 const Footer = () => {
   return (
-    <footer className="py-8 font-poppins bg-fondo text-foreground ring-2 ring-verde ring-opacity-100">
+    <footer className="py-8 font-poppins bg-fondo ring-2 ring-verde ring-opacity-100">
       <div className="grid grid-cols-1 gap-8 px-6 mx-auto transition max-w-7xl md:grid-cols-3">
         <div className=" hover:text-verde">
-          <h3 className="mb-3 text-lg font-semibold ">Quienes Somos</h3>
+          <h3 className="mb-3 text-lg font-semibold text-black ">
+            Quienes Somos
+          </h3>
           <p className="text-justify text-gray-400 hover:text-verde">
             Somos lo mejor de ambos mundos en un solo lugar. Un centro integral
             donde cualquiera puede entrenar de manera convencional y, al mismo
