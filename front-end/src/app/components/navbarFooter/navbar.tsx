@@ -13,11 +13,11 @@ const Navbar = () => {
   return (
     <div className="sticky z-40 top-4 bg-fondo bg-opacity-80 backdrop-blur-md">
       <nav
-        className="text-blanco ring-4 ring-azul ring-opacity-100 
+        className="text-foreground ring-4 ring-azul ring-opacity-100 
         w-[90%] max-w-7xl mx-auto rounded-2xl shadow-xl 
         bg-opacity-80 font-poppins flex items-center justify-between p-4"
       >
-        <div className="flex items-center">
+        <div className="flex items-center gap-8">
           <Link href={routes.home}>
             <img
               src="/logo.png"
@@ -39,9 +39,9 @@ const Navbar = () => {
         <div
           className={`${
             isOpen ? "block" : "hidden"
-          } w-full lg:flex lg:w-auto lg:items-center lg:justify-between transition-all duration-300 ease-in-out`}
+          } w-full lg:flex lg:w-auto lg:items-center lg:justify-center transition-all duration-300 ease-in-out`}
         >
-          <div className="flex flex-col items-center lg:flex-row lg:gap-8 lg:space-x-8">
+          <div className="flex flex-col items-center pl-1 lg:flex-row lg:gap-8 lg:space-x-8">
             <Link href={routes.home} className="transition hover:text-verde">
               Inicio
             </Link>
@@ -53,13 +53,13 @@ const Navbar = () => {
             </Link>
             <Link
               href={routes.planesRutinas}
-              className="transition hover:text-verde"
+              className="text-center transition hover:text-verde"
             >
               Planes y Rutinas
             </Link>
             <Link
               href={routes.casosExito}
-              className="transition hover:text-verde"
+              className="text-center transition hover:text-verde"
             >
               Casos de Éxito
             </Link>

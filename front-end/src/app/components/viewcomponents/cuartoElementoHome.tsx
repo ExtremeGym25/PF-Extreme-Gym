@@ -63,7 +63,7 @@ const CuartoElementoHome = () => {
               />
             </div>
             <h3 className="pb-2 font-bold text-center">
-              Comunidad de Apasionados del Deporte
+              Comunidad de Apasionados
             </h3>
             <p className="text-sm text-justify">
               Conéctate con otros entusiastas del fitness y deportes extremos,

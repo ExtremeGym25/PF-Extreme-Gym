@@ -88,7 +88,7 @@ const UserAuth = () => {
       ) : (
         <div className="flex items-center gap-4">
           <Link href={routes.login}>
-            <ButtonPrimary>Iniciar Sesión</ButtonPrimary>
+            <ButtonPrimary>Ingresa</ButtonPrimary>
           </Link>
           <Link href={routes.registro}>
             <ButtonPrimary>Registrarse</ButtonPrimary>
