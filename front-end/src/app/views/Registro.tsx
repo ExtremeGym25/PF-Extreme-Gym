@@ -99,7 +99,7 @@ const Registro = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-md p-8 text-white bg-gray-900 rounded-lg shadow-lg">
+    <div className="flex flex-col items-center justify-center w-full max-w-md p-8 rounded-lg ">
       <h2 className="mb-6 text-3xl font-semibold text-center">Registro</h2>
       <Formik
         initialValues={{
@@ -117,12 +117,12 @@ const Registro = () => {
         onSubmit={handleOnSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="flex flex-col space-y-4">
+          <Form className="flex flex-col space-y-4 ">
             <Field
               name="name"
               type="text"
               placeholder="Nombre"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="name"
@@ -134,7 +134,7 @@ const Registro = () => {
               name="email"
               type="email"
               placeholder="Email"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="email"
@@ -146,7 +146,7 @@ const Registro = () => {
               name="address"
               type="text"
               placeholder="Direccion"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="address"
@@ -158,7 +158,7 @@ const Registro = () => {
               name="phone"
               type="number"
               placeholder="Teléfono"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="phone"
@@ -170,7 +170,7 @@ const Registro = () => {
               name="country"
               type="text"
               placeholder="Pais"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="country"
@@ -182,7 +182,7 @@ const Registro = () => {
               name="city"
               type="text"
               placeholder="Ciudad"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="city"
@@ -193,7 +193,7 @@ const Registro = () => {
               name="password"
               type="password"
               placeholder="Contraseña"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="password"
@@ -205,7 +205,7 @@ const Registro = () => {
               name="confirmPassword"
               type="text"
               placeholder="Confirma Contraseña"
-              className="w-full p-2 rounded-lg bg-blanco text-azul "
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde "
             />
             <ErrorMessage
               name="confirmPassword"
@@ -220,7 +220,7 @@ const Registro = () => {
                   handleImageUpload(e.target.files[0]);
                 }
               }}
-              className="w-full p-2 text-black bg-white rounded-lg"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="profileImage"
