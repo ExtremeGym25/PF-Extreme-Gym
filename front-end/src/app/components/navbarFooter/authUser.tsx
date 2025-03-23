@@ -45,14 +45,27 @@ const UserAuth = () => {
               <h3 className="text-xl font-bold">Perfil de Usuario</h3>
               <hr className="my-2 border-verde" />
               <div className="flex flex-col space-y-2">
+                <div className="flex items-center justify-center gap-4">
+                  <p className="text-center">
+                    {" "}
+                    ¡Hola, {user?.name || "Usuario"}! 👋{" "}
+                  </p>
+                  {user?.profileImage && (
+                    <img
+                      src={user.profileImage}
+                      alt="Foto de perfil"
+                      className="border-2 rounded w-28 h-28 border-verde"
+                    />
+                  )}
+                </div>
                 <Link href={routes.miPerfil} className="hover:text-verde">
-                  Ver Perfil
+                  Mi Perfil
                 </Link>
                 <Link href={routes.miPerfil} className="hover:text-verde">
-                  Configuración
+                  Rutinas
                 </Link>
                 <Link href={routes.miPerfil} className="hover:text-verde">
-                  Mensajes
+                  Mis rutinas favoritas
                 </Link>
                 <Link href={routes.miPerfil} className="hover:text-verde">
                   Notificaciones
