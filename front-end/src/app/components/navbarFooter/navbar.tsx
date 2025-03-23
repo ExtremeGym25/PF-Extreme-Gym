@@ -73,8 +73,6 @@ const Navbar = () => {
               <UserAuth />
             </div>
           </div>
-
-          {/* UserAuth - Alineación a la derecha */}
         </div>
       </nav>
     </div>
