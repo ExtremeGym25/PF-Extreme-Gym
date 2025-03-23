@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
-import ButtonPrimary from "../buttons/buttonPrimary";
 import { routes } from "@/app/routes/routes";
 import { useAuth } from "@/app/contextos/contextoAuth";
 import { FaRegUserCircle } from "react-icons/fa";
@@ -88,10 +87,14 @@ const UserAuth = () => {
       ) : (
         <div className="flex items-center gap-4">
           <Link href={routes.login}>
-            <ButtonPrimary>Ingresa</ButtonPrimary>
+            <button className="px-6 py-2 transition rounded-md font-poppins hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 ">
+              Ingresa
+            </button>
           </Link>
           <Link href={routes.registro}>
-            <ButtonPrimary>Registrarse</ButtonPrimary>
+            <button className="px-6 py-2 transition rounded-md font-poppins hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 ">
+              Registrate
+            </button>
           </Link>
         </div>
       )}

@@ -13,7 +13,7 @@ const Navbar = () => {
   return (
     <div className="sticky z-40 top-4 bg-fondo bg-opacity-80 backdrop-blur-md">
       <nav
-        className="text-foreground ring-4 ring-azul ring-opacity-100 
+        className="text-foreground ring-2 ring-gray-300 ring-opacity-100 
         w-[90%] max-w-7xl mx-auto rounded-2xl shadow-xl 
         bg-opacity-80 font-poppins flex items-center justify-between p-4"
       >
