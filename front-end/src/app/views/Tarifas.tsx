@@ -6,7 +6,7 @@ const Tarifas = () => {
       <div className="grid grid-cols-2 gap-4 py-4 md:px-16 md:grid-cols-2">
         <div className="object-cover w-full h-full mx-auto p-2relative max-w-10xl">
           <img
-            src="/landing1.jpg"
+            src="/landing1.webp"
             alt="Banner"
             className="object-cover w-full transition-transform duration-500 h-96"
           />

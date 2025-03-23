@@ -10,13 +10,15 @@ const PlanesRutinasView = () => {
   }
   if (isAuth) {
     return (
-      <div className="bg-fondo font-poppins text-blanco ">
+      <div className="py-10 text-black bg-fondo font-poppins">
         planesRutinasView
       </div>
     );
   }
 
-  return <div className="bg-fondo font-poppins text-blanco">Paga!!!!!</div>;
+  return (
+    <div className="py-10 text-black bg-fondo font-poppins">Paga!!!!!</div>
+  );
 };
 
 export default PlanesRutinasView;

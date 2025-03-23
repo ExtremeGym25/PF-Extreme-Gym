@@ -6,10 +6,10 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { routes } from "@/app/routes/routes";
 
 const images = [
-  "/landing1.jpg",
-  "/landing2.jpg",
-  "/landing3.jpg",
-  "/landing4.jpg",
+  "/landing1.webp",
+  "/landing2.webp",
+  "/landing3.webp",
+  "/landing4.webp",
 ];
 
 const CarouselHome = () => {

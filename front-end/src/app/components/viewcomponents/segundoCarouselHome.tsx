@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const testimonials = [
-  "/landing1.jpg",
-  "/landing2.jpg",
-  "/landing3.jpg",
-  "/landing4.jpg",
-  "/landing3.jpg",
+  "/landing1.webp",
+  "/landing2.webp",
+  "/landing3.webp",
+  "/landing4.webp",
+  "/landing3.webp",
 
   ,
 ];
