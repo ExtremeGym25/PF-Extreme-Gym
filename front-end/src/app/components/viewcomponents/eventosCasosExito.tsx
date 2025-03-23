@@ -21,7 +21,7 @@ const EventosCasosExito = () => {
         <motion.div
           onClick={() => setCurrentIndex(index)}
           key={index}
-          className={`w-48 h-48 md:w-64 md:h-64 bg-naranja shadow-md rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
+          className={`w-48 h-48 md:w-64 md:h-64 bg-verde shadow-md rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
             index === currentIndex ? "opacity-100" : "opacity-50"
           }`}
         >

@@ -40,7 +40,7 @@ const UserAuth = () => {
             {user?.name || "Usuario"}
           </button>
           {isAuthOpen && (
-            <div className="absolute right-0 z-50 p-4 mt-2 transition-transform origin-top-right transform rounded-lg shadow-lg w-80 bg-azul text-blanco animate-slide-down">
+            <div className="fixed z-50 h-screen p-4 mt-2 transition-transform origin-top-right transform rounded-lg shadow-2xl backdrop-blur-md ring-opacity-100 ring-2 ring-gray-300 bg-fondo right-20 top-15 w-80 text-foreground animate-slide-down bg-opacity-90">
               <h3 className="text-xl font-bold">Perfil de Usuario</h3>
               <hr className="my-2 border-verde" />
               <div className="flex flex-col space-y-2">
@@ -57,21 +57,30 @@ const UserAuth = () => {
                     />
                   )}
                 </div>
-                <Link href={routes.miPerfil} className="hover:text-verde">
-                  Mi Perfil
-                </Link>
-                <Link href={routes.miPerfil} className="hover:text-verde">
-                  Rutinas
-                </Link>
-                <Link href={routes.miPerfil} className="hover:text-verde">
-                  Mis rutinas favoritas
-                </Link>
-                <Link href={routes.miPerfil} className="hover:text-verde">
-                  Notificaciones
-                </Link>
-                <Link href={routes.miPerfil} className="hover:text-verde">
-                  Ayuda y Soporte
-                </Link>
+                <div className="flex flex-col items-center py-4 space-y-2 ">
+                  <hr className="w-full my-2 border-t-1 border-verde" />
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Mi Perfil
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Rutinas
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Rutinas Favoritas
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Notificaciones
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Otra Cosa
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Otra cosa
+                  </Link>
+                  <Link href={routes.miPerfil} className="hover:text-verde">
+                    Ayuda y Soporte
+                  </Link>
+                </div>
                 <hr className="my-2 border-verde" />
                 <span
                   onClick={resetUserData}
