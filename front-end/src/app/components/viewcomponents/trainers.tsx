@@ -24,7 +24,7 @@ const TrainersCarousel = () => {
           {trainers.map((trainer, index) => (
             <div
               key={index}
-              className="relative overflow-hidden transition-transform duration-300 rounded-lg shadow-md w-44 h-44 md:w-56 md:h-56 bg-naranja hover:scale-105"
+              className="relative overflow-hidden transition-transform duration-300 rounded-lg shadow-md w-44 h-44 md:w-56 md:h-56 bg-verde hover:scale-105"
               onClick={() => handleCardClick(index)}
               style={{ perspective: "1000px" }}
             >

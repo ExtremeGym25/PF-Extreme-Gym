@@ -7,7 +7,7 @@ import Contacto from "../components/viewcomponents/contacto";
 
 const Nosotros = () => {
   return (
-    <div className="font-poppins bg-fondo">
+    <div className="py-4 font-poppins bg-fondo">
       <NuestraHistoria />
       <Ubicacion />
       <TrainersCarousel />
