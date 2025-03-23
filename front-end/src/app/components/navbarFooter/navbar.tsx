@@ -11,13 +11,14 @@ const Navbar = () => {
         w-[90%] max-w-7xl rounded-2xl shadow-xl 
       backdrop-blur-lg bg-opacity-80 font-poppins"
       >
-        <div className="flex items-center justify-between h-20 px-6 mx-auto max-w-7xl">
+        <div className="flex items-center justify-between h-20 px-6 mx-auto max-w-7xl translate-y-[-2px]">
           <div>
             {" "}
             <Link href={routes.home}>
               <img
+                src="/logo.png"
                 alt="logo"
-                className="w-auto transition-transform duration-300 h-28 animate-pulse hover:scale-110"
+                className="w-auto h-12 transition-transform duration-300 animate-pulse hover:scale-110"
               ></img>
             </Link>
           </div>

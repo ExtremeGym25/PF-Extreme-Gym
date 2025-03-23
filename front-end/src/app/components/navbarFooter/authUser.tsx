@@ -27,9 +27,9 @@ const UserAuth = () => {
         </Link>
         <Link
           href={routes.miPerfil}
-          className="font-semibold transition text-foreground hover:text-blueP"
+          className="font-semibold capitalize transition text-foreground hover:text-blueP"
         >
-          {user?.email || "Usuario"}
+          {user?.name || "Usuario"}
         </Link>
         <div className="transition hover:text-blueP">total</div>
         {/* <Link href={routes.cart} className="transition hover:text-blueP">

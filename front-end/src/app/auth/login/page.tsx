@@ -22,7 +22,7 @@ const Login = () => {
       if (res?.token) {
         toast.success("Login Exitoso");
         // Persiste solo el token
-        saveUserData(res.token);
+        saveUserData(res);
         setTimeout(() => router.push(routes.miPerfil), 1000);
       } else {
         console.error("Token no encontrado en la respuesta");
