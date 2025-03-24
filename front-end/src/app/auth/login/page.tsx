@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React from "react";
 import Link from "next/link";
@@ -10,111 +11,104 @@ import { routes } from "@/app/routes/routes";
 import { loginService } from "@/app/servicios/auth";
 import { useRouter } from "next/navigation";
 
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("El formato de correo no es válido")
+    .required("El correo es obligatorio"),
+  password: Yup.string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .matches(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+    .matches(/[a-z]/, "Debe contener al menos una letra minúscula")
+    .matches(/\d/, "Debe contener al menos un número")
+    .matches(/[@$!%*?&]/, "Debe contener al menos un carácter especial")
+    .required("La contraseña es obligatoria"),
+});
+
 const Login = () => {
   const { saveUserData } = useAuth();
   const router = useRouter();
 
-  const handleOnSubmit = async (values: IUserLogin) => {
+  const handleOnSubmit = async (values: IUserLogin, { setSubmitting }: any) => {
     try {
       const res = await loginService(values);
-      console.log("Respuesta al iniciar sesión:", res);
-
       if (res?.token) {
-        toast.success("Login Exitoso");
-        // Persiste solo el token
-        saveUserData(res.token);
+        toast.success("Inicio de sesión exitoso");
+        saveUserData(res);
         setTimeout(() => router.push(routes.miPerfil), 1000);
       } else {
-        console.error("Token no encontrado en la respuesta");
-        toast.error("Token no encontrado en la respuesta");
+        toast.error("Credenciales incorrectas");
       }
     } catch (error) {
-      console.warn("Error al iniciar sesión", error);
-      toast.error("El Login no pudo completarse");
+      console.error("Error al iniciar sesión", error);
+      toast.error(
+        "Error al iniciar sesión. Verifica tus datos e intenta de nuevo."
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-fondo font-poppins">
-      <div className="flex w-full max-w-4xl overflow-hidden rounded-lg shadow-lg bg-grisP">
-        {/* Sección del formulario */}
-        <div className="w-1/2 p-8">
-          <h2 className="mb-6 text-2xl font-bold text-center text-blanco">
-            Iniciar Sesión
-          </h2>
-          <Formik
-            initialValues={{
-              email: "",
-              password: "",
-            }}
-            validationSchema={Yup.object({
-              email: Yup.string()
-                .email("Correo inválido")
-                .required("El correo es obligatorio"),
-              password: Yup.string()
-                .min(6, "La contraseña debe tener al menos 6 caracteres")
-                .required("La contraseña es obligatoria"),
-            })}
-            onSubmit={handleOnSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-4">
-                <div className="space-y-3">
-                  <Field
-                    type="email"
-                    name="email"
-                    placeholder="Correo electrónico"
-                    className="input-field"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="error-message"
-                  />
-
-                  <Field
-                    type="password"
-                    name="password"
-                    placeholder="Contraseña"
-                    className="input-field"
-                  />
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="error-message"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full p-2 mt-4 font-bold transition rounded bg-verde text-blanco hover:bg-opacity-90"
-                  disabled={isSubmitting}
-                >
-                  Iniciar Sesión
-                </button>
-              </Form>
-            )}
-          </Formik>
-        </div>
-
-        {/* Sección de imagen y mensaje */}
-        <div
-          className="flex flex-col items-center justify-center w-1/2 p-8 bg-center bg-cover"
-          style={{ backgroundImage: "url('/tu-imagen.jpg')" }}
+    <div
+      className="flex items-center justify-center min-h-screen bg-center bg-no-repeat bg-cover"
+      style={{
+        backgroundImage: "url('/fondologin.PNG')",
+      }}
+    >
+      <div className="w-full max-w-md p-8 bg-white shadow-lg bg-opacity-20 rounded-2xl backdrop-blur-md">
+        <h2 className="mb-6 text-3xl font-bold text-center text-foreground">
+          Iniciar Sesión
+        </h2>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={validationSchema}
+          onSubmit={handleOnSubmit}
         >
-          <div className="p-6 text-center bg-black rounded-lg bg-opacity-60">
-            <h2 className="mb-4 text-2xl font-bold text-blanco">
-              ¿Aún no tienes cuenta?
-            </h2>
-            <p className="mb-4 text-blanco">
-              Regístrate y únete a nuestra comunidad.
-            </p>
-            <Link href="/registro">
-              <button className="px-6 py-2 font-bold transition rounded bg-verde text-blanco hover:bg-opacity-90">
-                Registrarse
+          {({ isSubmitting }) => (
+            <Form className="space-y-4">
+              <div className="space-y-2">
+                <Field
+                  type="email"
+                  name="email"
+                  placeholder="Correo Electrónico"
+                  className="w-full p-3 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-verde"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500"
+                />
+
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Contraseña"
+                  className="w-full p-3 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-verde"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full p-3 font-semibold text-foreground  px-6 py-2 mt-4 transition rounded-md  font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100
+                  ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {isSubmitting ? "Iniciando..." : "Iniciar Sesión"}
               </button>
-            </Link>
-          </div>
+            </Form>
+          )}
+        </Formik>
+
+        <div className="mt-4 text-center text-foreground">
+          ¿No tienes una cuenta?{" "}
+          <Link href="/auth/registro" className="text-blue-400 hover:underline">
+            Regístrate aquí
+          </Link>
         </div>
       </div>
     </div>

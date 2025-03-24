@@ -6,10 +6,10 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { routes } from "@/app/routes/routes";
 
 const images = [
-  "/landing1.jpg",
-  "/landing2.jpg",
-  "/landing3.jpg",
-  "/landing4.jpg",
+  "/landing1.webp",
+  "/landing2.webp",
+  "/landing3.webp",
+  "/landing4.webp",
 ];
 
 const CarouselHome = () => {
@@ -43,7 +43,7 @@ const CarouselHome = () => {
               <img
                 src={images[currentIndex]}
                 alt={`Slide ${currentIndex + 1}`}
-                className="object-cover w-full transition-transform duration-500 h-96"
+                className="object-cover w-full h-screen transition-transform duration-500"
               />
             </Link>
           </div>

@@ -8,7 +8,7 @@ import GridCasosExito from "../components/viewcomponents/gridCasosExito";
 
 const CasosExito = () => {
   return (
-    <div className="pb-2 space-y-10 font-poppins bg-fondo">
+    <div className="py-2 pb-2 space-y-10 font-poppins bg-fondo">
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -30,7 +30,7 @@ const CasosExito = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-4">
+        <div className="flex flex-col items-center justify-center mx-auto ">
           <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
             ¿Estas Listo?
           </h2>
@@ -66,7 +66,7 @@ const CasosExito = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-4">
+        <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-2">
           <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
             ¿Quieres Participar?
           </h2>

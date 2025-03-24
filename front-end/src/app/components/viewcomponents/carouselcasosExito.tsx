@@ -6,10 +6,10 @@ import { routes } from "../../routes/routes";
 import Link from "next/link";
 
 const images = [
-  "/casosExito1.jpg",
-  "/landing2.jpg",
-  "/landing3.jpg",
-  "/landing4.jpg",
+  "/casosExito1.webp",
+  "/landing2.webp",
+  "/landing3.webp",
+  "/landing4.webp",
 ];
 
 const CarouselCasosExito = () => {

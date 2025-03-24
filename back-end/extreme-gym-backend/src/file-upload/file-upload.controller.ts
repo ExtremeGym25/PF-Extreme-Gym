@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   InternalServerErrorException,
   Post,
@@ -23,10 +24,10 @@ export class FileUploadController {
     }
     try {
       console.log('Archivo de imagen recibido:', file);
-      const result = await this.fileUploadService.uploadImage(file);
+      const result = await this.fileUploadService.uploadImage(file, 'default');
       return {
         message: 'Imagen subida exitosamente',
-        url: result.secure_url,
+        url: result.url,
       };
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -43,16 +44,20 @@ export class FileUploadController {
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
   )
-  async uploadProfilePicture(@UploadedFile() file: Express.Multer.File) {
+  async uploadProfilePicture(@UploadedFile() file: Express.Multer.File, @Body('userId') userId: string) {
     if (!file) {
       throw new BadRequestException('No se ha recibido ningún archivo.');
     }
+
+    if (!userId) {
+      new BadRequestException('Se debe proporcionar el userId');
+    }
     try {
       console.log('Archivo de perfil recibido:', file);
-      const result = await this.fileUploadService.uploadProfilePicture(file);
+      const result = await this.fileUploadService.uploadProfilePicture(file, userId);
       return {
         message: 'Foto de perfil subida exitosamente',
-        url: result.secure_url,
+        url: result.url,
       };
     } catch (error) {
       if (error instanceof BadRequestException) {

@@ -1,11 +1,14 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { routes } from "../routes/routes";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { registerService } from "@/app/servicios/auth";
+import {
+  registerService,
+  uploadProfileImageService,
+} from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 
 export interface IForm {
@@ -55,7 +58,18 @@ const validationSchema = Yup.object().shape({
 
 const Registro = () => {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string>("");
 
+  const handleImageUpload = async (file: File) => {
+    try {
+      const uploadedUrl = await uploadProfileImageService(file);
+      setImageUrl(uploadedUrl);
+      toast.success("Imagen subida correctamente");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error("Error al subir la imagen");
+    }
+  };
   const handleOnSubmit = async (values: IForm) => {
     console.log("Datos enviados:", values);
     try {
@@ -69,7 +83,7 @@ const Registro = () => {
         phone: Number(values.phone),
         country: values.country,
         city: values.city,
-        profileImage: values.profileImage || " ",
+        profileImage: imageUrl || " ",
       };
       console.log("Datos enviados al backend:", formattedUserData);
 
@@ -85,7 +99,7 @@ const Registro = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-md p-8 text-white bg-gray-900 rounded-lg shadow-lg">
+    <div className="flex flex-col items-center justify-center w-full max-w-md p-8 rounded-lg ">
       <h2 className="mb-6 text-3xl font-semibold text-center">Registro</h2>
       <Formik
         initialValues={{
@@ -103,12 +117,12 @@ const Registro = () => {
         onSubmit={handleOnSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="flex flex-col space-y-4">
+          <Form className="flex flex-col space-y-4 ">
             <Field
               name="name"
               type="text"
               placeholder="Nombre"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="name"
@@ -120,7 +134,7 @@ const Registro = () => {
               name="email"
               type="email"
               placeholder="Email"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="email"
@@ -132,7 +146,7 @@ const Registro = () => {
               name="address"
               type="text"
               placeholder="Direccion"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="address"
@@ -144,7 +158,7 @@ const Registro = () => {
               name="phone"
               type="number"
               placeholder="Teléfono"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="phone"
@@ -156,7 +170,7 @@ const Registro = () => {
               name="country"
               type="text"
               placeholder="Pais"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="country"
@@ -168,7 +182,7 @@ const Registro = () => {
               name="city"
               type="text"
               placeholder="Ciudad"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="city"
@@ -179,7 +193,7 @@ const Registro = () => {
               name="password"
               type="password"
               placeholder="Contraseña"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="password"
@@ -191,18 +205,22 @@ const Registro = () => {
               name="confirmPassword"
               type="text"
               placeholder="Confirma Contraseña"
-              className="w-full p-2 rounded-lg bg-blanco text-azul "
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde "
             />
             <ErrorMessage
               name="confirmPassword"
               component="div"
               className="text-sm text-red-500"
             />
-            <Field
-              name="profileImage"
-              type="text"
-              placeholder="Imagen"
-              className="w-full p-2 rounded-lg bg-blanco text-azul"
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  handleImageUpload(e.target.files[0]);
+                }
+              }}
+              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
             />
             <ErrorMessage
               name="profileImage"

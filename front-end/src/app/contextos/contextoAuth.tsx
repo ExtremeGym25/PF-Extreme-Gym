@@ -10,66 +10,43 @@ import {
 } from "react";
 import { jwtDecode } from "jwt-decode"; // Importación corregida
 
-import { IResponseBack, IUser } from "../tipos";
+import { IUser } from "../tipos";
 
 // Que queremos guardar en el contexto
 interface AuthContextType {
   user: IUser | null;
   isAuth: boolean | null;
   token?: string | null;
-  // action
-  saveUserData: (token: string) => void;
+  // actions
+  saveUserData: (data: { user: IUser; token: string }) => void;
   resetUserData: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Un componente que recibe un children, que genera otro componente y retorna nuestro provider con el children de hijo
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const saveUserData = (token: string) => {
-    try {
-      console.log("Token recibido en saveUserData:", token);
-      if (typeof token !== "string" || !token) {
-        throw new Error("Token inválido o nulo");
-      }
-
-      const decodedToken: any = jwtDecode(token);
-      console.log("Token decodificado en saveUserData:", decodedToken);
-
-      const user: IResponseBack = {
-        email: decodedToken.email,
-      };
-
-      setUser(user);
-      setIsAuth(true);
-      setToken(token);
-
-      // Guardar en localStorage
-      const userData = JSON.stringify({ user, token });
-      localStorage.setItem("userData", userData);
-      console.log("Datos guardados en el almacenamiento:", userData);
-    } catch (error) {
-      console.error("Error al decodificar el token en saveUserData:", error);
-      setIsAuth(false);
-    }
+  const saveUserData = (data: { user: IUser; token: string }) => {
+    setUser(data.user);
+    setIsAuth(true);
+    setToken(data.token);
+    localStorage.setItem("user", JSON.stringify(data));
   };
 
   const resetUserData = () => {
     setUser(null);
     setIsAuth(false);
     setToken(null);
-    localStorage.removeItem("userData");
+    localStorage.removeItem("user");
   };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Asegurar que solo se ejecute en el cliente
-      const storageData = localStorage.getItem("userData");
+      const storageData = localStorage.getItem("user");
 
       console.log("Datos en localStorage:", storageData);
       if (!storageData) {
@@ -79,31 +56,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       try {
-        const parsedData: { token: string } = JSON.parse(storageData);
-        console.log("Datos parseados correctamente:", parsedData);
+        const parsedData: { user: IUser; token: string } =
+          JSON.parse(storageData);
+
+        // Validación del token
+        if (!parsedData.token || parsedData.token.split(".").length !== 3) {
+          console.warn("Token inválido o mal formado");
+          resetUserData();
+          setLoading(false);
+          return;
+        }
 
         const decodedToken: any = jwtDecode(parsedData.token);
         console.log("Token decodificado:", decodedToken);
 
-        if (decodedToken) {
-          const user: IUser = {
-            email: decodedToken.email,
-            name: decodedToken.name,
-            address: decodedToken.address,
-            phone: decodedToken.phone,
-            password: decodedToken.password,
-            confirmPassword: decodedToken.confirmPassword,
-            country: decodedToken.country,
-            city: decodedToken.city,
-            profileImage: decodedToken.profileImage,
-          };
-
-          setUser(user);
-          setToken(parsedData.token);
-          setIsAuth(true);
-        } else {
-          setIsAuth(false);
+        // Validar la expiración del token
+        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          console.warn("El token ha expirado");
+          resetUserData();
+          setLoading(false);
+          return;
         }
+
+        setUser(parsedData.user);
+        setToken(parsedData.token);
+        setIsAuth(true);
       } catch (error) {
         console.error("Error al parsear datos del usuario:", error);
         setIsAuth(false);

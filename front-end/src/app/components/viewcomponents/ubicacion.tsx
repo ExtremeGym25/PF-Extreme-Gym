@@ -13,12 +13,12 @@ const Ubicacion = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="grid grid-cols-2 gap-4 py-4 md:px-16 md:grid-cols-2">
-          <div className="flex flex-col justify-center">
-            <h2 className="py-2 text-3xl font-bold text-center transition-transform duration-300 hover:scale-110">
-              Nuestra ubicacion
+        <div className="grid grid-cols-2 gap-4 py-4 md:px-16 md:grid-cols-2 ">
+          <div className="flex flex-col justify-center transition-transform duration-300 ring-2 hover:scale-110 ring-gray-300">
+            <h2 className="py-2 text-3xl font-bold text-center ">
+              Nuestra ubicación
             </h2>
-            <h3 className="text-center transition-transform duration-300 text-1xl hover:scale-110">
+            <h3 className="text-center text-1xl ">
               Centro Comercial Andino Cra. 11 #82-71, Bogotá
             </h3>
           </div>
