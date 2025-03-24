@@ -18,4 +18,13 @@ export class NotificationsController {
     await this.notificationsService.sendWeeklyReminder();
     return { message: 'Correos de prueba enviados' };
   }
+
+  @Get('test-expiration-reminder')
+  async testExpirationReminder() {
+    await this.notificationsService.sendSubscriptionExpirationReminder();
+    return {
+      message:
+        'Correos de expiración enviados (si había usuarios próximos a expirar)',
+    };
+  }
 }
