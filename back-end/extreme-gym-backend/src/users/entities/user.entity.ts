@@ -1,4 +1,5 @@
 import { IsDateString } from 'class-validator';
+import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import {
   Entity,
@@ -38,18 +39,16 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: true })
   city: string;
 
-  @Column({ type: 'varchar',
-      nullable: true,
-      default: "" })
+  @Column({ type: 'varchar', nullable: true, default: '' })
   profileImage?: string;
-  
+
   @ManyToOne(() => Subscription)
   @JoinColumn({ name: 'planId' })
-  plan: Subscription; 
+  plan: Subscription;
 
   @Column({ nullable: true })
   @IsDateString()
-  subscriptionExpirationDate: string; 
+  subscriptionExpirationDate: string;
 
   @Column({
     type: 'boolean',
@@ -63,4 +62,9 @@ export class User {
   })
   isActive: boolean;
   user: any;
+
+  @OneToMany(() => FileUpload, fileUpload => fileUpload.userId, {
+    nullable: true,
+  })
+  fileUploads: FileUpload[];
 }

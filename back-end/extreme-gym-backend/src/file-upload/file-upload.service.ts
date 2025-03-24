@@ -4,6 +4,7 @@ import { Readable } from 'stream';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FileUpload } from './entities/file-upload.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class FileUploadService {
@@ -13,6 +14,7 @@ export class FileUploadService {
   constructor(
     @InjectRepository(FileUpload)
     private readonly fileUploadRepository: Repository<FileUpload>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {
     cloudinary.config({
       cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -41,31 +43,50 @@ export class FileUploadService {
     }
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
+  async uploadImage(file: Express.Multer.File, category: string): Promise<UploadApiResponse> {
     this.validateImageType(file);
-    return this.uploadFile(file, 'images');
+    const result= await this.uploadFile(file, `images/${category} `);
+    return this.saveFileUpload(result, 'image', null);
   }
 
   async uploadProfilePicture(
-    file: Express.Multer.File,
+    file: Express.Multer.File, userId: string
   ): Promise<UploadApiResponse> {
     this.validateImageType(file); 
     const result = await this.uploadFile(file, 'profile_pictures');
-
-    const fileUpload = this.fileUploadRepository.create({
-      url: result.secure_url, 
-      type: 'image', 
-      createdAt: new Date(),
-    });
-    
-    await this.fileUploadRepository.save(fileUpload);
-
-    return result;
+    return await this.saveFileUpload(result, 'image', userId)
   }
 
   async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
     this.validateVideoType(file); 
     return this.uploadFile(file, 'videos', 'video');
+  }
+
+  private async saveFileUpload(result: UploadApiResponse, type: 'image' | 'video', userId: string | null): Promise<any> {
+let user: User | null = null;
+    if (userId) {
+      user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new BadRequestException('Usuario no encontrado');
+      }
+    }
+    const fileUploadData: Partial<FileUpload>= {
+      url: result.secure_url,
+      type: type,
+      userId: user,
+      createdAt: new Date(),
+    };
+
+    const fileUpload= this.fileUploadRepository.create(fileUploadData);
+
+    await this.fileUploadRepository.save(fileUpload);
+    return{
+      id: fileUpload.id,
+      url: result.secure_url,
+      type: type,
+      userId: userId || null,
+      publicId: result.public_id
+    };
   }
 
   private uploadFile(
