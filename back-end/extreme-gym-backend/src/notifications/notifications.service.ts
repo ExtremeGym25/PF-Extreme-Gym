@@ -53,4 +53,25 @@ export class NotificationsService {
       select: ['email', 'name'],
     });
   }
+
+  async enviarCorreoConfirmacion(
+    email: string,
+    nombre: string,
+    tipoPlan: string,
+    duracion: string,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: `Confirmación de suscripción ${tipoPlan}`,
+        template: './confirmacion', // Nombre del archivo .hbs en la carpeta templates
+        context: { nombre, tipoPlan, duracion }, // Variables para la plantilla
+      });
+
+      console.log('Correo de confirmación enviado correctamente');
+    } catch (error) {
+      console.error('Error al enviar el correo de confirmación:', error);
+      throw new Error('No se pudo enviar el correo de confirmación');
+    }
+  }
 }
