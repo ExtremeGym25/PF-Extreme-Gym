@@ -17,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
+import { adminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import typeormConfig from './config/typeorm';
     BookingsModule,
     PlansModule,
     PaymentsModule,
+    adminModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
