@@ -6,10 +6,12 @@ import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Subscription]),
+    TypeOrmModule.forFeature([User, Subscription, FileUpload]),
     NotificationsModule,
   ],
   controllers: [UsersController],

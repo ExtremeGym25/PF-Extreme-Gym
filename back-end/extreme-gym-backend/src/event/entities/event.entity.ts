@@ -1,6 +1,8 @@
 import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity({
+  name: 'EVENT'
+})
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id: string;
