@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -7,69 +8,94 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { IUser } from "../tipos";
-//Que queremos guardar en el contexto
+import { jwtDecode } from "jwt-decode"; // Importación corregida
 
+import { IUser } from "../tipos";
+
+// Que queremos guardar en el contexto
 interface AuthContextType {
   user: IUser | null;
   isAuth: boolean | null;
-  token?: string | null; //
-  //actions
+  token?: string | null;
+  // actions
   saveUserData: (data: { user: IUser; token: string }) => void;
   resetUserData: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-// Un componente que recibe un children que genera otro componente y retorna nuestroi provider con el children de hijo
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(null);
   const [token, setToken] = useState<string | null>(null);
-  //Estado actual, se puede cambiar el valor actualizar estado =inicializa el estado
   const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const saveUserData = (data: { user: IUser; token: string }) => {
     setUser(data.user);
     setIsAuth(true);
     setToken(data.token);
-    //persistir datos EL LOCAL STROGA SOLO GUARDA STRINGS PARA PODER GUARDAR EL OBJETO USER SE USA JSON Y STRIGFLY QUE LO CONVIRTE EN UN STRING
     localStorage.setItem("user", JSON.stringify(data));
   };
+
   const resetUserData = () => {
     setUser(null);
     setIsAuth(false);
+    setToken(null);
     localStorage.removeItem("user");
   };
+
   useEffect(() => {
-    // const mockUser = { name: "Carlos García", email: "carlosg@hotmail.com" };
-    // const mockToken = "fakeToken123";
-    // localStorage.setItem(
-    //   "user",
-    //   JSON.stringify({ user: mockUser, token: mockToken })
-    // );
+    if (typeof window !== "undefined") {
+      const storageData = localStorage.getItem("user");
 
-    // setUser(mockUser);
-    // setToken(mockToken);
-    // setIsAuth(true);
+      console.log("Datos en localStorage:", storageData);
+      if (!storageData) {
+        setIsAuth(false);
+        setLoading(false);
+        return;
+      }
 
-    // console.log("Autenticación forzada para pruebas");
-    const storage = localStorage.getItem("user");
+      try {
+        const parsedData: { user: IUser; token: string } =
+          JSON.parse(storageData);
 
-    if (!storage) {
-      setIsAuth(false);
-      return;
-    }
+        // Validación del token
+        if (!parsedData.token || parsedData.token.split(".").length !== 3) {
+          console.warn("Token inválido o mal formado");
+          resetUserData();
+          setLoading(false);
+          return;
+        }
 
-    try {
-      const parsedData: { user: IUser; token: string } = JSON.parse(storage);
-      console.log("Datos parseados correctamente:", parsedData);
-      setUser(parsedData.user || null); // Evita errores si el user no existe
-      setToken(parsedData.token || null);
-      setIsAuth(!!parsedData.user); // Solo autentica si hay un usuario válido
-    } catch (error) {
-      console.error("Error al parsear datos del usuario:", error);
-      setIsAuth(false);
+        const decodedToken: any = jwtDecode(parsedData.token);
+        console.log("Token decodificado:", decodedToken);
+
+        // Validar la expiración del token
+        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          console.warn("El token ha expirado");
+          resetUserData();
+          setLoading(false);
+          return;
+        }
+
+        setUser(parsedData.user);
+        setToken(parsedData.token);
+        setIsAuth(true);
+      } catch (error) {
+        console.error("Error al parsear datos del usuario:", error);
+        setIsAuth(false);
+      }
+
+      setLoading(false);
     }
   }, []);
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
+
+  console.log("Contexto de autenticación:", { user, isAuth, token });
 
   return (
     <AuthContext.Provider
@@ -79,6 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

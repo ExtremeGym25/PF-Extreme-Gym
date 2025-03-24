@@ -26,8 +26,8 @@ html {
 body {
   font-family: sans-serif;
   line-height: 1.6;
-  background-color: #0d1f2d;
-  color: #f2f2f2;
+  background-color: #f2f2f2;
+  color: #0d1f2d;
   min-height: 100vh;
   text-rendering: optimizeSpeed;
 }
@@ -66,4 +66,27 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+.custom-toast {
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  color: #ffffff;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
 }

@@ -11,7 +11,7 @@ const GridCasosExito = () => {
 
   return (
     <div className="md:pl-16 font-poppins">
-      <div className="grid items-center grid-cols-2 gap-4 px-4 py-4 md:px-8 md:grid-cols-3">
+      <div className="grid items-center grid-cols-2 gap-4 px-4 pt-2 md:px-8 md:grid-cols-3">
         {opinionesUsuarios.map((opinion, index) => (
           <div
             key={index}
