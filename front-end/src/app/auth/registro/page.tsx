@@ -8,7 +8,11 @@ const registroView = () => {
     <div className="grid w-full min-h-screen grid-cols-1 overflow-hidden font-poppins md:grid-cols-2">
       <div
         className="relative flex flex-col items-center justify-center w-full min-h-screen transform scale-105 bg-no-repeat bg-cover border-l-4 border-grisP"
-        style={{ backgroundImage: "url('/landing1.jpg')" }}
+        style={{
+          backgroundImage: "url('/landing1.webp')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         <p className="mb-6 text-lg transition-transform duration-300 text-foreground hover:scale-110 hover:text-black">
           ¿Ya tienes cuenta?
@@ -23,10 +27,7 @@ const registroView = () => {
         ></img>
       </div>
 
-      <div
-        className="flex flex-col items-center justify-center p-10 shadow-lg bg-background text-foreground "
-        style={{ backgroundImage: "/landing1.jpg" }}
-      >
+      <div className="flex flex-col items-center justify-center p-10 shadow-lg bg-background text-foreground ">
         <Registro />
       </div>
     </div>

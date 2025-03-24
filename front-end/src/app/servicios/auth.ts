@@ -1,6 +1,9 @@
 "use server";
 import axios from "axios";
 import { IUserLogin, IUser } from "../tipos";
+interface ErrorResponse {
+  message?: string;
+}
 
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -24,8 +27,14 @@ export const registerService = async (userData: Partial<IUser>) => {
     await axiosApiBack.post("/auth/signup", userData);
     return "Registro exitoso";
   } catch (error) {
-    console.log("Error al registrarse", error);
-    throw Error("Error_Register");
+    if (axios.isAxiosError(error)) {
+      const errorData = error.response?.data as ErrorResponse; // Aseguramos el tipo
+      console.log("Error al registrarse", errorData?.message || error.message);
+      throw new Error(errorData?.message || "Error_Register");
+    } else {
+      console.log("Error desconocido", error);
+      throw new Error("Error_Register");
+    }
   }
 };
 
