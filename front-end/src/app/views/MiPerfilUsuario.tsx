@@ -4,7 +4,12 @@ import { useAuth } from "../contextos/contextoAuth";
 
 const MiPerfilUsuario = () => {
   const { user } = useAuth();
+
   console.log("Imagen de perfil:", user?.profileImage);
+
+  const profileImage = user?.profileImage?.trim()
+    ? user.profileImage
+    : "/logo.png";
 
   return (
     <div>
@@ -15,7 +20,7 @@ const MiPerfilUsuario = () => {
         {user?.profileImage && (
           <div className="flex justify-center my-2">
             <img
-              src={user.profileImage}
+              src={profileImage}
               alt="Imagen de Perfil"
               className="object-cover w-40 h-40 m-1 border-2 rounded-full hover:scale-110 border-verde"
             />

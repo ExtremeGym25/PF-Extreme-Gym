@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const parsedData: { user: IUser; token: string } =
           JSON.parse(storageData);
-
+        console.log(user, "user");
         // Validación del token
         if (!parsedData.token || parsedData.token.split(".").length !== 3) {
           console.warn("Token inválido o mal formado");
