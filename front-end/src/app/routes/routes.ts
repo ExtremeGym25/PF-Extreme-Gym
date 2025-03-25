@@ -11,4 +11,5 @@ export const routes = {
   casosExito: "/casosExito",
   tarifas: "/tarifas",
   eventos: "/eventos",
+  admin: "/admin",
 };
