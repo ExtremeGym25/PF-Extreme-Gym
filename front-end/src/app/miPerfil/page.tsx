@@ -29,7 +29,6 @@ const MiPerfil = () => {
         Mi Perfil
       </h2>
       <div className="grid w-full max-w-6xl grid-cols-1 gap-8 pt-4 md:grid-cols-2">
-        {/* Sección de Información del Usuario */}
         <div className="flex flex-col items-center">
           <div className="w-full max-w-xl p-8 space-y-6 shadow-lg bg-fondo rounded-2xl">
             <p className="text-xl font-semibold text-center text-gray-700">
