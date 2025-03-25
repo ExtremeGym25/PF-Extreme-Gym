@@ -10,6 +10,7 @@ import {
   uploadProfileImageService,
 } from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
+import { Eye, EyeOff } from "lucide-react";
 
 export interface IForm {
   name: string;
@@ -59,6 +60,8 @@ const validationSchema = Yup.object().shape({
 const Registro = () => {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleImageUpload = async (file: File) => {
     try {
@@ -104,14 +107,14 @@ const Registro = () => {
       <Formik
         initialValues={{
           name: "",
-          email: "pau@gmail.com",
-          address: "calle falsa ",
-          phone: "1234567891",
-          password: "Sisisis123!",
-          confirmPassword: "Sisisis123!",
-          country: "Colombia",
-          city: "pasto",
-          profileImage: "https://i.imgur.com/foto.jpg",
+          email: "",
+          address: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          country: "",
+          city: "",
+          profileImage: "",
         }}
         validationSchema={validationSchema}
         onSubmit={handleOnSubmit}
@@ -189,24 +192,42 @@ const Registro = () => {
               component="div"
               className="text-sm text-red-500"
             />
-            <Field
-              name="password"
-              type="password"
-              placeholder="Contraseña"
-              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
-            />
+            <div className="relative">
+              <Field
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                className="w-full p-2 pr-10 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute text-gray-600 transform -translate-y-1/2 right-4 top-1/2"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             <ErrorMessage
               name="password"
               component="div"
               className="text-sm text-red-500"
             />
 
-            <Field
-              name="confirmPassword"
-              type="text"
-              placeholder="Confirma Contraseña"
-              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde "
-            />
+            <div className="relative">
+              <Field
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirma Contraseña"
+                className="w-full p-2 pr-10 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute text-gray-600 transform -translate-y-1/2 right-4 top-1/2"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             <ErrorMessage
               name="confirmPassword"
               component="div"
