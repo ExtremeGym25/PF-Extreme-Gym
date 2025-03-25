@@ -6,11 +6,13 @@ import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
+  loginService,
   registerService,
   uploadProfileImageService,
 } from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../contextos/contextoAuth";
 
 export interface IForm {
   name: string;
@@ -59,6 +61,7 @@ const validationSchema = Yup.object().shape({
 
 const Registro = () => {
   const router = useRouter();
+  const { saveUserData } = useAuth();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -92,9 +95,18 @@ const Registro = () => {
 
       await registerService(formattedUserData);
       toast.success("Registro Exitoso");
-      setTimeout(() => {
-        router.push(routes.login);
-      }, 3000);
+
+      const loginResponse = await loginService({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (loginResponse.token) {
+        localStorage.setItem("token", loginResponse.token); // Almacenar token de sesión
+        toast.success("Inicio de sesión exitoso");
+        saveUserData(loginResponse);
+        router.push(routes.miPerfil); // Redirigir a la página principal o dashboard
+      }
     } catch (error) {
       console.warn("Error al registrarse", error);
       toast.error("El registro no pudo completarse");
