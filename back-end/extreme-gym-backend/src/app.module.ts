@@ -17,10 +17,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
-
-
-
 import { ScheduleModule } from '@nestjs/schedule';
+import { adminModule } from './admin/admin.module';
 
 
 @Module({
@@ -37,6 +35,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     BookingsModule,
     PlansModule,
     PaymentsModule,
+    adminModule,
 
 
     ScheduleModule.forRoot(),
