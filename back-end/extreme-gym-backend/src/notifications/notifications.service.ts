@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Between } from 'typeorm';
 
 @Injectable()
 export class NotificationsService {
@@ -52,5 +53,65 @@ export class NotificationsService {
     return await this.usersRepository.find({
       select: ['email', 'name'],
     });
+  }
+
+  async enviarCorreoConfirmacion(
+    email: string,
+    nombre: string,
+    tipoPlan: string,
+    duracion: string,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: `Confirmación de suscripción ${tipoPlan}`,
+        template: './confirmacion', // Nombre del archivo .hbs en la carpeta templates
+        context: { nombre, tipoPlan, duracion }, // Variables para la plantilla
+      });
+
+      console.log('Correo de confirmación enviado correctamente');
+    } catch (error) {
+      console.error('Error al enviar el correo de confirmación:', error);
+      throw new Error('No se pudo enviar el correo de confirmación');
+    }
+  }
+
+  async sendSubscriptionExpirationReminder() {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7); // 7 días adelante
+
+    // 📌 Búsqueda con rango de fechas para evitar problemas con horas
+    const users = await this.usersRepository.find({
+      where: {
+        subscriptionExpirationDate: Between(
+          today.toISOString(), // Desde ahora
+          nextWeek.toISOString(), // Hasta 7 días adelante
+        ),
+      },
+      relations: ['plan'],
+    });
+
+    if (users.length === 0) {
+      console.log('✅ No hay usuarios con suscripción próxima a vencer.');
+      return;
+    }
+
+    for (const user of users) {
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: '⚠️ Tu suscripción está por vencer',
+        template: 'plan-expiracion',
+        context: {
+          nombre: user.name,
+          plan: user.plan?.name || 'Desconocido',
+          fechaExpiracion: user.subscriptionExpirationDate.split('T')[0], // Solo la fecha
+        },
+      });
+
+      console.log(
+        `✅ Correo enviado a ${user.email} - Expira el ${user.subscriptionExpirationDate}`,
+      );
+    }
   }
 }
