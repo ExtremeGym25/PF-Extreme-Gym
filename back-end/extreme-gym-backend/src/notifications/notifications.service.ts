@@ -19,8 +19,8 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: email,
         subject: '¡Bienvenido a Extreme Gym! 🏋️‍♂️',
-        template: './welcome', // Se busca en la carpeta `templates`
-        context: { name }, // Variables para la plantilla
+        template: './welcome', 
+        context: { name }, 
       });
       return { message: 'Correo enviado con éxito' };
     } catch (error) {
@@ -38,7 +38,7 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: user.email,
         subject: '¡Empieza tu semana con energía en Extreme Gym! 💪',
-        template: 'weekly-reminder', // Plantilla Handlebars en 'src/notifications/templates'
+        template: 'weekly-reminder', 
         context: {
           name: user.name,
         },
@@ -65,8 +65,8 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: email,
         subject: `Confirmación de suscripción ${tipoPlan}`,
-        template: './confirmacion', // Nombre del archivo .hbs en la carpeta templates
-        context: { nombre, tipoPlan, duracion }, // Variables para la plantilla
+        template: './confirmacion', 
+        context: { nombre, tipoPlan, duracion },
       });
 
       console.log('Correo de confirmación enviado correctamente');
@@ -79,9 +79,9 @@ export class NotificationsService {
   async sendSubscriptionExpirationReminder() {
     const today = new Date();
     const nextWeek = new Date();
-    nextWeek.setDate(today.getDate() + 7); // 7 días adelante
+    nextWeek.setDate(today.getDate() + 7); 
 
-    // 📌 Búsqueda con rango de fechas para evitar problemas con horas
+
     const users = await this.usersRepository.find({
       where: {
         subscriptionExpirationDate: Between(
