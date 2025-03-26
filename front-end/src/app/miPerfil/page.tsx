@@ -7,6 +7,7 @@ import { routes } from "../routes/routes";
 import Link from "next/link";
 import MiPerfilUsuario from "../views/MiPerfilUsuario";
 import UpdatePerfilUsuario from "../views/UpdateUsuario";
+import ImagenPerfil from "../views/ImagenPerfil";
 
 const MiPerfil = () => {
   const loading = usePrivate();
@@ -40,7 +41,7 @@ const MiPerfil = () => {
             </Acordeon>
 
             <Acordeon title="Actualizar Imagen de Perfil ">
-              <p>Actualiza tu Imagen de Perfil.</p>
+              <ImagenPerfil />.
             </Acordeon>
 
             <Acordeon title="Eventos">

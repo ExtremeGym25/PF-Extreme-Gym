@@ -14,29 +14,41 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
+  private validateFile(file: Express.Multer.File): void {
+    if (!file) {
+      throw new BadRequestException('No se ha recibido ningún archivo.');
+    }
+  }
+
+  private handleError(error: any, action: string): never {
+    if (error instanceof BadRequestException) {
+      throw error;
+    }
+    console.error(`Error al ${action}:`, error);
+    throw new InternalServerErrorException(
+      `Error al ${action}. Intenta nuevamente más tarde.`,
+    );
+  }
+
+  private buildResponse(message: string, url: string): any {
+    return {
+      message,
+      url,
+    };
+  }
+
   @Post('image')
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }),
   )
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('No se ha recibido ningún archivo.');
-    }
+    this.validateFile(file);
     try {
       console.log('Archivo de imagen recibido:', file);
       const result = await this.fileUploadService.uploadImage(file, 'default');
-      return {
-        message: 'Imagen subida exitosamente',
-        url: result.url,
-      };
+      return this.buildResponse('Imagen subida exitosamente', result); // Aquí devolvemos directamente la URL
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      console.error('Error al subir la imagen:', error);
-      throw new InternalServerErrorException(
-        'Error al subir la imagen. Intenta nuevamente más tarde.',
-      );
+      this.handleError(error, 'subir la imagen');
     }
   }
 
@@ -44,29 +56,24 @@ export class FileUploadController {
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
   )
-  async uploadProfilePicture(@UploadedFile() file: Express.Multer.File, @Body('userId') userId: string) {
-    if (!file) {
-      throw new BadRequestException('No se ha recibido ningún archivo.');
-    }
+  async uploadProfilePicture(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('userId') userId: string,
+  ) {
+    this.validateFile(file);
 
     if (!userId) {
-      new BadRequestException('Se debe proporcionar el userId');
+      throw new BadRequestException('Se debe proporcionar el userId');
     }
     try {
       console.log('Archivo de perfil recibido:', file);
-      const result = await this.fileUploadService.uploadProfilePicture(file, userId);
-      return {
-        message: 'Foto de perfil subida exitosamente',
-        url: result.url,
-      };
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      console.error('Error al subir la foto de perfil:', error);
-      throw new InternalServerErrorException(
-        'Error al subir la foto de perfil. Intenta nuevamente más tarde.',
+      const result = await this.fileUploadService.uploadProfilePicture(
+        file,
+        userId,
       );
+      return this.buildResponse('Foto de perfil subida exitosamente', result); // Solo devolvemos la URL
+    } catch (error) {
+      this.handleError(error, 'subir la foto de perfil');
     }
   }
 
@@ -75,24 +82,13 @@ export class FileUploadController {
     FileInterceptor('file', { limits: { fileSize: 15 * 1024 * 1024 } }),
   )
   async uploadVideo(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('No se ha recibido ningún archivo.');
-    }
+    this.validateFile(file);
     try {
       console.log('Archivo de video recibido:', file);
       const result = await this.fileUploadService.uploadVideo(file);
-      return {
-        message: 'Video subido exitosamente',
-        url: result.secure_url,
-      };
+      return this.buildResponse('Video subido exitosamente', result.secure_url); // Usa secure_url si aún lo necesitas
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      console.error('Error al subir el video:', error);
-      throw new InternalServerErrorException(
-        'Error al subir el video. Intenta nuevamente más tarde.',
-      );
+      this.handleError(error, 'subir el video');
     }
   }
 }

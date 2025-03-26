@@ -13,6 +13,23 @@ const images = [
 ];
 
 const CarouselHome = () => {
+  // const [images, setImages] = useState([]);
+  // const [currentIndex, setCurrentIndex] = useState(0);
+
+  // useEffect(() => {
+  //   // Obtener imágenes desde la API
+  //   const fetchImages = async () => {
+  //     try {
+  //       const res = await fetch("/api/carousel-images");
+  //       const data = await res.json();
+  //       setImages(data.map(item => item.image_url)); // Extraer URLs de la respuesta
+  //     } catch (error) {
+  //       console.error("Error cargando imágenes:", error);
+  //     }
+  //   };
+
+  //   fetchImages();
+  // }, []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {

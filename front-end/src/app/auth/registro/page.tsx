@@ -9,7 +9,8 @@ const registroView = () => {
       <div
         className="relative flex flex-col items-center justify-center w-full min-h-screen transform scale-105 bg-no-repeat bg-cover border-l-4 border-grisP"
         style={{
-          backgroundImage: "url('/landing1.webp')",
+          backgroundImage:
+            "url('https://res.cloudinary.com/dixcrmeue/image/upload/v1743015236/landing1_lzoasu.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

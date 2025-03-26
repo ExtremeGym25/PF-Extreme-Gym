@@ -12,4 +12,13 @@ export const routes = {
   tarifas: "/tarifas",
   eventos: "/eventos",
   admin: "/admin",
-};
+  adminU: "/admin/usuarios",
+  adminE: "/admin/eventos",
+  adminR: "/admin/rutinas",
+  adminEn: "/admin/entrenadores",
+  adminP: "/admin/publicidad",
+  adminCE: "/admin/casosDeExito",
+  adminVP: "/admin/vistaPrevia"
+}
+
+

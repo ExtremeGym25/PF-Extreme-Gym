@@ -43,18 +43,19 @@ export class FileUploadService {
     }
   }
 
-  async uploadImage(file: Express.Multer.File, category: string): Promise<UploadApiResponse> {
+  async uploadImage(file: Express.Multer.File, category: string): Promise<string> {
     this.validateImageType(file);
-    const result= await this.uploadFile(file, `images/${category} `);
+    const result= await this.uploadFile(file, `images/${category}`);
     return this.saveFileUpload(result, 'image', null);
   }
 
   async uploadProfilePicture(
     file: Express.Multer.File, userId: string
-  ): Promise<UploadApiResponse> {
+  ): Promise<string> {
     this.validateImageType(file); 
     const result = await this.uploadFile(file, 'profile_pictures');
-    return await this.saveFileUpload(result, 'image', userId)
+    const uploadResponse= await this.saveFileUpload(result, 'image', userId);
+    return await this.saveFileUpload(result, 'image', userId);
   }
 
   async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
@@ -62,7 +63,7 @@ export class FileUploadService {
     return this.uploadFile(file, 'videos', 'video');
   }
 
-  private async saveFileUpload(result: UploadApiResponse, type: 'image' | 'video', userId: string | null): Promise<any> {
+  private async saveFileUpload(result: UploadApiResponse, type: 'image' | 'video', userId: string | null): Promise<string> {
 let user: User | null = null;
     if (userId) {
       user = await this.userRepository.findOne({ where: { id: userId } });
@@ -70,6 +71,7 @@ let user: User | null = null;
         throw new BadRequestException('Usuario no encontrado');
       }
     }
+
     const fileUploadData: Partial<FileUpload>= {
       url: result.secure_url,
       type: type,
@@ -78,16 +80,10 @@ let user: User | null = null;
     };
 
     const fileUpload= this.fileUploadRepository.create(fileUploadData);
-
     await this.fileUploadRepository.save(fileUpload);
-    return{
-      id: fileUpload.id,
-      url: result.secure_url,
-      type: type,
-      userId: userId || null,
-      publicId: result.public_id
-    };
-  }
+
+    return result.secure_url
+  };
 
   private uploadFile(
     file: Express.Multer.File,

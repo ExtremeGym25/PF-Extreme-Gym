@@ -39,7 +39,12 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: true })
   city: string;
 
-  @Column({ type: 'varchar', nullable: true, default: '' })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default:
+      'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
+  })
   profileImage?: string;
 
   @ManyToOne(() => Subscription)
@@ -63,7 +68,10 @@ export class User {
   isActive: boolean;
   user: any;
 
-  @OneToMany(() => FileUpload, fileUpload => fileUpload.userId, {
+  @Column()
+  role: string;
+
+  @OneToMany(() => FileUpload, (fileUpload) => fileUpload.userId, {
     nullable: true,
   })
   fileUploads: FileUpload[];

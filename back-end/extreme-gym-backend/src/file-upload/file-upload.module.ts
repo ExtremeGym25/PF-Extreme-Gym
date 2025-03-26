@@ -24,5 +24,6 @@ import { User } from 'src/users/entities/user.entity';
   ],
   controllers: [FileUploadController],
   providers: [FileUploadService],
+  exports: [FileUploadService]
 })
 export class FileUploadModule {}
