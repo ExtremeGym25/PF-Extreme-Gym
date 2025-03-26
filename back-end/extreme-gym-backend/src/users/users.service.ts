@@ -70,6 +70,14 @@ export class UsersService {
     };
   }
 
+  async profileFindById(userId: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id: userId } });
+  }
+
+  async profileUpdate(user: User): Promise<User | null> {
+    return this.userRepository.save(user);
+  }
+
   async remove(userId: string): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
