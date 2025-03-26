@@ -29,7 +29,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-[#0D1F2D]">
+    <div className="flex min-h-screen py-2 bg-azul1">
       <Sidebar />
       <div className="flex-1">
         <Header />
@@ -37,7 +37,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-[#F2F2F2] mb-4">
             Resumen del Gimnasio
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
             <StatsCard
               title="Usuarios Registrados"
               value={stats.totalUsuarios}

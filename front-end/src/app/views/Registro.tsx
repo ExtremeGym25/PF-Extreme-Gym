@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import {
-  registerService,
-  uploadProfileImageService,
-} from "@/app/servicios/auth";
+import { loginService, registerService } from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../contextos/contextoAuth";
+import usePublic from "../hooks/usePublic";
 
 export interface IForm {
   name: string;
@@ -21,7 +20,6 @@ export interface IForm {
   confirmPassword: string;
   country: string;
   city: string;
-  profileImage: string;
 }
 
 const validationSchema = Yup.object().shape({
@@ -54,25 +52,15 @@ const validationSchema = Yup.object().shape({
     .min(5, "El país debe tener al menos 5 caracteres")
     .max(20, "El país no puede tener más de 20 caracteres")
     .required("El país es obligatorio"),
-  profileImage: Yup.string().notRequired(),
 });
 
 const Registro = () => {
+  const loading = usePublic();
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const { saveUserData } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleImageUpload = async (file: File) => {
-    try {
-      const uploadedUrl = await uploadProfileImageService(file);
-      setImageUrl(uploadedUrl);
-      toast.success("Imagen subida correctamente");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      toast.error("Error al subir la imagen");
-    }
-  };
   const handleOnSubmit = async (values: IForm) => {
     console.log("Datos enviados:", values);
     try {
@@ -86,35 +74,52 @@ const Registro = () => {
         phone: Number(values.phone),
         country: values.country,
         city: values.city,
-        profileImage: imageUrl || " ",
       };
       console.log("Datos enviados al backend:", formattedUserData);
 
       await registerService(formattedUserData);
       toast.success("Registro Exitoso");
-      setTimeout(() => {
-        router.push(routes.login);
-      }, 3000);
+
+      const loginResponse = await loginService({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (loginResponse.token) {
+        localStorage.setItem("token", loginResponse.token);
+        toast.success("Inicio de sesión exitoso");
+        saveUserData(loginResponse);
+        router.push(routes.miPerfil);
+      }
     } catch (error) {
-      console.warn("Error al registrarse", error);
-      toast.error("El registro no pudo completarse");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocurrió un error inesperado");
+      }
     }
   };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-bold text-foreground">Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md p-8 rounded-lg ">
       <h2 className="mb-6 text-3xl font-semibold text-center">Registro</h2>
       <Formik
         initialValues={{
-          name: "",
-          email: "",
-          address: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          country: "",
-          city: "",
-          profileImage: "",
+          name: "Paula Santacruz",
+          email: "pau@gmail.com",
+          address: "Calle 123",
+          phone: "3216599736",
+          password: "Holi123!",
+          confirmPassword: "Holi123!",
+          country: "Colombia",
+          city: "Pasto",
         }}
         validationSchema={validationSchema}
         onSubmit={handleOnSubmit}
@@ -230,21 +235,6 @@ const Registro = () => {
             </div>
             <ErrorMessage
               name="confirmPassword"
-              component="div"
-              className="text-sm text-red-500"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleImageUpload(e.target.files[0]);
-                }
-              }}
-              className="w-full p-2 bg-white rounded-lg text-azul focus:outline-none focus:ring-2 focus:ring-verde"
-            />
-            <ErrorMessage
-              name="profileImage"
               component="div"
               className="text-sm text-red-500"
             />

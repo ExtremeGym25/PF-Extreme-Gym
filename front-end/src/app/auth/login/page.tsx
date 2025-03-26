@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { routes } from "@/app/routes/routes";
 import { loginService } from "@/app/servicios/auth";
 import { useRouter } from "next/navigation";
+import usePublic from "@/app/hooks/usePublic";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -25,6 +26,8 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
+  const loading = usePublic();
+
   const { saveUserData } = useAuth();
   const router = useRouter();
 
@@ -47,12 +50,19 @@ const Login = () => {
       setSubmitting(false);
     }
   };
-
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-bold text-foreground">Cargando...</p>
+      </div>
+    );
+  }
   return (
     <div
       className="flex items-center justify-center min-h-screen bg-center bg-no-repeat bg-cover"
       style={{
-        backgroundImage: "url('/fondologin.PNG')",
+        backgroundImage:
+          "url('https://res.cloudinary.com/dixcrmeue/image/upload/v1743014897/fondologin_lojsm9.png')",
       }}
     >
       <div className="w-full max-w-md p-8 bg-white shadow-lg bg-opacity-20 rounded-2xl backdrop-blur-md">

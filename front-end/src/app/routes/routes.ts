@@ -12,4 +12,5 @@ export const routes = {
   tarifas: "/tarifas",
   eventos: "/eventos",
   admin: "/admin",
+  adminPublicidad: "/admin/publicidad",
 };

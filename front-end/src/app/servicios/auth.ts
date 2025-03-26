@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import axios from "axios";
 import { IUserLogin, IUser } from "../tipos";
@@ -38,22 +39,31 @@ export const registerService = async (userData: Partial<IUser>) => {
   }
 };
 
-export const updateUser = async (userId: string, formData: IUser) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : "";
-  const response = await axios.patch(
-    `http://localhost:3000/users/${userId}`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+export const updateUser = async (
+  userId: string,
+  formData: Partial<IUser>,
+  token: string
+) => {
+  try {
+    console.log("Sending Data:", JSON.stringify(formData, null, 2));
+    console.log("UserID:", userId);
 
+    const response = await axios.patch(
+      `http://localhost:3000/users/${userId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error in updateUser:", error.response?.data || error);
+    throw error;
+  }
+};
 export const uploadProfileImageService = async (
   file: File
 ): Promise<string> => {
@@ -71,7 +81,7 @@ export const uploadProfileImageService = async (
     }
 
     const data = await response.json();
-    return data.imageUrl; // Suponiendo que el backend retorna la URL en esta propiedad
+    return data.imageUrl;
   } catch (error) {
     console.error("Error al subir la imagen:", error);
     throw error;
