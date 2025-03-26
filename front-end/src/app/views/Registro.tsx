@@ -92,8 +92,11 @@ const Registro = () => {
         router.push(routes.miPerfil);
       }
     } catch (error) {
-      console.warn("Error al registrarse", error);
-      toast.error("El registro no pudo completarse");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocurrió un error inesperado");
+      }
     }
   };
   if (loading) {
@@ -109,14 +112,14 @@ const Registro = () => {
       <h2 className="mb-6 text-3xl font-semibold text-center">Registro</h2>
       <Formik
         initialValues={{
-          name: "",
-          email: "",
-          address: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          country: "",
-          city: "",
+          name: "Paula Santacruz",
+          email: "pau@gmail.com",
+          address: "Calle 123",
+          phone: "3216599736",
+          password: "Holi123!",
+          confirmPassword: "Holi123!",
+          country: "Colombia",
+          city: "Pasto",
         }}
         validationSchema={validationSchema}
         onSubmit={handleOnSubmit}
