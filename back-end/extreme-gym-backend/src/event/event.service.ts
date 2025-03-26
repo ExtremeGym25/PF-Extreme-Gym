@@ -101,7 +101,7 @@ export class EventService {
   async cancelEvent(id: string): Promise<Event> {
     try {
       const event = await this.getEventById(id);
-      event.isCancelled = true; // Cambiado a true para cancelar el evento
+      event.isCancelled = true;
       return await this.eventRepository.save(event);
     } catch (error) {
       if (error instanceof NotFoundException) {
