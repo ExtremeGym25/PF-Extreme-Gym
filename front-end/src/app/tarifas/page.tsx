@@ -4,7 +4,7 @@ import Beneficios from "../components/viewcomponents/beneficios";
 
 const tarifasView = () => {
   return (
-    <div className="bg-fondo font-poppins text-blanco ">
+    <div className="py-2 bg-fondo font-poppins text-foreground">
       {" "}
       <Tarifas></Tarifas>
       <Beneficios></Beneficios>

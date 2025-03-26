@@ -9,6 +9,7 @@ import { loginService, registerService } from "@/app/servicios/auth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contextos/contextoAuth";
+import usePublic from "../hooks/usePublic";
 
 export interface IForm {
   name: string;
@@ -54,6 +55,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Registro = () => {
+  const loading = usePublic();
   const router = useRouter();
   const { saveUserData } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -94,6 +96,13 @@ const Registro = () => {
       toast.error("El registro no pudo completarse");
     }
   };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl font-bold text-foreground">Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md p-8 rounded-lg ">
