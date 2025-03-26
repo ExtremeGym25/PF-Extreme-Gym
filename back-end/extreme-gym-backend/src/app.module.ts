@@ -19,6 +19,7 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { adminModule } from './admin/admin.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 
 @Module({
@@ -62,7 +63,7 @@ import { adminModule } from './admin/admin.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}
