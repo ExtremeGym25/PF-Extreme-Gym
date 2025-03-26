@@ -7,23 +7,43 @@ export default function Sidebar() {
       <nav>
         <ul className="space-y-4">
           <li>
-            <Link href="/dashboard" className="block p-2 rounded hover:bg-gray-700">
+            <Link href="/admin" className="block p-2 rounded hover:bg-gray-700">
               Inicio
             </Link>
           </li>
           <li>
-            <Link href="/dashboard/usuarios" className="block p-2 rounded hover:bg-gray-700">
+            <Link href="/admin/usuarios" className="block p-2 rounded hover:bg-gray-700">
               Usuarios
             </Link>
           </li>
           <li>
-            <Link href="/dashboard/membresias" className="block p-2 rounded hover:bg-gray-700">
-              Membresías
+            <Link href="/admin/eventos" className="block p-2 rounded hover:bg-gray-700">
+              Eventos
             </Link>
           </li>
           <li>
-            <Link href="/dashboard/configuracion" className="block p-2 rounded hover:bg-gray-700">
-              Configuración
+            <Link href="/admin/rutinas" className="block p-2 rounded hover:bg-gray-700">
+              Rutinas
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/entrenadores" className="block p-2 rounded hover:bg-gray-700">
+              Entrenadores
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/publicidad" className="block p-2 rounded hover:bg-gray-700">
+              Publicidad
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/casosDeExito" className="block p-2 rounded hover:bg-gray-700">
+              Casos de Exito
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/vistaPrevia" className="block p-2 rounded hover:bg-gray-700">
+              Vista Previa
             </Link>
           </li>
         </ul>
