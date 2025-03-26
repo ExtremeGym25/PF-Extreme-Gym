@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { useAuth } from "../contextos/contextoAuth";
 
 const MiPerfilUsuario = () => {
@@ -7,32 +7,39 @@ const MiPerfilUsuario = () => {
 
   console.log("Imagen de perfil:", user?.profileImage);
 
-  const profileImage = user?.profileImage?.trim()
-    ? user.profileImage
-    : "/logox.png";
+  const profileImage = useMemo(
+    () => (user?.profileImage?.trim() ? user.profileImage : "/logox.png"),
+    [user?.profileImage]
+  );
 
   return (
-    <div>
-      <div className="h-auto py-8 mx-auto transition-transform duration-300 rounded-lg shadow-md w-96">
+    <div className="flex justify-center">
+      <div className="h-auto py-8 mx-auto transition-transform duration-300 bg-white rounded-lg shadow-md w-96">
         <h3 className="text-xl font-bold text-center capitalize">
-          Usuario: {user?.name}
+          Usuario: {user?.name || "No especificado"}
         </h3>
-        {user?.profileImage && (
-          <div className="flex justify-center my-2">
-            <img
-              src={profileImage}
-              alt="Imagen de Perfil"
-              className="object-cover w-40 h-40 m-1 border-2 rounded-full hover:scale-110 border-verde"
-            />
-          </div>
-        )}
-        <p className="text-center capitalize text-l">País: {user?.country}</p>
-        <p className="text-center capitalize text-l">Ciudad: {user?.city}</p>
+        <div className="flex justify-center my-2">
+          <img
+            src={profileImage}
+            alt="Imagen de Perfil"
+            className="object-cover w-40 h-40 m-1 border-2 rounded-full hover:scale-110 border-verde"
+          />
+        </div>
         <p className="text-center capitalize text-l">
-          Dirección: {user?.address}
+          País: {user?.country || "No especificado"}
         </p>
-        <p className="text-center text-l">Teléfono: {user?.phone}</p>
-        <p className="text-center text-l">Email: {user?.email}</p>
+        <p className="text-center capitalize text-l">
+          Ciudad: {user?.city || "No especificado"}
+        </p>
+        <p className="text-center capitalize text-l">
+          Dirección: {user?.address || "No especificado"}
+        </p>
+        <p className="text-center text-l">
+          Teléfono: {user?.phone || "No especificado"}
+        </p>
+        <p className="text-center text-l">
+          Email: {user?.email || "No especificado"}
+        </p>
       </div>
     </div>
   );

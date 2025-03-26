@@ -41,8 +41,8 @@ export const registerService = async (userData: Partial<IUser>) => {
 
 export const updateUser = async (
   userId: string,
-  formData: Partial<IUser>, // ✅ Permitir actualización parcial
-  token: string // ✅ Pasar el token como parámetro
+  formData: Partial<IUser>,
+  token: string
 ) => {
   try {
     console.log("Sending Data:", JSON.stringify(formData, null, 2));
@@ -53,7 +53,7 @@ export const updateUser = async (
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Ahora sí tenemos el token
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }
@@ -81,7 +81,7 @@ export const uploadProfileImageService = async (
     }
 
     const data = await response.json();
-    return data.imageUrl; // Suponiendo que el backend retorna la URL en esta propiedad
+    return data.imageUrl;
   } catch (error) {
     console.error("Error al subir la imagen:", error);
     throw error;
