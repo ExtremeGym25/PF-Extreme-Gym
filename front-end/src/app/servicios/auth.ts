@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import axios from "axios";
 import { IUserLogin, IUser } from "../tipos";
@@ -38,22 +39,31 @@ export const registerService = async (userData: Partial<IUser>) => {
   }
 };
 
-export const updateUser = async (userId: string, formData: IUser) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : "";
-  const response = await axios.patch(
-    `http://localhost:3000/users/${userId}`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data;
-};
+export const updateUser = async (
+  userId: string,
+  formData: Partial<IUser>, // ✅ Permitir actualización parcial
+  token: string // ✅ Pasar el token como parámetro
+) => {
+  try {
+    console.log("Sending Data:", JSON.stringify(formData, null, 2));
+    console.log("UserID:", userId);
 
+    const response = await axios.patch(
+      `http://localhost:3000/users/${userId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Ahora sí tenemos el token
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error in updateUser:", error.response?.data || error);
+    throw error;
+  }
+};
 export const uploadProfileImageService = async (
   file: File
 ): Promise<string> => {

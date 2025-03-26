@@ -11,7 +11,6 @@ const UserAuth = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const authRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar el dropdown si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (authRef.current && !authRef.current.contains(event.target as Node)) {
@@ -27,6 +26,9 @@ const UserAuth = () => {
   if (isAuth === null) {
     return <div>loading...</div>;
   }
+  const profileImage = user?.profileImage?.trim()
+    ? user.profileImage
+    : "/logox.png";
 
   return (
     <div className="relative z-50 py-4" ref={authRef}>
@@ -51,7 +53,7 @@ const UserAuth = () => {
                   </p>
                   {user?.profileImage && (
                     <img
-                      src={user.profileImage}
+                      src={profileImage}
                       alt="Foto de perfil"
                       className="border-2 rounded w-28 h-28 border-verde"
                     />

@@ -9,7 +9,7 @@ const MiPerfilUsuario = () => {
 
   const profileImage = user?.profileImage?.trim()
     ? user.profileImage
-    : "/logo.png";
+    : "/logox.png";
 
   return (
     <div>
