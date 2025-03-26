@@ -71,7 +71,7 @@ export const uploadProfileImageService = async (
   formData.append("file", file);
 
   try {
-    const response = await fetch("http://localhost:3000/upload/profile", {
+    const response = await fetch("http://localhost:3000/users/profile", {
       method: "POST",
       body: formData,
     });
