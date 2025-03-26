@@ -1,30 +1,36 @@
 "use client";
-import React, { useState } from "react";
-import { useAuth } from "../contextos/contextoAuth";
-import { updateUser } from "../servicios/auth";
-import { useRouter } from "next/navigation";
-import { routes } from "../routes/routes";
+
 import { toast } from "react-toastify";
+import { routes } from "../routes/routes";
+import { updateUser } from "../servicios/auth";
+import { useState } from "react";
+import { useAuth } from "../contextos/contextoAuth";
+import { useRouter } from "next/navigation";
+import { IUser } from "../tipos";
 
 const UpdatePerfilUsuario = () => {
   const router = useRouter();
-
   const { user, saveUserData } = useAuth();
+
   const [formData, setFormData] = useState({
     name: user?.name || "",
     country: user?.country || "",
     city: user?.city || "",
     address: user?.address || "",
-    phone: Number(user?.phone) || 0,
+    phone: user?.phone ? Number(user.phone) : "",
     email: user?.email || "",
     password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "phone" ? (value ? Number(value) : "") : value, // Evita NaN
+    }));
   };
 
-  // Validación de la contraseña
   const validatePassword = (password: string) => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -40,22 +46,32 @@ const UpdatePerfilUsuario = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación de la contraseña
-    if (!validatePassword(formData.password)) {
-      return;
-    }
-
     if (!user || !user.id) {
       toast.error("Usuario no definido");
       return;
     }
+    if (formData.password && !validatePassword(formData.password)) {
+      return;
+    }
+
+    const token = localStorage.getItem("token") || "";
+    if (!token) {
+      toast.error("No hay token disponible");
+      return;
+    }
+
+    const dataToSend: Partial<IUser> = {
+      ...formData,
+      phone: formData.phone ? Number(formData.phone) : undefined,
+    };
+
+    if (!dataToSend.password) {
+      delete dataToSend.password;
+    }
 
     try {
-      const updatedUser = await updateUser(user.id, formData);
-      saveUserData({
-        user: updatedUser,
-        token: localStorage.getItem("token") || "",
-      });
+      const updatedUser = await updateUser(user.id, dataToSend, token);
+      saveUserData({ user: updatedUser, token });
       toast.success("¡Datos actualizados correctamente!");
       router.push(routes.login);
     } catch (error) {
