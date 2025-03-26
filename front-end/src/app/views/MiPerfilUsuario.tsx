@@ -8,7 +8,10 @@ const MiPerfilUsuario = () => {
   console.log("Imagen de perfil:", user?.profileImage);
 
   const profileImage = useMemo(
-    () => (user?.profileImage?.trim() ? user.profileImage : "/logox.png"),
+    () =>
+      user?.profileImage?.trim()
+        ? user.profileImage
+        : "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png",
     [user?.profileImage]
   );
 

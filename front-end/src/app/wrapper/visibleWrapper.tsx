@@ -6,7 +6,12 @@ import React, { FC } from "react";
 interface VisibleWrapperProps {
   children: React.ReactNode;
 }
-const hidePages = [routes.login, routes.registro];
+const hidePages = [
+  routes.login,
+  routes.registro,
+  routes.admin,
+  routes.adminImagenes,
+];
 
 const VisibleWrapper: FC<VisibleWrapperProps> = ({ children }) => {
   //hook next el children es la nvbar
