@@ -68,7 +68,7 @@ export class User {
   isActive: boolean;
   user: any;
 
-  @Column()
+  @Column({nullable: true})
   role: string;
 
   @OneToMany(() => FileUpload, (fileUpload) => fileUpload.userId, {
