@@ -34,7 +34,10 @@ const UserAuth = () => {
   }
 
   const profileImage = useMemo(
-    () => (user?.profileImage?.trim() ? user.profileImage : "/logox.png"),
+    () =>
+      user?.profileImage?.trim()
+        ? user.profileImage
+        : "https://res.cloudinary.com/dixcrmeue/image/upload/v1743015555/logox_iy2aee.png",
     [user?.profileImage]
   );
 

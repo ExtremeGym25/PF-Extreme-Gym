@@ -20,3 +20,5 @@ export const routes = {
   adminCE: "/admin/casosDeExito",
   adminVP: "/admin/vistaPrevia"
 }
+
+

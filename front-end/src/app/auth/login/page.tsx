@@ -61,7 +61,8 @@ const Login = () => {
     <div
       className="flex items-center justify-center min-h-screen bg-center bg-no-repeat bg-cover"
       style={{
-        backgroundImage: "url('/fondologin.PNG')",
+        backgroundImage:
+          "url('https://res.cloudinary.com/dixcrmeue/image/upload/v1743014897/fondologin_lojsm9.png')",
       }}
     >
       <div className="w-full max-w-md p-8 bg-white shadow-lg bg-opacity-20 rounded-2xl backdrop-blur-md">
