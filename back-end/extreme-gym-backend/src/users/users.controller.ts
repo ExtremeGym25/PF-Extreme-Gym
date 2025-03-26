@@ -46,6 +46,8 @@ export class UsersController {
  
     if (file) { 
       user.profileImage = await this.fileUploadService.uploadProfilePicture(file, user.id)
+      console.log(user.profile);
+      
     } else {  
       // Si no se carga una imagen, se mantendrá la imagen por defecto  
       user.profileImage =
