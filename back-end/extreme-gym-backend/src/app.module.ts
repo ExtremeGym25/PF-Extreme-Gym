@@ -20,7 +20,7 @@ import typeormConfig from './config/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { adminModule } from './admin/admin.module';
 import { ChatGateway } from './chat/chat.gateway';
-
+import { ExpirationTask } from './plans/expiration.task';
 
 @Module({
   imports: [
@@ -38,9 +38,7 @@ import { ChatGateway } from './chat/chat.gateway';
     PaymentsModule,
     adminModule,
 
-
     ScheduleModule.forRoot(),
-
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -63,7 +61,7 @@ import { ChatGateway } from './chat/chat.gateway';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, ExpirationTask],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}
