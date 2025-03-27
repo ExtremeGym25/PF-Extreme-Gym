@@ -75,10 +75,18 @@ export class PlanService {
   }
 
   async getUserPlans(userId: string) {
-    return this.userPlanRepo.find({
+    const plans = await this.userPlanRepo.find({
       where: { userId },
       relations: ['plan'],
+      select: {
+        plan: { id: true, nombre: true, descripcion: true },
+      },
     });
+    if (!plans) {
+      throw new NotFoundException(`Error al cargar los planes`);
+    }
+
+    return plans;
   }
 
   async findAll(

@@ -11,5 +11,6 @@ import { Notification } from '../notifications/entities/notification.entity';
   imports: [TypeOrmModule.forFeature([Plan, UserPlan, User, Notification])],
   controllers: [PlanController],
   providers: [PlanService],
+  exports: [PlanService],
 })
 export class PlansModule {}

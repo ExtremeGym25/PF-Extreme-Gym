@@ -49,7 +49,7 @@ export class PaymentsController {
   async subscribeMonthly(@Param('userId') userId: string) {
     const user = await this.paymentsService.assignPremiumMonthlyPlan(userId);
     return {
-      message: 'Suscripción mensual activada',
+      message: 'Suscripción anual activada',
       user: {
         id: user.id,
         name: user.name,
