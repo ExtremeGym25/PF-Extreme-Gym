@@ -11,6 +11,9 @@ import { User } from '../users/entities/user.entity';
 import { Notification } from '../notifications/entities/notification.entity';
 import { AssignPlanDto } from './dto/assign-plan.dto';
 import { LessThan, Raw } from 'typeorm';
+import { CreatePlanDto } from './dto/create-plan.dto';
+import { PlanCategory } from './entities/plan.entity';
+import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Injectable()
 export class PlanService {
@@ -76,5 +79,38 @@ export class PlanService {
       where: { userId },
       relations: ['plan'],
     });
+  }
+
+  async findAll(
+    options: { categoria?: PlanCategory; page?: number; limit?: number } = {},
+  ): Promise<{ data: Plan[]; total: number }> {
+    const { categoria, page = 1, limit = 10 } = options;
+    const skip = (page - 1) * limit;
+
+    const query = this.planRepo.createQueryBuilder('plan');
+
+    if (categoria) {
+      query.where('plan.categoria = :categoria', { categoria });
+    }
+
+    const [data, total] = await query.skip(skip).take(limit).getManyAndCount();
+
+    return { data, total };
+  }
+
+  async createPlan(dto: CreatePlanDto): Promise<Plan> {
+    return this.planRepo.save(dto);
+  }
+
+  async deletePlan(id: string): Promise<void> {
+    await this.userPlanRepo.delete({ planId: id }); // Primero elimina relaciones
+    await this.planRepo.delete(id);
+  }
+
+  async updatePlan(id: string, dto: UpdatePlanDto): Promise<Plan> {
+    const plan = await this.planRepo.findOneBy({ id });
+    if (!plan) throw new NotFoundException('Plan no encontrado');
+
+    return this.planRepo.save({ ...plan, ...dto });
   }
 }

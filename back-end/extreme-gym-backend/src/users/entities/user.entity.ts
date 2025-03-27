@@ -1,6 +1,7 @@
 import { IsDateString } from 'class-validator';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
+import { UserPlan } from 'src/plans/entities/user-plan.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -68,11 +69,14 @@ export class User {
   isActive: boolean;
   user: any;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   role: string;
 
   @OneToMany(() => FileUpload, (fileUpload) => fileUpload.userId, {
     nullable: true,
   })
   fileUploads: FileUpload[];
+
+  @OneToMany(() => UserPlan, (userPlan) => userPlan.user)
+  plans: UserPlan[];
 }
