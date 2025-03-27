@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Plan } from './plan.entity';
 
@@ -14,5 +14,6 @@ export class UserPlan {
   user: User;
 
   @ManyToOne(() => Plan, (plan) => plan.userPlans)
+  @JoinColumn({ name: 'plan_id' })
   plan: Plan;
 }

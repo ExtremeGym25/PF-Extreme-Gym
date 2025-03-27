@@ -56,22 +56,27 @@ export class PaymentsService {
     });
 
     if (!premiumPlan) {
-      throw new NotFoundException('Plan Premium no está disponible');
+      throw new NotFoundException(
+        'Plan Premium no está disponible actualmente',
+      );
     }
 
-    user.plan = premiumPlan;
-    user.subscriptionExpirationDate = this.addMonthsToDate(new Date(), 1);
+    try {
+      user.plan = premiumPlan;
+      user.subscriptionExpirationDate = this.addMonthsToDate(new Date(), 1);
 
-    await this.userRepository.save(user);
+      await this.userRepository.save(user);
+      await this.notificationsService.enviarCorreoConfirmacion(
+        user.email,
+        user.name,
+        'Mensual',
+        '1 mes',
+      );
 
-    await this.notificationsService.enviarCorreoConfirmacion(
-      user.email,
-      user.name,
-      'Mensual',
-      '1 mes',
-    );
-
-    return user;
+      return user;
+    } catch (error) {
+      throw new Error('Error al guardar la suscripción mensual');
+    }
   }
 
   async assignPremiumYearlyPlan(userId: string): Promise<User> {
@@ -89,23 +94,28 @@ export class PaymentsService {
     });
 
     if (!premiumPlan) {
-      throw new NotFoundException('Plan Premium no está disponible');
+      throw new NotFoundException(
+        'Plan Premium no está disponible actualmente',
+      );
     }
 
-    user.plan = premiumPlan;
-    user.subscriptionExpirationDate = this.addYearsToDate(new Date(), 1);
+    try {
+      user.plan = premiumPlan;
+      user.subscriptionExpirationDate = this.addYearsToDate(new Date(), 1);
 
-    await this.userRepository.save(user);
-    await this.notificationsService.enviarCorreoConfirmacion(
-      user.email,
-      user.name,
-      'Anual',
-      '1 año',
-    );
+      await this.userRepository.save(user);
+      await this.notificationsService.enviarCorreoConfirmacion(
+        user.email,
+        user.name,
+        'Anual',
+        '1 año',
+      );
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new Error('Error al guardar la suscripción mensual');
+    }
   }
-
   private addMonthsToDate(date: Date, months: number): string {
     date.setMonth(date.getMonth() + months);
     return date.toISOString();

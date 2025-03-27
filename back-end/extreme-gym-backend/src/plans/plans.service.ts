@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { format } from 'date-fns';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Plan } from './entities/plan.entity';
@@ -14,6 +15,8 @@ import { LessThan, Raw } from 'typeorm';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { PlanCategory } from './entities/plan.entity';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PlanService {
@@ -26,6 +29,7 @@ export class PlanService {
     private userRepo: Repository<User>,
     @InjectRepository(Notification)
     private notificationRepo: Repository<Notification>,
+    private readonly mailService: MailerService,
   ) {}
 
   async assignPlan(userId: string, dto: AssignPlanDto) {
@@ -57,7 +61,7 @@ export class PlanService {
   async checkExpirations() {
     const todayString = new Date().toISOString();
 
-    // 2. Buscar usuarios con suscripción expirada
+    // Buscar usuarios con suscripción expirada
     const users = await this.userRepo.find({
       where: {
         subscriptionExpirationDate: LessThan(todayString),
@@ -66,12 +70,50 @@ export class PlanService {
       relations: ['plans'],
     });
 
-    for (const user of users) {
-      await this.notificationRepo.save({
-        mensaje: `Tu suscripción premium ha expirado. Renueva para mantener acceso a los planes.`,
-        user,
-      });
+    if (users.length === 0) {
+      return {
+        message: 'No hay usuarios con suscripción expirada hoy.',
+        expiredUsers: [],
+      };
     }
+
+    // Procesar cada usuario
+    for (const user of users) {
+      try {
+        // 1. Guardar notificación en DB
+        await this.notificationRepo.save({
+          mensaje: 'Tu suscripción ha expirado. Renueva ahora.',
+          user,
+        });
+
+        // 2. Enviar correo
+        await this.mailService.sendMail({
+          to: user.email,
+          subject: 'Tu suscripción ha expirado',
+          template: './plan-expiracion', // Si usas plantillas
+          context: {
+            name: user.name,
+            expirationDate: format(
+              new Date(user.subscriptionExpirationDate),
+              'dd/MM/yyyy',
+            ), // Usa date-fns o similar
+            currentYear: new Date().getFullYear().toString(),
+          },
+        });
+
+        console.log(`📧 Correo enviado a ${user.email}`);
+      } catch (error) {
+        console.error(`❌ Error al notificar a ${user.email}:`, error.message);
+      }
+    }
+
+    return {
+      message: `Notificaciones enviadas a ${users.length} usuarios.`,
+      expiredUsers: users.map((user) => ({
+        id: user.id,
+        email: user.email,
+      })),
+    };
   }
 
   async getUserPlans(userId: string) {

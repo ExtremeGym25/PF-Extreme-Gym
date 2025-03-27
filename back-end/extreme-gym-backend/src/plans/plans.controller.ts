@@ -86,6 +86,10 @@ export class PlanController {
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   async checkExpirations() {
-    return this.planService.checkExpirations();
+    const result = await this.planService.checkExpirations();
+    return {
+      status: 'success',
+      data: result,
+    };
   }
 }
