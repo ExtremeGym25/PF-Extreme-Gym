@@ -54,7 +54,7 @@ const UserAuth = () => {
           </button>
 
           {isAuthOpen && (
-            <div className="fixed z-50 h-screen p-4 mt-2 transition-transform origin-top-right transform rounded-lg shadow-2xl backdrop-blur-md ring-opacity-100 ring-2 ring-gray-300 bg-fondo right-20 top-15 w-80 text-foreground animate-slide-down bg-opacity-90">
+            <div className="fixed z-50 h-screen p-4 mt-2 transition-transform origin-top-right transform rounded-lg shadow-2xl backdrop-blur-md ring-opacity-100 ring-2 ring-gray-300 bg-background bg-fondo right-20 top-15 w-80 text-foreground animate-slide-down bg-opacity-90">
               <h3 className="text-xl font-bold">Perfil de Usuario</h3>
               <hr className="my-2 border-verde" />
 

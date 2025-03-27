@@ -68,13 +68,12 @@ body {
   padding: 0;
 }
 .custom-toast {
-  background-color: #000000;
-  color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  font-family: "Poppins", sans-serif;
-  font-size: 1rem;
-  color: #ffffff;
+  background-color: #f2f2f2 !important;
+  color: #0d1f2d !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 1rem !important;
 }
 @keyframes fade-in {
   from {

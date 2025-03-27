@@ -20,6 +20,7 @@ interface AuthContextType {
   // actions
   saveUserData: (data: { user: IUser; token: string }) => void;
   resetUserData: () => void;
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>; // <-- Agregado aquí
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuth, saveUserData, resetUserData, token }}
+      value={{ user, isAuth, saveUserData, resetUserData, token, setUser }}
     >
       {children}
     </AuthContext.Provider>
