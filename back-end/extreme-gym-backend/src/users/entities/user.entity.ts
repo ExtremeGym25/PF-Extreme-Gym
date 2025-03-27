@@ -1,4 +1,5 @@
 import { IsDateString } from 'class-validator';
+import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import {
@@ -14,7 +15,7 @@ import {
   name: 'USER',
 })
 export class User {
-  [x: string]: any;
+  // [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -48,7 +49,7 @@ export class User {
   profileImage?: string;
 
   @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'planId' })
+  @JoinColumn({ name: 'plan' })
   plan: Subscription;
 
   @Column({ nullable: true })
@@ -66,12 +67,15 @@ export class User {
     default: true,
   })
   isActive: boolean;
-  user: any;
+  // user: any;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   role: string;
 
-  @OneToMany(() => FileUpload, (fileUpload) => fileUpload.userId, {
+  @OneToMany(() => Booking, (booking) => booking.user)
+  bookings: Booking[];
+
+  @OneToMany(() => FileUpload, (fileUpload) => fileUpload.user, {
     nullable: true,
   })
   fileUploads: FileUpload[];

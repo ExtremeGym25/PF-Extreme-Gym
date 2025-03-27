@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadFileDto } from './dto/upload-file.dto';
+import { UploadProfilePictureDto } from './dto/upload-profile-picture.dto';
 
 @Controller('upload')
 export class FileUploadController {
@@ -37,16 +39,33 @@ export class FileUploadController {
     };
   }
 
-  @Post('image')
+  @Post('file')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }),
-  )
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() UploadFileDto: UploadFileDto,
+  ) {
     this.validateFile(file);
+
+    const maxSize = UploadFileDto.category.startsWith('video')
+    ? 15 * 1024 * 1024
+    : 5 * 1024 * 1024;
+
+    if(file.size > maxSize) {
+      throw new BadRequestException(
+        `El tamaño del archivo excede el límite permitido de ${maxSize} MB.`,
+      );
+    }
+
     try {
       console.log('Archivo de imagen recibido:', file);
-      const result = await this.fileUploadService.uploadImage(file, 'default');
-      return this.buildResponse('Imagen subida exitosamente', result); // Aquí devolvemos directamente la URL
+      const result = await this.fileUploadService.uploadImage(
+        file,
+        UploadFileDto.category,
+        UploadFileDto.userId,
+      );
+      return this.buildResponse('Imagen subida exitosamente', result);
     } catch (error) {
       this.handleError(error, 'subir la imagen');
     }
@@ -58,37 +77,18 @@ export class FileUploadController {
   )
   async uploadProfilePicture(
     @UploadedFile() file: Express.Multer.File,
-    @Body('userId') userId: string,
+    @Body() uploadProfilePictureDto: UploadProfilePictureDto,
   ) {
     this.validateFile(file);
-
-    if (!userId) {
-      throw new BadRequestException('Se debe proporcionar el userId');
-    }
     try {
       console.log('Archivo de perfil recibido:', file);
       const result = await this.fileUploadService.uploadProfilePicture(
         file,
-        userId,
+        uploadProfilePictureDto.userId,
       );
-      return this.buildResponse('Foto de perfil subida exitosamente', result); // Solo devolvemos la URL
+      return this.buildResponse('Foto de perfil subida exitosamente', result);
     } catch (error) {
       this.handleError(error, 'subir la foto de perfil');
-    }
-  }
-
-  @Post('video')
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 15 * 1024 * 1024 } }),
-  )
-  async uploadVideo(@UploadedFile() file: Express.Multer.File) {
-    this.validateFile(file);
-    try {
-      console.log('Archivo de video recibido:', file);
-      const result = await this.fileUploadService.uploadVideo(file);
-      return this.buildResponse('Video subido exitosamente', result.secure_url); // Usa secure_url si aún lo necesitas
-    } catch (error) {
-      this.handleError(error, 'subir el video');
     }
   }
 }
