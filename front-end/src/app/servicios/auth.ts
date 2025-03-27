@@ -87,3 +87,15 @@ export const uploadProfileImageService = async (
     throw error;
   }
 };
+
+export const deleteUserService = async (userId: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/users/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    throw error;
+  }
+};

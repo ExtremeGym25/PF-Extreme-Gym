@@ -20,10 +20,35 @@ const Footer = () => {
         </div>
 
         <div className="transition hover:text-verde">
-          <h3 className="mb-3 text-lg font-semibold">Contactanos</h3>
-          <p className="text-justify text-gray-400 hover:text-verde">
-            AQUI DEBE IR ALGO
-          </p>
+          <h3 className="mb-3 text-lg font-semibold">Políticas</h3>
+          <div>
+            <Link href="/politicas/protecciondedatos">
+              <p className="text-justify text-gray-400 hover:text-verde">
+                Proteccion de Datos
+              </p>
+            </Link>
+            <Link href="/politicas/politicaprivacidad">
+              <p className="text-justify text-gray-400 hover:text-verde">
+                Política de Privacidad
+              </p>
+            </Link>
+            <Link href="/politicas/terminoscondiciones">
+              <p className="text-justify text-gray-400 hover:text-verde">
+                Términos y Condiciones de Uso{" "}
+              </p>
+            </Link>
+          </div>
+          <h3 className="pt-2 mb-3 text-lg font-semibold">Contáctanos</h3>
+          <Link href="tel:+123456789">
+            <p className="text-justify text-gray-400 hover:text-verde">
+              Llamanos{" "}
+            </p>
+          </Link>
+          <Link href="mailto:extremegym25@gmail.com">
+            <p className="text-justify text-gray-400 hover:text-verde">
+              Email{" "}
+            </p>
+          </Link>
         </div>
 
         <div className=" hover:text-verde">
