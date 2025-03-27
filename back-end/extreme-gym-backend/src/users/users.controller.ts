@@ -33,7 +33,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Patch('profile')  
+  @Post('profile')  
   @UseInterceptors(  
     FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),  
   )  
@@ -45,16 +45,18 @@ export class UsersController {
     }  
  
     if (file) { 
-      user.profileImage = await this.fileUploadService.uploadProfilePicture(file, user.id);
+      user.profileImage = await this.fileUploadService.uploadProfilePicture(file, user.id)
+      console.log(user.profile);
+      
     } else {  
-
+      // Si no se carga una imagen, se mantendrá la imagen por defecto  
       user.profileImage =
         user.profileImage ||
-        'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png';  
-    }  
+        'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png';
+    }
 
-    return await this.usersService.profileUpdate(user);  
-  }  
+    return await this.usersService.profileUpdate(user);
+  }
 
   @Patch(':id')
   async update(

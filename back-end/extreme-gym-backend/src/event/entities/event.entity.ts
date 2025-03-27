@@ -43,11 +43,11 @@ export class Event {
   @Column({ default: false })
   isCancelled: boolean;
 
-  @ManyToOne(() => User, (user) => user.fileUploads) // Ajuste para la relación
-  @JoinColumn({ name: 'userId' }) // Nombre de la columna que se usará en la tabla EVENTS
-  user: User; // Relación con el usuario
+  @ManyToOne(() => User, (user) => user.fileUploads)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
-  @OneToMany(() => Booking, (booking) => booking.event) // Relación con reservas
+  @OneToMany(() => Booking, (booking) => booking.event)
   bookings: Booking[];
   
   @BeforeUpdate()

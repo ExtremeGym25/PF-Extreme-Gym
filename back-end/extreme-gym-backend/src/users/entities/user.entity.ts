@@ -49,7 +49,7 @@ export class User {
   profileImage?: string;
 
   @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'plan' })
+  @JoinColumn({ name: 'planid' })
   plan: Subscription;
 
   @Column({ nullable: true })

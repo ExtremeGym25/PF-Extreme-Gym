@@ -2,10 +2,10 @@ import { IsNumber, IsPositive, IsString } from "class-validator";
 
 export class CreateBookingDto {
   @IsString()
-  userId: string; // ID del usuario que hace la reserva
+  userId: string;
 
   @IsString()
-  eventId: string; // ID del evento que se reserva
+  eventId: string;
 
   @IsNumber()
   @IsPositive()

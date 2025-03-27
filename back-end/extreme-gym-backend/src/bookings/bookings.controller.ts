@@ -18,7 +18,6 @@ import { Booking } from './entities/booking.entity';
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  // Crear una nueva reserva
   @Post()
   async create(@Body() createBookingDto: CreateBookingDto): Promise<Booking> {
     try {
@@ -37,7 +36,7 @@ export class BookingsController {
     return await this.bookingsService.findAllBookings();
   }
 
-  // Obtener una reserva por ID
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Booking> {
     try {
@@ -50,7 +49,6 @@ export class BookingsController {
     }
   }
 
-  // Actualizar una reserva
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -66,7 +64,6 @@ export class BookingsController {
     }
   }
 
-  // Eliminar una reserva
   @Delete(':id')
   async cancel(@Param('id') id: string): Promise<void> {
     try {

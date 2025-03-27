@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
+import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
 import { uploadProfileImageService } from "../servicios/auth";
+import { useAuth } from "../contextos/contextoAuth";
+import { routes } from "../routes/routes";
 
 const validationSchema = Yup.object().shape({
   profileImage: Yup.mixed()
@@ -28,6 +31,8 @@ interface FormValues {
 const ImagenPerfil = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { resetUserData } = useAuth();
+  const router = useRouter();
   return (
     <Formik<FormValues>
       initialValues={{ profileImage: null }}
@@ -47,6 +52,11 @@ const ImagenPerfil = () => {
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
+
+          resetUserData();
+          setTimeout(() => {
+            router.push(routes.login);
+          }, 1000);
         } catch (error) {
           console.error("Error al subir la imagen:", error);
           toast.error("Error al subir la imagen");

@@ -9,7 +9,7 @@ import { Booking } from './entities/booking.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Event } from 'src/event/entities/event.entity';
-import { User } from '../users/entities/user.entity'; // Asegúrate de que la ruta sea correcta
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class BookingsService {
@@ -42,7 +42,7 @@ export class BookingsService {
       user: user,
       event: event,
       numberOfPeople: createBookingDto.numberOfPeople,
-      bookingsDate: new Date(), // Establecemos la fecha de la reserva actual
+      bookingsDate: new Date(),
     });
 
     return await this.bookingRepository.save(booking);
@@ -53,11 +53,10 @@ export class BookingsService {
     return await this.bookingRepository.find({ relations: ['user', 'event'] });
   }
 
-  // Obtener una reserva por ID
   async findBookingById(id: string): Promise<Booking> {
     const booking = await this.bookingRepository.findOne({
       where: { id },
-      relations: ['user', 'event'], // Cargar relaciones si es necesario
+      relations: ['user', 'event'],
     });
     if (!booking) {
       throw new NotFoundException(`Reserva con ID ${id} no encontrada`);
@@ -65,7 +64,6 @@ export class BookingsService {
     return booking;
   }
 
-  // Actualizar una reserva
   async updateBooking(
     id: string,
     updateBookingDto: UpdateBookingDto,
@@ -79,7 +77,7 @@ export class BookingsService {
       if (!user) {
         throw new NotFoundException('Usuario no encontrado');
       }
-      booking.user = user; // Actualiza el usuario de la reserva
+      booking.user = user;
     }
 
     if (updateBookingDto.eventId) {
@@ -89,17 +87,16 @@ export class BookingsService {
       if (!event) {
         throw new NotFoundException('Evento no encontrado');
       }
-      booking.event = event; // Actualiza el evento de la reserva
+      booking.event = event;
     }
 
     if (updateBookingDto.numberOfPeople !== undefined) {
-      booking.numberOfPeople = updateBookingDto.numberOfPeople; // Actualiza el número de personas
+      booking.numberOfPeople = updateBookingDto.numberOfPeople;
     }
 
     return await this.bookingRepository.save(booking);
   }
 
-  // Eliminar una reserva
   async cancelBooking(id: string): Promise<void> {
     const booking = await this.findBookingById(id);
     booking.isCancelled = true;

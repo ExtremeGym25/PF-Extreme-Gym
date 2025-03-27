@@ -10,7 +10,6 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Event } from './entities/event.entity'
 import { User } from 'src/users/entities/user.entity';
-import { create } from 'domain';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
