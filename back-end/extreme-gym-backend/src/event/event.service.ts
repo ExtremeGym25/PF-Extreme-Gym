@@ -5,22 +5,39 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
+import { CreateEventDto, ExtremeSportCategory } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Event } from './entities/event.entity'
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class EventService {
   private readonly eventRepository: Repository<Event>;
+  private readonly userRepository: Repository<User>;
   private readonly logger = new Logger(EventService.name);
 
-  constructor(private dataSource: DataSource) {
+  constructor(private dataSource: DataSource, private readonly userService: UsersService) {
     this.eventRepository = this.dataSource.getRepository(Event);
+    this.userRepository = this.dataSource.getRepository(User);
   }
 
   async createEvent(createEventDto: CreateEventDto): Promise<Event> {
+    if (!Object.values(ExtremeSportCategory).includes(createEventDto.category)) {  
+      throw new BadRequestException('Categoría de evento inválida'); 
+  } 
+
+  const user = await this.userService.findOne(
+    createEventDto.userId );
+  if (!user) {
+    throw new BadRequestException('Usuario no encontrado');
+  }
+
     try {
+      const event = this.eventRepository.create({
+        ...createEventDto, user
+      });
       return await this.eventRepository.save(createEventDto);
     } catch (error) {
       if (error instanceof QueryFailedError) {
@@ -40,7 +57,7 @@ export class EventService {
 
   async getEvents(): Promise<Event[]> {
     try {
-      return await this.eventRepository.find();
+      return await this.eventRepository.find({ relations: ['user'] });
     } catch (error) {
       this.logger.error(
         `Error al obtener los eventos: ${error.message}`,
@@ -54,7 +71,7 @@ export class EventService {
 
   async getEventById(id: string): Promise<Event> {
     try {
-      const event = await this.eventRepository.findOne({ where: { id } });
+      const event = await this.eventRepository.findOne({ where: { id }, relations: ['user'] });
       if (!event) {
         throw new NotFoundException(`Evento con ID ${id} no encontrado`);
       }
@@ -75,8 +92,13 @@ export class EventService {
     id: string,
     updateEventDto: UpdateEventDto,
   ): Promise<Event> {
+    const event= await this.getEventById(id);
+
+    if (updateEventDto.category && !Object.values(ExtremeSportCategory).includes(updateEventDto.category)) {
+      throw new BadRequestException('Categoria de evento invalida');
+    } 
+
     try {
-      const event = await this.getEventById(id);
       this.eventRepository.merge(event, updateEventDto);
       return await this.eventRepository.save(event);
     } catch (error) {
