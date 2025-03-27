@@ -15,7 +15,7 @@ export class UsersService {
   async findAll() {
     const users = await this.userRepository.find();
     return users.map(
-      ({ password, isAdmin, subscriptionType, ...user }) => user,
+      ({ password, isAdmin, ...user }) => user,
     );
   }
 
@@ -61,7 +61,7 @@ export class UsersService {
     Object.assign(existingUser, updateUserDto);
 
     const savedUser = await this.userRepository.save(existingUser);
-    const { password, isAdmin, subscriptionType, ...userWithoutSensitiveData } =
+    const { password, isAdmin, ...userWithoutSensitiveData } =
       savedUser;
 
     return {

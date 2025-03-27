@@ -8,6 +8,7 @@ import {
   IsNumber,
   Validate,
   IsOptional,
+  IsUrl,
 } from 'class-validator';
 import { MatchPassword } from '../../helpers/matchPassword';
 
@@ -59,5 +60,7 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
+  @IsUrl()
+  @MaxLength(2048)
   profileImage?: string;
 }

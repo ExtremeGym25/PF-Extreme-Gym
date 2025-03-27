@@ -23,48 +23,79 @@ export class FileUploadService {
     });
   }
 
-  private validateImageType(file: Express.Multer.File): void {
+  private validateFileType(
+    file: Express.Multer.File,
+    allowedTypes: string[],
+    errorMessage: string,
+  ): void {
     const { mimetype } = file;
-
-    if (!this.allowedImageTypes.includes(mimetype)) {
-      throw new BadRequestException(
-        'Formato de archivo no permitido. Por favor, sube un archivo de tipo imagen (PNG, JPEG, GIF).',
-      );
+    if (!allowedTypes.includes(mimetype)) {
+      throw new BadRequestException(errorMessage);
     }
   }
 
-  private validateVideoType(file: Express.Multer.File): void {
-    const { mimetype } = file;
-
-    if (!this.allowedVideoTypes.includes(mimetype)) {
-      throw new BadRequestException(
-        'Formato de archivo no permitido. Por favor, sube un archivo de tipo video (MP4, WEBM, AVI).',
-      );
-    }
+  async uploadImage(
+    file: Express.Multer.File,
+    category: string,
+    userId?: string,
+  ): Promise<string> {
+    const allowedTypes = [...this.allowedImageTypes, ...this.allowedVideoTypes];
+    const errorMessage =
+      'Formato de archivo no permitido. Por favor, sube un archivo de tipo imagen (PNG, JPEG, GIF) o video (MP4, WEBM, AVI).';
+    this.validateFileType(file, allowedTypes, errorMessage);
+    const resourceType = this.allowedVideoTypes.includes(file.mimetype)
+      ? 'video'
+      : 'image';
+    return await this.uploadToResource(
+      file,
+      `${category}`,
+      resourceType,
+      userId,
+      category,
+    );
   }
 
-  async uploadImage(file: Express.Multer.File, category: string): Promise<string> {
-    this.validateImageType(file);
-    const result= await this.uploadFile(file, `images/${category}`);
-    return this.saveFileUpload(result, 'image', null);
+  private async uploadToResource(
+    file: Express.Multer.File,
+    folder: string,
+    resourceType: 'image' | 'video',
+    userId?: string,
+    context?: string,
+  ): Promise<string> {
+    const result = await this.uploadFileCloudinary(file, folder, resourceType);
+    return await this.saveFileUpload(result, resourceType, userId || null, context || null);return await this.saveFileUpload(result, resourceType, userId || null, context || null);return await this.saveFileUpload(
+      result,
+      resourceType,
+      userId ?? null,
+      context ?? null,
+    );
   }
 
   async uploadProfilePicture(
-    file: Express.Multer.File, userId: string
+    file: Express.Multer.File,
+    userId: string,
   ): Promise<string> {
-    this.validateImageType(file); 
-    const result = await this.uploadFile(file, 'profile_pictures');
-    const uploadResponse= await this.saveFileUpload(result, 'image', userId);
-    return await this.saveFileUpload(result, 'image', userId);
+    this.validateFileType(
+      file,
+      this.allowedImageTypes,
+      'Formato de archivo no permitido. Por favor, sube un archivo de tipo imagen (PNG, JPEG, GIF).',
+    );
+    return this.uploadToResource(
+      file,
+      'profile_pictures',
+      'image',
+      userId,
+      'profile',
+    );
   }
 
-  async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
-    this.validateVideoType(file); 
-    return this.uploadFile(file, 'videos', 'video');
-  }
-
-  private async saveFileUpload(result: UploadApiResponse, type: 'image' | 'video', userId: string | null): Promise<string> {
-let user: User | null = null;
+  private async saveFileUpload(
+    result: UploadApiResponse,
+    type: 'image' | 'video',
+    userId: string | null,
+    context: string | null,
+  ): Promise<string> {
+    let user: User | null = null;
     if (userId) {
       user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
@@ -72,20 +103,25 @@ let user: User | null = null;
       }
     }
 
-    const fileUploadData: Partial<FileUpload>= {
+    const fileUploadData: Partial<FileUpload> = {
       url: result.secure_url,
       type: type,
-      userId: user,
+      user: user,
       createdAt: new Date(),
+      context: context,
     };
 
-    const fileUpload= this.fileUploadRepository.create(fileUploadData);
+    const fileUpload = this.fileUploadRepository.create(fileUploadData);
     await this.fileUploadRepository.save(fileUpload);
 
-    return result.secure_url
-  };
+    if (type === 'image' && user && context === 'profile') {
+      user.profileImage = result.secure_url;
+      await this.userRepository.save(user);
+    }
+    return result.secure_url;
+  }
 
-  private uploadFile(
+  private uploadFileCloudinary(
     file: Express.Multer.File,
     folder: string,
     resourceType: 'image' | 'video' = 'image',
@@ -97,13 +133,16 @@ let user: User | null = null;
           if (error) {
             console.log(`Error al subir el ${resourceType}`, error);
             return reject(
-              new Error(`Error al subir el ${resourceType}: ${error.message}`),
+              new BadRequestException(
+                `Error al subir el ${resourceType}: ${error.message}`,
+              ),
             );
           }
           if (!result) {
-
             return reject(
-              new Error('No se recibió un resultado válido de Cloudinary.'),
+              new BadRequestException(
+                'No se recibió un resultado válido de Cloudinary.',
+              ),
             );
           }
           resolve(result);

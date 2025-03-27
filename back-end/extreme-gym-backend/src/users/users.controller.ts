@@ -33,28 +33,23 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post('profile')
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
-  )
-  async uploadProfileImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Body('userId') userId: string,
-  ): Promise<User | null> {
-    const user = await this.usersService.profileFindById(userId);
-
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
-
-    if (file) {
-      user.profileImage = await this.fileUploadService.uploadProfilePicture(
-        file,
-        user.id,
-      );
+  @Post('profile')  
+  @UseInterceptors(  
+    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),  
+  )  
+  async uploadProfileImage(@UploadedFile() file: Express.Multer.File, @Body('userId') userId: string): Promise<User | null> {  
+    const user = await this.usersService.profileFindById(userId);  
+    
+    if (!user) {  
+      throw new Error('Usuario no encontrado');  
+    }  
+ 
+    if (file) { 
+      user.profileImage = await this.fileUploadService.uploadProfilePicture(file, user.id)
       console.log(user.profile);
-    } else {
-      // Si no se carga una imagen, se mantendrá la imagen por defecto
+      
+    } else {  
+      // Si no se carga una imagen, se mantendrá la imagen por defecto  
       user.profileImage =
         user.profileImage ||
         'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png';

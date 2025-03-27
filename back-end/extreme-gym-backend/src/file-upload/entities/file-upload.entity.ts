@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({
   name: 'FILE_UPLOAD',
@@ -14,6 +14,12 @@ export class FileUpload {
   @Column({ nullable: true })
   type: 'image' | 'video';
 
+  @ManyToOne(() => User, (user) => user.fileUploads, { nullable: true })
+  @JoinColumn({ name: 'userId' })
+  user: User | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  context: string | null;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP', nullable: false })
   createdAt: Date;
@@ -21,8 +27,5 @@ export class FileUpload {
   constructor() {
     this.createdAt = new Date();
   }
-
-  @ManyToOne(() => User, (user) => user.fileUploads, {nullable: true}) // Asegúrate de que esta relación sea válida
-  userId: User | null;
 }
 

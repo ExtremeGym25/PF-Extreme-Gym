@@ -1,28 +1,30 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Booking } from "src/bookings/entities/booking.entity";
+import { User } from "src/users/entities/user.entity";
+import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({
-  name: 'EVENT'
+  name: 'EVENTS',
 })
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column()
+  @Column('text')
   description: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   location: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   date: Date;
 
-  @Column()
+  @Column({ type: 'time' })
   time: string;
 
-  @Column()
+  @Column({ type: 'int' })
   capacity: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -41,6 +43,13 @@ export class Event {
   @Column({ default: false })
   isCancelled: boolean;
 
+  @ManyToOne(() => User, (user) => user.fileUploads)
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @OneToMany(() => Booking, (booking) => booking.event)
+  bookings: Booking[];
+  
   @BeforeUpdate()
   updateTimestamp() {
     this.updatedAt = new Date();
