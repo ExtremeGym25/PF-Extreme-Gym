@@ -1,34 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PlansService } from './plans.service';
-import { CreatePlanDto } from './dto/create-plan.dto';
-import { UpdatePlanDto } from './dto/update-plan.dto';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { PlanService } from './plans.service';
+import { AssignPlanDto } from './dto/assign-plan.dto';
+import { User as UserDecorator } from '../decorators/user.decorator'; 
+import { User } from '../users/entities/user.entity'; 
 
 @Controller('plans')
-export class PlansController {
-  constructor(private readonly plansService: PlansService) {}
+export class PlanController {
+  constructor(private readonly planService: PlanService) {}
 
-  @Post()
-  create(@Body() createPlanDto: CreatePlanDto) {
-    return this.plansService.create(createPlanDto);
+  @Post('assign')
+  async assignPlan(@UserDecorator() user: User, @Body() dto: AssignPlanDto) {
+    return this.planService.assignPlan(user.id, dto);
   }
 
-  @Get()
-  findAll() {
-    return this.plansService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.plansService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlanDto: UpdatePlanDto) {
-    return this.plansService.update(+id, updatePlanDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.plansService.remove(+id);
+  async getMyPlans(@UserDecorator() user: User) {
+    return this.planService.getUserPlans(user.id); 
   }
 }

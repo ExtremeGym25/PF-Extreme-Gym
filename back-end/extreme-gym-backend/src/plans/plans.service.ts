@@ -70,4 +70,11 @@ export class PlanService {
       });
     }
   }
+
+  async getUserPlans(userId: string) {
+    return this.userPlanRepo.find({
+      where: { userId },
+      relations: ['plan'],
+    });
+  }
 }
