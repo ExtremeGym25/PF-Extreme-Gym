@@ -8,6 +8,7 @@ import Link from "next/link";
 import MiPerfilUsuario from "../views/MiPerfilUsuario";
 import UpdatePerfilUsuario from "../views/UpdateUsuario";
 import ImagenPerfil from "../views/ImagenPerfil";
+import DeleteUsuario from "../views/DeleteUsuario";
 
 const MiPerfil = () => {
   const loading = usePrivate();
@@ -29,7 +30,7 @@ const MiPerfil = () => {
       <h2 className="text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
         Mi Perfil
       </h2>
-      <div className="grid w-full max-w-6xl grid-cols-1 gap-8 pt-4 md:grid-cols-2">
+      <div className="grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col items-center">
           <div className="w-full max-w-xl p-8 space-y-6 shadow-lg bg-fondo rounded-2xl">
             <p className="text-xl font-semibold text-center text-gray-700">
@@ -44,8 +45,8 @@ const MiPerfil = () => {
               <ImagenPerfil />.
             </Acordeon>
 
-            <Acordeon title="Eventos">
-              <p>Aquí va la información de eventos.</p>
+            <Acordeon title="Eliminar Cuenta">
+              <DeleteUsuario />
             </Acordeon>
           </div>
         </div>

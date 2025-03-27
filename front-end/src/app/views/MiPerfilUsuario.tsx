@@ -17,7 +17,7 @@ const MiPerfilUsuario = () => {
 
   return (
     <div className="flex justify-center">
-      <div className="h-auto py-8 mx-auto transition-transform duration-300 bg-white rounded-lg shadow-md w-96">
+      <div className="h-auto py-8 mx-auto transition-transform duration-300 rounded-lg shadow-md bg-fondo w-96">
         <h3 className="text-xl font-bold text-center capitalize">
           Usuario: {user?.name || "No especificado"}
         </h3>

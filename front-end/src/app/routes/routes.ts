@@ -1,7 +1,6 @@
 export const routes = {
   login: "/auth/login",
   registro: "/auth/registro",
-  //landing: "/landing",
   miPerfil: "/miPerfil",
   carroCompras: "/carroCompra",
   home: "/",
@@ -18,7 +17,5 @@ export const routes = {
   adminEn: "/admin/entrenadores",
   adminP: "/admin/publicidad",
   adminCE: "/admin/casosDeExito",
-  adminVP: "/admin/vistaPrevia"
-}
-
-
+  adminVP: "/admin/vistaPrevia",
+};

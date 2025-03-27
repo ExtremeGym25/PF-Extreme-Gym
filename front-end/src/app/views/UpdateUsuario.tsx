@@ -81,7 +81,7 @@ const UpdatePerfilUsuario = () => {
   };
 
   return (
-    <div className="p-4 mx-auto transition-transform duration-300 rounded-lg shadow-md text-foreground w-96">
+    <div className="w-full max-w-md p-4 mx-auto transition-transform duration-300 rounded-lg shadow-md text-foreground">
       <h3 className="text-xl font-bold text-center capitalize text-foreground">
         Mi Perfil
       </h3>
