@@ -2,6 +2,7 @@ import { IsDateString } from 'class-validator';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 import { UserPlan } from 'src/plans/entities/user-plan.entity';
 import {
   Entity,
@@ -83,4 +84,9 @@ export class User {
 
   @OneToMany(() => UserPlan, (userPlan) => userPlan.user)
   plans: UserPlan[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  
 }
