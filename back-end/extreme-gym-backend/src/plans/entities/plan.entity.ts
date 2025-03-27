@@ -3,8 +3,13 @@ import { UserPlan } from './user-plan.entity';
 
 export enum PlanCategory {
   SALUD = 'salud',
-  RENDIMIENTO = 'rendimiento',
-  COMPETICION = 'competicion',
+  FUERZA = 'fuerza',
+  ESPECIALIZADO = 'especializado',
+  FUNCIONAL = 'funcional',
+  ACUATICO = 'acuatico',
+  MENTECUERPO = 'mentecuerpo',
+  ARTESMARCIALES = 'artesmarciales',
+  AEROBICO = 'aerobico',
 }
 
 @Entity({ name: 'PLAN' })
