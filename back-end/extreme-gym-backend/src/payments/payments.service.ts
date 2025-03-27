@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -44,10 +44,11 @@ export class PaymentsService {
   async assignPremiumMonthlyPlan(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['plan'],
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
     }
 
     const premiumPlan = await this.subscriptionRepository.findOne({
@@ -55,31 +56,37 @@ export class PaymentsService {
     });
 
     if (!premiumPlan) {
-      throw new Error('Premium plan not found');
+      throw new NotFoundException(
+        'Plan Premium no está disponible actualmente',
+      );
     }
 
-    user.plan = premiumPlan;
-    user.subscriptionExpirationDate = this.addMonthsToDate(new Date(), 1);
+    try {
+      user.plan = premiumPlan;
+      user.subscriptionExpirationDate = this.addMonthsToDate(new Date(), 1);
 
-    await this.userRepository.save(user);
+      await this.userRepository.save(user);
+      await this.notificationsService.enviarCorreoConfirmacion(
+        user.email,
+        user.name,
+        'Mensual',
+        '1 mes',
+      );
 
-    await this.notificationsService.enviarCorreoConfirmacion(
-      user.email,
-      user.name,
-      'Mensual',
-      '1 mes',
-    );
-
-    return user;
+      return user;
+    } catch (error) {
+      throw new Error('Error al guardar la suscripción mensual');
+    }
   }
 
   async assignPremiumYearlyPlan(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['plan'],
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
     }
 
     const premiumPlan = await this.subscriptionRepository.findOne({
@@ -87,23 +94,28 @@ export class PaymentsService {
     });
 
     if (!premiumPlan) {
-      throw new Error('Premium plan not found');
+      throw new NotFoundException(
+        'Plan Premium no está disponible actualmente',
+      );
     }
 
-    user.plan = premiumPlan;
-    user.subscriptionExpirationDate = this.addYearsToDate(new Date(), 1);
+    try {
+      user.plan = premiumPlan;
+      user.subscriptionExpirationDate = this.addYearsToDate(new Date(), 1);
 
-    await this.userRepository.save(user);
-     await this.notificationsService.enviarCorreoConfirmacion(
-       user.email,
-       user.name,
-       'Anual',
-       '1 año',
-     );
+      await this.userRepository.save(user);
+      await this.notificationsService.enviarCorreoConfirmacion(
+        user.email,
+        user.name,
+        'Anual',
+        '1 año',
+      );
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new Error('Error al guardar la suscripción mensual');
+    }
   }
-
   private addMonthsToDate(date: Date, months: number): string {
     date.setMonth(date.getMonth() + months);
     return date.toISOString();

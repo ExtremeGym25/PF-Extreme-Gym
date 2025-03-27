@@ -5,6 +5,7 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { User } from 'src/users/entities/user.entity';
@@ -46,23 +47,36 @@ export class PaymentsController {
   }
 
   @Post('subscribe/monthly/:userId')
-  async subscribeMonthly(@Param('userId') userId: string) {
-    const user = await this.paymentsService.assignPremiumMonthlyPlan(userId);
-    return {
-      message: 'Suscripción mensual activada',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        plan: user.plan ? user.plan.name : 'Sin plan',
-        expirationDate: user.subscriptionExpirationDate,
-      },
-    };
+  async subscribeMonthly(@Param('userId', ParseUUIDPipe) userId: string) {
+    try {
+      const user = await this.paymentsService.assignPremiumMonthlyPlan(userId);
+      return {
+        status: 'success',
+        statusCode: HttpStatus.OK,
+        message: 'Suscripción mensual activada',
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            plan: user.plan?.name || 'Sin plan',
+            expirationDate: user.subscriptionExpirationDate,
+          },
+        },
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        statusCode: HttpStatus.NOT_FOUND,
+        message: error.message || 'Error al procesar suscripción mensual',
+        data: null,
+      };
+    }
   }
 
   // ✅ Prueba la suscripción anual
   @Post('subscribe/yearly/:userId')
-  async subscribeYearly(@Param('userId') userId: string) {
+  async subscribeYearly(@Param('userId', ParseUUIDPipe) userId: string) {
     const user = await this.paymentsService.assignPremiumYearlyPlan(userId);
 
     return {

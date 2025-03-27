@@ -1,34 +1,95 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PlansService } from './plans.service';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Delete,
+  Param,
+  Query,
+  ParseIntPipe,
+  Put,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
+import { PlanService } from './plans.service';
+import { AssignPlanDto } from './dto/assign-plan.dto';
+import { User as UserDecorator } from '../decorators/user.decorator';
+import { User } from '../users/entities/user.entity';
+import { PlanCategory } from './entities/plan.entity';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Role } from '../users/entities/roles.enum';
+import { Roles } from 'src/decorators/roles.decorators';
 
 @Controller('plans')
-export class PlansController {
-  constructor(private readonly plansService: PlansService) {}
+export class PlanController {
+  constructor(private readonly planService: PlanService) {}
 
-  @Post()
-  create(@Body() createPlanDto: CreatePlanDto) {
-    return this.plansService.create(createPlanDto);
+  @Post('assign')
+  @UseGuards(AuthGuard)
+  async assignPlan(@UserDecorator() user: User, @Body() dto: AssignPlanDto) {
+    if (!user || !user.id) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+    return this.planService.assignPlan(user.id, dto);
+  }
+
+  @Post('create')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async createPlan(@Body() dto: CreatePlanDto) {
+    return this.planService.createPlan(dto);
   }
 
   @Get()
-  findAll() {
-    return this.plansService.findAll();
+  @UseGuards(AuthGuard)
+  async getPlans(
+    @Query('categoria') categoria?: PlanCategory,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
+  ) {
+    return this.planService.findAll({ categoria, page, limit });
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.plansService.findOne(+id);
-  }
+  @Get('my-plans')
+  @UseGuards(AuthGuard)
+  async getMyPlans(@UserDecorator() user: User) {
+    const plans = await this.planService.getUserPlans(user.id);
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlanDto: UpdatePlanDto) {
-    return this.plansService.update(+id, updatePlanDto);
+    if (!plans || plans.length === 0) {
+      throw new NotFoundException('No tienes planes asignados');
+    }
+
+    return plans;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.plansService.remove(+id);
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async deletePlan(@Param('id') id: string) {
+    await this.planService.deletePlan(id);
+    return {
+      statusCode: 200,
+      message: 'Plan eliminado correctamente',
+    };
+  }
+  @Put(':id')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  updatePlan(@Param('id') id: string, @Body() dto: UpdatePlanDto) {
+    return this.planService.updatePlan(id, dto);
+  }
+  @Get('check-expirations')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async checkExpirations() {
+    const result = await this.planService.checkExpirations();
+    return {
+      status: 'success',
+      data: result,
+    };
   }
 }

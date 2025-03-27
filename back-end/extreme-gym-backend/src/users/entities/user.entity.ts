@@ -2,6 +2,7 @@ import { IsDateString } from 'class-validator';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
+import { UserPlan } from 'src/plans/entities/user-plan.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -79,4 +80,7 @@ export class User {
     nullable: true,
   })
   fileUploads: FileUpload[];
+
+  @OneToMany(() => UserPlan, (userPlan) => userPlan.user)
+  plans: UserPlan[];
 }
