@@ -46,7 +46,7 @@ export class PlanController {
     return this.planService.assignPlan(user.id, dto);
   }
 
-  @Post('create')
+  @Post()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   async createPlan(@Body() dto: CreatePlanDto) {
@@ -117,7 +117,7 @@ export class PlanController {
         file,
         'plan_images',
       );
-      // Aquí puedes actualizar tu entidad Plan con la imageUrl usando plansService
+
       await this.planService.updatePlanImage(planId, imageUrl);
 
       return { imageUrl };
