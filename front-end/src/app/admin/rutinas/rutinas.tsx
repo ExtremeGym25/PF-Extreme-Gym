@@ -40,8 +40,8 @@ const CreacionRutinas = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center p-2 ">
-      <div className="max-w-lg p-6 shadow-md sm:w-1/3 md:w-full bg-azul2 rounded-xl">
+    <div className="flex items-center justify-center p-2">
+      <div className="w-full max-w-lg p-6 shadow-md sm:w-11/12 md:w-8/12 lg:w-6/12 bg-azul2 rounded-xl">
         <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
           Crear Rutina
         </h2>
