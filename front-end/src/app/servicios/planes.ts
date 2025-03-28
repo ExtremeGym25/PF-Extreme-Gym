@@ -18,20 +18,6 @@ export const createPlanService = async (planData: IPlans, token: string) => {
     });
     console.log("Respuesta creación planes rutinas:", plan);
     return plan.data;
-<<<<<<< HEAD
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response) {
-      if (axios.isAxiosError(error)) {
-        console.error(
-          "Error de Axios:",
-          error.response?.data.message || error.message
-        );
-        throw new Error(error.response?.data?.message || "Error desconocido");
-      } else {
-        console.error("Error desconocido:", error);
-        throw new Error("Ocurrió un error inesperado");
-      }
-=======
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
@@ -42,7 +28,6 @@ export const createPlanService = async (planData: IPlans, token: string) => {
     } else {
       console.error("Error inesperado:", (error as Error).message);
       throw new Error((error as Error).message || "Error desconocido");
->>>>>>> 42015e8 ("Dashboard admin")
     }
   }
 };
@@ -79,10 +64,6 @@ export const getPlanService = async (
     }
   }
 };
-<<<<<<< HEAD
-export const deletePlanService = async (id: string, token: string) => {
-  try {
-=======
 export const updatePlanService = async (
   token: string,
   id: string,
@@ -129,7 +110,6 @@ export const updatePlanService = async (
 export const deletePlanService = async (id: string, token: string) => {
   try {
     console.log("Token de autenticación:", token);
->>>>>>> 42015e8 ("Dashboard admin")
     const response = await axios.delete(`http://localhost:3000/plans/${id}`, {
       headers: {
         Authorization: `Bearer ${token.trim()}`,
