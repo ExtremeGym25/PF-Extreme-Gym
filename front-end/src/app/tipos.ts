@@ -30,7 +30,7 @@ export enum PlanCategory {
   AEROBICO = "aerobico",
 }
 export interface IPlans {
-  id?: string;
+  id?: string | null;
   nombre: string;
   descripcion: string;
   categoria: PlanCategory;

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { IPlans } from "@/app/tipos";
 import { getPlanService } from "@/app/servicios/planes";
+import DeleteRutinas from "./DeleteRutinas";
 
 const ListaRutinas = () => {
   const [rutinas, setRutinas] = useState<IPlans[]>([]);
@@ -84,6 +85,12 @@ const ListaRutinas = () => {
                   <source src={rutina.descripcion} type="video/mp4" />
                   Tu navegador no soporta el elemento de video.
                 </video>
+                <DeleteRutinas
+                  id={rutina.id || ""}
+                  onPlanDeleted={() => {
+                    setRutinas(rutinas.filter((r) => r.id !== rutina.id));
+                  }}
+                />
               </div>
             </li>
           ))}

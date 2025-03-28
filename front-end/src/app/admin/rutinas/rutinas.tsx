@@ -141,7 +141,7 @@ const CreacionRutinas = () => {
                 <Field
                   type="text"
                   name="imageUrl"
-                  placeholder="URL de la imagen (opcional)"
+                  placeholder="VIDEO"
                   className="w-full p-2 text-black rounded bg-blanco"
                 />
               </div>
