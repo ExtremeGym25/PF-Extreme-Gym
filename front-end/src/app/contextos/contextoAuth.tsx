@@ -8,7 +8,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { jwtDecode } from "jwt-decode"; // Importación corregida
+import { jwtDecode } from "jwt-decode";
 
 import { IUser } from "../tipos";
 
@@ -35,7 +35,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(data.user);
     setIsAuth(true);
     setToken(data.token);
-    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("token", data.token);
   };
 
   const resetUserData = () => {
@@ -43,6 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuth(false);
     setToken(null);
     localStorage.removeItem("user");
+    console.log("Se eliminó el token");
   };
 
   useEffect(() => {
@@ -59,7 +61,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const parsedData: { user: IUser; token: string } =
           JSON.parse(storageData);
-        console.log(user, "user");
         // Validación del token
         if (!parsedData.token || parsedData.token.split(".").length !== 3) {
           console.warn("Token inválido o mal formado");

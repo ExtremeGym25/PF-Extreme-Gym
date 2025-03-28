@@ -19,3 +19,20 @@ export interface IResponseBack {
   id?: string;
   isAdmin?: boolean;
 }
+export enum PlanCategory {
+  SALUD = "salud",
+  FUERZA = "fuerza",
+  ESPECIALIZADO = "especializado",
+  FUNCIONAL = "funcional",
+  ACUATICO = "acuatico",
+  MENTECUERPO = "mentecuerpo",
+  ARTESMARCIALES = "artesmarciales",
+  AEROBICO = "aerobico",
+}
+export interface IPlans {
+  id?: string;
+  nombre: string;
+  descripcion: string;
+  categoria: PlanCategory;
+  imageUrl?: string;
+}
