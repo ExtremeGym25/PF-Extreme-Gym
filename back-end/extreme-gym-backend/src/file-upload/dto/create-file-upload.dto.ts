@@ -1,4 +1,3 @@
-// dto/create-file-upload.dto.ts
 import { IsString, IsEnum } from 'class-validator';
 
 export class CreateFileUploadDto {

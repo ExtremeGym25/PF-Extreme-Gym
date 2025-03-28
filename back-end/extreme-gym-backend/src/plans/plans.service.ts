@@ -163,4 +163,13 @@ export class PlanService {
 
     return this.planRepo.save({ ...plan, ...dto });
   }
+  async updatePlanImage(planId: string, imageUrl: string): Promise<Plan> {
+    const plan = await this.planRepo.findOneBy({ id: planId });
+    if (!plan) {
+      throw new NotFoundException('Plan no encontrado');
+    }
+
+    plan.imageUrl = imageUrl;
+    return this.planRepo.save(plan);
+  }
 }

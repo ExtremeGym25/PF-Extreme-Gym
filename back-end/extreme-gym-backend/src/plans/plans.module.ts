@@ -8,6 +8,9 @@ import { User } from '../users/entities/user.entity';
 import { Notification } from '../notifications/entities/notification.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { FileUploadModule } from 'src/file-upload/file-upload.module';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 
 @Module({
   imports: [
@@ -15,13 +18,15 @@ import { MailerModule } from '@nestjs-modules/mailer';
       Plan,
       UserPlan,
       User,
-      Notification,
       MailerModule,
+      Notification,
+      FileUpload
     ]),
     NotificationsModule,
+    FileUploadModule,
   ],
   controllers: [PlanController],
-  providers: [PlanService, NotificationsModule],
+  providers: [PlanService, NotificationsModule, FileUploadService],
   exports: [PlanService],
 })
 export class PlansModule {}

@@ -107,7 +107,6 @@ export class FileUploadService {
       url: result.secure_url,
       type: type,
       user: user,
-      createdAt: new Date(),
       context: context,
     };
 
