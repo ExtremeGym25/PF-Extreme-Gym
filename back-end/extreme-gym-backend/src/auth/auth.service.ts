@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateUserDto, LoginUserDto } from '../users/dto/create-user.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt/dist';
+import { User } from '../users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import { Subscription } from 'src/payments/entities/payment.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private jwtService: JwtService,
+    private readonly notificationsService: NotificationsService,
+  ) {}
+
+  async createUser(user: CreateUserDto) {
+    const { email, password, confirmPassword, ...userWithoutConfirmation } =
+      user;
+
+    const finduser = await this.usersRepository.findOneBy({ email });
+    if (finduser) throw new BadRequestException('user already registered');
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await this.usersRepository.save({
+      ...userWithoutConfirmation,
+      password: hashedPassword,
+      email: email,
+      isAdmin: false,
+      premium: false,
+    });
+
+    await this.notificationsService.sendWelcomeEmail(
+      newUser.email,
+      newUser.name,
+    );
+
+
+    const { password: _, isAdmin, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async signIn(credentials: LoginUserDto) {
+    const { email, password } = credentials;
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const finduser = await this.usersRepository.findOneBy({ email });
+    if (!finduser) throw new BadRequestException('bad credentials');
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      const passwordMatch = await bcrypt.compare(password, finduser.password)
+      if (!passwordMatch) throw new BadRequestException('bad credentials')
+      
+          const userPayload = {
+              id : finduser.id,
+              email: finduser.email,
+              isAdmin: finduser.isAdmin,
+              
+              
+          }
+      const token = this.jwtService.sign(userPayload)
+          const { password: _, ...userWithoutPassword } = finduser;
+    return {
+      token,
+      user : userWithoutPassword,
+      message: 'Success',
+    };
   }
 }

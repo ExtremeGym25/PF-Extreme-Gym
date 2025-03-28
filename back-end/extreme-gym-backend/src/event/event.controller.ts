@@ -1,34 +1,73 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  Put,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { Event } from './entities/event.entity';
 
-@Controller('event')
+@Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.create(createEventDto);
-  }
-
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  async findAllEvents(): Promise<Event[]> {
+    return this.eventService.getEvents();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventService.findOne(+id);
+  async findOneEvent(@Param('id') id: string): Promise<Event> {
+    try {
+      return await this.eventService.getEventById(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(+id, updateEventDto);
+  @Post()
+  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
+    try {
+      return await this.eventService.createEvent(createEventDto);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put(':id')
+  async updateEvent(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
+    try {
+      return await this.eventService.updateEvent(id, updateEventDto);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventService.remove(+id);
+  async cancel(@Param('id') id: string): Promise<Event> {
+    try {
+      return await this.eventService.cancelEvent(id);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
-}
+}  

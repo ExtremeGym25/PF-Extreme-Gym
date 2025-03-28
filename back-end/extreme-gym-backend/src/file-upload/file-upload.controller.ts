@@ -1,34 +1,94 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  InternalServerErrorException,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
-import { CreateFileUploadDto } from './dto/create-file-upload.dto';
-import { UpdateFileUploadDto } from './dto/update-file-upload.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadFileDto } from './dto/upload-file.dto';
+import { UploadProfilePictureDto } from './dto/upload-profile-picture.dto';
 
-@Controller('file-upload')
+@Controller('upload')
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Post()
-  create(@Body() createFileUploadDto: CreateFileUploadDto) {
-    return this.fileUploadService.create(createFileUploadDto);
+  private validateFile(file: Express.Multer.File): void {
+    if (!file) {
+      throw new BadRequestException('No se ha recibido ningún archivo.');
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.fileUploadService.findAll();
+  private handleError(error: any, action: string): never {
+    if (error instanceof BadRequestException) {
+      throw error;
+    }
+    console.error(`Error al ${action}:`, error);
+    throw new InternalServerErrorException(
+      `Error al ${action}. Intenta nuevamente más tarde.`,
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileUploadService.findOne(+id);
+  private buildResponse(message: string, url: string): any {
+    return {
+      message,
+      url,
+    };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileUploadDto: UpdateFileUploadDto) {
-    return this.fileUploadService.update(+id, updateFileUploadDto);
+  @Post('file')
+  @UseInterceptors(
+    FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() UploadFileDto: UploadFileDto,
+  ) {
+    this.validateFile(file);
+
+    const maxSize = UploadFileDto.category.startsWith('video')
+    ? 15 * 1024 * 1024
+    : 5 * 1024 * 1024;
+
+    if(file.size > maxSize) {
+      throw new BadRequestException(
+        `El tamaño del archivo excede el límite permitido de ${maxSize} MB.`,
+      );
+    }
+
+    try {
+      console.log('Archivo de imagen recibido:', file);
+      const result = await this.fileUploadService.uploadImage(
+        file,
+        UploadFileDto.category,
+        UploadFileDto.userId,
+      );
+      return this.buildResponse('Imagen subida exitosamente', result);
+    } catch (error) {
+      this.handleError(error, 'subir la imagen');
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileUploadService.remove(+id);
+  @Post('profile')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
+  )
+  async uploadProfilePicture(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() uploadProfilePictureDto: UploadProfilePictureDto,
+  ) {
+    this.validateFile(file);
+    try {
+      console.log('Archivo de perfil recibido:', file);
+      const result = await this.fileUploadService.uploadProfilePicture(
+        file,
+        uploadProfilePictureDto.userId,
+      );
+      return this.buildResponse('Foto de perfil subida exitosamente', result);
+    } catch (error) {
+      this.handleError(error, 'subir la foto de perfil');
+    }
   }
 }
