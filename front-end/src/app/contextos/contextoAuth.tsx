@@ -49,31 +49,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storageData = localStorage.getItem("user");
+      const storedUser = localStorage.getItem("user");
+      const storedToken = localStorage.getItem("token");
 
-      console.log("Datos en localStorage:", storageData);
-      if (!storageData) {
+      console.log("Datos en localStorage:", { storedUser, storedToken });
+
+      if (!storedUser || !storedToken) {
         setIsAuth(false);
         setLoading(false);
         return;
       }
 
       try {
-        const parsedData: { user: IUser; token: string } =
-          JSON.parse(storageData);
-        // Validación del token
-        if (!parsedData.token || parsedData.token.split(".").length !== 3) {
+        const parsedUser: IUser = JSON.parse(storedUser);
+
+        if (!storedToken || storedToken.split(".").length !== 3) {
           console.warn("Token inválido o mal formado");
           resetUserData();
           setLoading(false);
           return;
         }
 
-        const decodedToken: any = jwtDecode(parsedData.token);
+        const decodedToken: any = jwtDecode(storedToken);
         console.log("Token decodificado:", decodedToken);
 
-        // Validar la expiración del token
-        const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+        const currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp && decodedToken.exp < currentTime) {
           console.warn("El token ha expirado");
           resetUserData();
@@ -81,12 +81,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
 
-        setUser(parsedData.user);
-        setToken(parsedData.token);
+        setUser(parsedUser);
+        setToken(storedToken);
         setIsAuth(true);
       } catch (error) {
-        console.error("Error al parsear datos del usuario:", error);
-        setIsAuth(false);
+        console.error("Error al parsear los datos del usuario:", error);
+        resetUserData();
       }
 
       setLoading(false);

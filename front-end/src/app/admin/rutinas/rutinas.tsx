@@ -5,7 +5,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { PlanCategory, IPlans } from "@/app/tipos";
-import ListaRutinas from "./listaRutinas";
 
 const validationSchema = Yup.object().shape({
   nombre: Yup.string()
@@ -41,12 +40,11 @@ const CreacionRutinas = () => {
   }, []);
 
   return (
-    <div>
-      <div className="p-6 mx-auto mt-6 shadow-md bg-azul2 rounded-xl w-max">
-        <h2 className="mb-4 text-2xl font-bold text-center text-white">
+    <div className="flex items-center justify-center p-2 ">
+      <div className="max-w-lg p-6 shadow-md sm:w-1/3 md:w-full bg-azul2 rounded-xl">
+        <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
           Crear Rutina
         </h2>
-
         <Formik
           initialValues={{
             nombre: "",
@@ -150,7 +148,7 @@ const CreacionRutinas = () => {
 
               <button
                 type="submit"
-                className="p-2 mx-auto font-bold text-black rounded bg-verde w-80 hover:bg-green-600 hover:text-blanco"
+                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creando..." : "Crear Rutina"}
@@ -158,9 +156,6 @@ const CreacionRutinas = () => {
             </Form>
           )}
         </Formik>
-      </div>
-      <div>
-        <ListaRutinas rutinas={rutinas} />
       </div>
     </div>
   );
