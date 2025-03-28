@@ -30,6 +30,9 @@ export class Plan {
   })
   categoria: PlanCategory;
 
+  @Column({ type: 'varchar', nullable: true })
+  imageUrl?: string;
+
   @OneToMany(() => UserPlan, (userPlan) => userPlan.plan)
   userPlans: UserPlan[];
 }

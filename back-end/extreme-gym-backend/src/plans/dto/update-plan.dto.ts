@@ -15,4 +15,8 @@ export class UpdatePlanDto extends PartialType(CreatePlanDto) {
   @IsEnum(PlanCategory)
   @IsOptional()
   categoria?: PlanCategory;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }

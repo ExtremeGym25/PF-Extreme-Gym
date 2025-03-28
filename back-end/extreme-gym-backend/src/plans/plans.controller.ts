@@ -11,6 +11,9 @@ import {
   Put,
   UnauthorizedException,
   NotFoundException,
+  BadRequestException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { PlanService } from './plans.service';
 import { AssignPlanDto } from './dto/assign-plan.dto';
@@ -23,10 +26,16 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from '../users/entities/roles.enum';
 import { Roles } from 'src/decorators/roles.decorators';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 
 @Controller('plans')
 export class PlanController {
-  constructor(private readonly planService: PlanService) {}
+  constructor(
+    private readonly planService: PlanService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   @Post('assign')
   @UseGuards(AuthGuard)
@@ -91,5 +100,32 @@ export class PlanController {
       status: 'success',
       data: result,
     };
+  }
+  @Post('upload-image/:planId')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPlanImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('planId') planId: string,
+  ): Promise<{ imageUrl: string }> {
+    try {
+      if (!file) {
+        throw new BadRequestException('No se ha recibido ningún archivo.');
+      }
+      const imageUrl = await this.fileUploadService.uploadImage(
+        file,
+        'plan_images',
+      );
+      // Aquí puedes actualizar tu entidad Plan con la imageUrl usando plansService
+      await this.planService.updatePlanImage(planId, imageUrl);
+
+      return { imageUrl };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Error al subir la imagen del plan.');
+    }
   }
 }

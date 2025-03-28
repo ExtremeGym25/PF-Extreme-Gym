@@ -20,12 +20,5 @@ export class FileUpload {
 
   @Column({ type: 'varchar', nullable: true })
   context: string | null;
-
-  @Column({ default: () => 'CURRENT_TIMESTAMP', nullable: false })
-  createdAt: Date;
-
-  constructor() {
-    this.createdAt = new Date();
-  }
 }
 
