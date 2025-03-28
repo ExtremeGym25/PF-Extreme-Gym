@@ -38,12 +38,44 @@ export class BookingsService {
       throw new NotFoundException('Evento no encontrado');
     }
 
+    // Verificar si el usuario ya tiene una reserva para este evento
+    const existingBooking = await this.bookingRepository.findOne({
+      where: {
+        user: { id: createBookingDto.userId },
+        event: { id: createBookingDto.eventId },
+      },
+    });
+
+    if (existingBooking) {
+      throw new BadRequestException(
+        'El usuario ya tiene una reserva para este evento',
+      );
+    }
+
+    // Calcular el número total de personas reservadas
+    const totalPeopleBooked = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .select('SUM(booking.numberOfPeople)', 'totalPeople')
+      .where('booking.eventId = :eventId', {
+        eventId: createBookingDto.eventId,
+      })
+      .getRawOne()
+      .then((result) => parseInt(result?.totalPeople || '0'));
+
+    // Verificar la capacidad del evento
+    if (totalPeopleBooked + createBookingDto.numberOfPeople > event.capacity) {
+      throw new BadRequestException(
+        'La cantidad total de personas reservadas excede la capacidad del evento',
+      );
+    }
+
     const booking = this.bookingRepository.create({
       user: user,
       event: event,
       numberOfPeople: createBookingDto.numberOfPeople,
       bookingsDate: new Date(),
     });
+    console.log(booking);
 
     return await this.bookingRepository.save(booking);
   }

@@ -18,24 +18,11 @@ import { Booking } from './entities/booking.entity';
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  @Post()
-  async create(@Body() createBookingDto: CreateBookingDto): Promise<Booking> {
-    try {
-      return await this.bookingsService.createBooking(createBookingDto);
-    } catch (error) {
-      throw new HttpException(
-        error.message,
-        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   // Obtener todas las reservas
   @Get()
   async findAll(): Promise<Booking[]> {
     return await this.bookingsService.findAllBookings();
   }
-
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Booking> {
@@ -45,6 +32,18 @@ export class BookingsController {
       throw new HttpException(
         error.message,
         error.getStatus ? error.getStatus() : HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  @Post()
+  async create(@Body() createBookingDto: CreateBookingDto): Promise<Booking> {
+    try {
+      return await this.bookingsService.createBooking(createBookingDto);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
