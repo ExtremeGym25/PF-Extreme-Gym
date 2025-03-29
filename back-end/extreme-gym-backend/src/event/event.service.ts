@@ -13,6 +13,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Booking } from 'src/bookings/entities/booking.entity';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class EventService {
@@ -25,9 +26,13 @@ export class EventService {
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
     private readonly userService: UsersService,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
-  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
+  async createEvent(
+    createEventDto: CreateEventDto,
+    file: Express.Multer.File,
+  ): Promise<Event> {
     if (
       !Object.values(ExtremeSportCategory).includes(createEventDto.category)
     ) {
@@ -40,9 +45,13 @@ export class EventService {
     }
 
     try {
+      // Subir la imagen y obtener la URL
+      const imageUrl = await this.fileUploadService.uploadImage(file, 'events');
+
       const event = this.eventRepository.create({
         ...createEventDto,
         user,
+        imageUrl,
       });
 
       const existingEvent = await this.eventRepository.findOne({
@@ -114,7 +123,8 @@ export class EventService {
 
   async updateEvent(
     id: string,
-    updateEventDto: UpdateEventDto,
+    updateEventDto: UpdateEventDto, 
+    file?: Express.Multer.File,
   ): Promise<Event> {
     const event = await this.getEventById(id);
 
@@ -126,6 +136,15 @@ export class EventService {
     }
 
     try {
+      if (file) {
+        // Subir nueva imagen y actualizar imageUrl
+        const imageUrl = await this.fileUploadService.uploadImage(
+          file,
+          'events',
+        );
+        event.imageUrl = imageUrl;
+      }
+
       this.eventRepository.merge(event, updateEventDto);
       return await this.eventRepository.save(event);
     } catch (error) {

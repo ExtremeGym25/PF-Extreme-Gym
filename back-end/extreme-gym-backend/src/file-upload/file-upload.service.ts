@@ -63,12 +63,7 @@ export class FileUploadService {
     context?: string,
   ): Promise<string> {
     const result = await this.uploadFileCloudinary(file, folder, resourceType);
-    return await this.saveFileUpload(result, resourceType, userId || null, context || null);return await this.saveFileUpload(result, resourceType, userId || null, context || null);return await this.saveFileUpload(
-      result,
-      resourceType,
-      userId ?? null,
-      context ?? null,
-    );
+    return await this.saveFileUpload(result, resourceType, userId || null, context || null);
   }
 
   async uploadProfilePicture(
