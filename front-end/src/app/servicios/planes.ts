@@ -18,6 +18,7 @@ export const createPlanService = async (planData: IPlans, token: string) => {
     });
     console.log("Respuesta creación planes rutinas:", plan);
     return plan.data;
+<<<<<<< HEAD
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       if (axios.isAxiosError(error)) {
@@ -30,6 +31,18 @@ export const createPlanService = async (planData: IPlans, token: string) => {
         console.error("Error desconocido:", error);
         throw new Error("Ocurrió un error inesperado");
       }
+=======
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error desde el backend:", error.response.data);
+      throw new Error(error.response.data.message || "Error desconocido");
+    } else if (axios.isAxiosError(error) && error.request) {
+      console.error("No hubo respuesta del servidor:", error.request);
+      throw new Error("No hubo respuesta del servidor");
+    } else {
+      console.error("Error inesperado:", (error as Error).message);
+      throw new Error((error as Error).message || "Error desconocido");
+>>>>>>> 42015e8 ("Dashboard admin")
     }
   }
 };
@@ -66,8 +79,57 @@ export const getPlanService = async (
     }
   }
 };
+<<<<<<< HEAD
 export const deletePlanService = async (id: string, token: string) => {
   try {
+=======
+export const updatePlanService = async (
+  token: string,
+  id: string,
+  dto: IPlans
+) => {
+  try {
+    if (!token) {
+      throw new Error("No se proporcionó un token.");
+    }
+
+    let decoded;
+    try {
+      decoded = JSON.parse(atob(token.split(".")[1]));
+      console.log("Token decodificado:", decoded);
+    } catch (error) {
+      throw new Error("Token inválido o mal formado.");
+    }
+
+    if (!decoded.isAdmin) {
+      throw new Error("El usuario no tiene permisos de administrador.");
+    }
+
+    if (!dto || Object.keys(dto).length === 0) {
+      throw new Error("El objeto de datos (dto) está vacío.");
+    }
+
+    const response = await axios.put(`http://localhost:3000/plans/${id}`, dto, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(response.data, "respuesta servicio");
+    return response.data;
+  } catch (error: any) {
+    console.error("Error en updatePlanService:", error);
+
+    throw new Error(
+      error.response?.data?.message || "Error al actualizar el plan."
+    );
+  }
+};
+export const deletePlanService = async (id: string, token: string) => {
+  try {
+    console.log("Token de autenticación:", token);
+>>>>>>> 42015e8 ("Dashboard admin")
     const response = await axios.delete(`http://localhost:3000/plans/${id}`, {
       headers: {
         Authorization: `Bearer ${token.trim()}`,
