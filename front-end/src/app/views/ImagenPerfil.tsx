@@ -30,7 +30,7 @@ interface FormValues {
 
 const ImagenPerfil = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user, resetUserData } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   return (
@@ -49,22 +49,21 @@ const ImagenPerfil = () => {
             toast.error("Error: No se encontró el usuario");
             return;
           }
-          const imageUrl = await uploadProfileImageService(
+          const userData = await uploadProfileImageService(
             values.profileImage,
             userId
           );
-          console.log("Imagen subida con éxito:", imageUrl);
-          toast.success("Imagen subida correctamente");
+          console.log("Datos recibidos del servicio:", userData);
+
+          localStorage.setItem("user", JSON.stringify(userData));
+
+          toast.success("Imagen subida con exito");
 
           resetForm();
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
-
-          // resetUserData();
-          // setTimeout(() => {
-          //   router.push(routes.login);
-          // }, 1000);
+          window.location.reload();
         } catch (error) {
           console.error("Error al subir la imagen:", error);
           toast.error("Error al subir la imagen");

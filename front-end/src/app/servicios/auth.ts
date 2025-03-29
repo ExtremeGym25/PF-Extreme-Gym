@@ -99,7 +99,7 @@ export const uploadProfileImageService = async (
     }
 
     const data = await response.json();
-    return data.imageUrl;
+    return data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       console.error(
