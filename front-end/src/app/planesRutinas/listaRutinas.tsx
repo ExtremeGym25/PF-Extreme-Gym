@@ -122,14 +122,14 @@ const ListaRutinas = () => {
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-4 py-2 text-sm font-semibold transition bg-white rounded-md text-azul1 hover:bg-verde disabled:opacity-50"
+          className="px-4 py-2 text-sm font-semibold transition rounded-md bg-fondo text-azul1 hover:bg-verde disabled:opacity-50"
         >
           Anterior
         </button>
-        <span className="text-white">Página {page}</span>
+        <span className="text-sm text-azul1">Página {page}</span>
         <button
           onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 text-sm font-semibold transition bg-white rounded-md text-azul1 hover:bg-verde"
+          className="px-4 py-2 text-sm font-semibold transition rounded-md bg-fondo text-azul1 hover:bg-verde"
         >
           Siguiente
         </button>
