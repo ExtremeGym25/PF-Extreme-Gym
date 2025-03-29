@@ -43,13 +43,16 @@ export class Event {
   @Column({ default: false })
   isCancelled: boolean;
 
+  @Column({ type: 'varchar', nullable: true })
+  imageUrl: string;
+
   @ManyToOne(() => User, (user) => user.fileUploads)
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @OneToMany(() => Booking, (booking) => booking.event)
   bookings: Booking[];
-  
+
   @BeforeUpdate()
   updateTimestamp() {
     this.updatedAt = new Date();
