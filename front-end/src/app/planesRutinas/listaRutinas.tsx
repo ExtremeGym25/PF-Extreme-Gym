@@ -7,6 +7,7 @@ import ButtonPrimary from "../components/buttons/buttonPrimary";
 import Link from "next/link";
 import { routes } from "../routes/routes";
 import { useAuth } from "./../contextos/contextoAuth";
+import AssignFavoritos from "./assignFavoritos";
 
 const ListaRutinas = () => {
   const [rutinas, setRutinas] = useState<IPlans[]>([]);
@@ -85,6 +86,8 @@ const ListaRutinas = () => {
               key={rutina.id}
               className="relative p-4 transition transform border rounded-lg shadow-md border-verde hover:scale-105 font-poppins"
             >
+              <AssignFavoritos planId={rutina.id || ""} />
+
               <h3 className="text-lg font-semibold text-center text-foreground">
                 {rutina.nombre}
               </h3>

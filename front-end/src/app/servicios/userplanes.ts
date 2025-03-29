@@ -1,25 +1,21 @@
 "use server";
 import axios from "axios";
-import { IPlans } from "../tipos";
 
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
-export const getPlanService = async (
-  token: string,
-  page: number = 1,
-  limit: number = 10,
-  categoria?: string
-) => {
+export const assignPlanService = async (token: string, planId: string) => {
+  console.log("planId enviado:", planId);
   try {
-    const endpoint = categoria ? `/plans/${categoria}` : "/plans";
-
-    const response = await axiosApiBack.get(endpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: { page, limit },
-    });
+    const response = await axiosApiBack.post(
+      "/plans/assign",
+      { planId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error: any) {

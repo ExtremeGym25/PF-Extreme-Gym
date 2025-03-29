@@ -38,12 +38,6 @@ const CategoriesFilter: React.FC<CategoriesFilterProps> = ({
             </option>
           ))}
         </select>
-        <button
-          onClick={() => onCategoryChange(null)}
-          className="w-full py-2 text-black transition-colors rounded-lg shadow-md bg-fondo hover:bg-verde"
-        >
-          Guarda la categoria en tus rutinas
-        </button>
       </div>
     </div>
   );
