@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { IPlans, PlanCategory } from "@/app/tipos";
-import { getPlanService } from "../servicios/planes";
+import { getPlanService } from "../servicios/userplanes";
 import Filtro from "./filtro";
 import ButtonPrimary from "../components/buttons/buttonPrimary";
 import Link from "next/link";
