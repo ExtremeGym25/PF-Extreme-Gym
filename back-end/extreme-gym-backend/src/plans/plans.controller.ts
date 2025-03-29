@@ -31,6 +31,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('plans')
+@UseGuards(AuthGuard)
 export class PlanController {
   constructor(
     private readonly planService: PlanService,
@@ -38,23 +39,18 @@ export class PlanController {
   ) {}
 
   @Post('assign')
-  @UseGuards(AuthGuard)
   async assignPlan(@UserDecorator() user: User, @Body() dto: AssignPlanDto) {
-    if (!user || !user.id) {
-      throw new UnauthorizedException('Usuario no autenticado');
-    }
     return this.planService.assignPlan(user.id, dto);
   }
 
   @Post()
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   async createPlan(@Body() dto: CreatePlanDto) {
     return this.planService.createPlan(dto);
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   async getPlans(
     @Query('categoria') categoria?: PlanCategory,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
@@ -64,7 +60,6 @@ export class PlanController {
   }
 
   @Get('my-plans')
-  @UseGuards(AuthGuard)
   async getMyPlans(@UserDecorator() user: User) {
     const plans = await this.planService.getUserPlans(user.id);
 
@@ -76,8 +71,8 @@ export class PlanController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   async deletePlan(@Param('id') id: string) {
     await this.planService.deletePlan(id);
     return {
@@ -86,14 +81,14 @@ export class PlanController {
     };
   }
   @Put(':id')
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   updatePlan(@Param('id') id: string, @Body() dto: UpdatePlanDto) {
     return this.planService.updatePlan(id, dto);
   }
   @Get('check-expirations')
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   async checkExpirations() {
     const result = await this.planService.checkExpirations();
     return {
@@ -102,8 +97,8 @@ export class PlanController {
     };
   }
   @Post('upload-image/:planId')
+  @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async uploadPlanImage(
     @UploadedFile() file: Express.Multer.File,

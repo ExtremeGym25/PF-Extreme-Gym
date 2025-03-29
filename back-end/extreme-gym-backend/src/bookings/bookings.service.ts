@@ -38,7 +38,6 @@ export class BookingsService {
       throw new NotFoundException('Evento no encontrado');
     }
 
-    // Verificar si el usuario ya tiene una reserva para este evento
     const existingBooking = await this.bookingRepository.findOne({
       where: {
         user: { id: createBookingDto.userId },
@@ -52,7 +51,6 @@ export class BookingsService {
       );
     }
 
-    // Calcular el número total de personas reservadas
     const totalPeopleBooked = await this.bookingRepository
       .createQueryBuilder('booking')
       .select('SUM(booking.numberOfPeople)', 'totalPeople')
@@ -62,7 +60,6 @@ export class BookingsService {
       .getRawOne()
       .then((result) => parseInt(result?.totalPeople || '0'));
 
-    // Verificar la capacidad del evento
     if (totalPeopleBooked + createBookingDto.numberOfPeople > event.capacity) {
       throw new BadRequestException(
         'La cantidad total de personas reservadas excede la capacidad del evento',
@@ -80,7 +77,6 @@ export class BookingsService {
     return await this.bookingRepository.save(booking);
   }
 
-  // Obtener todas las reservas
   async findAllBookings(): Promise<Booking[]> {
     return await this.bookingRepository.find({ relations: ['user', 'event'] });
   }
@@ -129,6 +125,20 @@ export class BookingsService {
     return await this.bookingRepository.save(booking);
   }
 
+  async findBookingsByUserId(userId: string): Promise<Booking[]> {
+    const bookings = await this.bookingRepository.find({
+      where: { user: { id: userId } },
+      relations: ['event'],
+    });
+
+    if (!bookings || bookings.length === 0) {
+      throw new NotFoundException(
+        `No hay reservas para el usuario con ID ${userId}`,
+      );
+    }
+
+    return bookings;
+  }
   async cancelBooking(id: string): Promise<void> {
     const booking = await this.findBookingById(id);
     booking.isCancelled = true;
