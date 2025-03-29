@@ -3,12 +3,12 @@ import { IsString, IsDate, IsBoolean, IsNumber, IsPositive, IsEnum, IsUUID } fro
 
 
 export enum ExtremeSportCategory {
-  AERIAL_SPORTS = 'Deportes Aéreos (Paracaidismo, Parapente, BASE Jumping)',
-  WATER_SPORTS = 'Deportes Acuáticos (Surf, Kitesurf, Rafting en aguas bravas)',
-  MOUNTAIN_SPORTS = 'Deportes de Montaña (Escalada en roca, Esquí Alpino, Snowboarding)',
-  MOTOR_SPORTS = 'Deportes de Motor (Motocross, Rally, Carreras de velocidad)',
-  ADVENTURE_SPORTS = 'Deportes de Aventura (Puenting, Ciclismo de montaña, Senderismo extremo)',
-  WINTER_SPORTS = 'Deportes de Invierno (Esquí extremo, Snowboard extremo, Escalada en hielo)',
+  AERIAL_SPORTS = 'Deportes Aéreos',
+  WATER_SPORTS = 'Deportes Acuáticos',
+  MOUNTAIN_SPORTS = 'Deportes de Montaña',
+  MOTOR_SPORTS = 'Deportes de Motor',
+  ADVENTURE_SPORTS = 'Deportes de Aventura',
+  WINTER_SPORTS = 'Deportes de Invierno',
 }
 
 export class CreateEventDto {

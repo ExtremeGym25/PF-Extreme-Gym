@@ -8,13 +8,19 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorators';
+import { Role } from 'src/users/entities/roles.enum';
 
 @Controller('events')
+@UseGuards(AuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -33,6 +39,8 @@ export class EventController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
     try {
       return await this.eventService.createEvent(createEventDto);
@@ -45,6 +53,8 @@ export class EventController {
   }
 
   @Put(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -60,6 +70,8 @@ export class EventController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   async cancel(@Param('id') id: string): Promise<Event> {
     try {
       return await this.eventService.cancelEvent(id);

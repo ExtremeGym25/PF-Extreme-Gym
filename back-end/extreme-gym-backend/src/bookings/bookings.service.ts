@@ -38,17 +38,45 @@ export class BookingsService {
       throw new NotFoundException('Evento no encontrado');
     }
 
+    const existingBooking = await this.bookingRepository.findOne({
+      where: {
+        user: { id: createBookingDto.userId },
+        event: { id: createBookingDto.eventId },
+      },
+    });
+
+    if (existingBooking) {
+      throw new BadRequestException(
+        'El usuario ya tiene una reserva para este evento',
+      );
+    }
+
+    const totalPeopleBooked = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .select('SUM(booking.numberOfPeople)', 'totalPeople')
+      .where('booking.eventId = :eventId', {
+        eventId: createBookingDto.eventId,
+      })
+      .getRawOne()
+      .then((result) => parseInt(result?.totalPeople || '0'));
+
+    if (totalPeopleBooked + createBookingDto.numberOfPeople > event.capacity) {
+      throw new BadRequestException(
+        'La cantidad total de personas reservadas excede la capacidad del evento',
+      );
+    }
+
     const booking = this.bookingRepository.create({
       user: user,
       event: event,
       numberOfPeople: createBookingDto.numberOfPeople,
       bookingsDate: new Date(),
     });
+    console.log(booking);
 
     return await this.bookingRepository.save(booking);
   }
 
-  // Obtener todas las reservas
   async findAllBookings(): Promise<Booking[]> {
     return await this.bookingRepository.find({ relations: ['user', 'event'] });
   }
@@ -97,6 +125,20 @@ export class BookingsService {
     return await this.bookingRepository.save(booking);
   }
 
+  async findBookingsByUserId(userId: string): Promise<Booking[]> {
+    const bookings = await this.bookingRepository.find({
+      where: { user: { id: userId } },
+      relations: ['event'],
+    });
+
+    if (!bookings || bookings.length === 0) {
+      throw new NotFoundException(
+        `No hay reservas para el usuario con ID ${userId}`,
+      );
+    }
+
+    return bookings;
+  }
   async cancelBooking(id: string): Promise<void> {
     const booking = await this.findBookingById(id);
     booking.isCancelled = true;

@@ -5,14 +5,20 @@ import {
   InternalServerErrorException,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadFileDto } from './dto/upload-file.dto';
 import { UploadProfilePictureDto } from './dto/upload-profile-picture.dto';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorators';
+import { Role } from 'src/users/entities/roles.enum';
 
 @Controller('upload')
+@UseGuards(AuthGuard)
 export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
@@ -40,6 +46,8 @@ export class FileUploadController {
   }
 
   @Post('file')
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @UseInterceptors(
     FileInterceptor('file'))
   async uploadImage(

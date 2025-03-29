@@ -7,38 +7,56 @@ import {
 } from '@nestjs/common';
 import { CreateEventDto, ExtremeSportCategory } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Event } from './entities/event.entity'
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Booking } from 'src/bookings/entities/booking.entity';
 
 @Injectable()
 export class EventService {
-  private readonly eventRepository: Repository<Event>;
-  private readonly userRepository: Repository<User>;
   private readonly logger = new Logger(EventService.name);
 
-  constructor(private dataSource: DataSource, private readonly userService: UsersService) {
-    this.eventRepository = this.dataSource.getRepository(Event);
-    this.userRepository = this.dataSource.getRepository(User);
-  }
+  constructor(
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
+    private readonly userService: UsersService,
+  ) {}
 
   async createEvent(createEventDto: CreateEventDto): Promise<Event> {
-    if (!Object.values(ExtremeSportCategory).includes(createEventDto.category)) {  
-      throw new BadRequestException('Categoría de evento inválida'); 
-  } 
+    if (
+      !Object.values(ExtremeSportCategory).includes(createEventDto.category)
+    ) {
+      throw new BadRequestException('Categoría de evento inválida');
+    }
 
-  const user = await this.userService.findOne(
-    createEventDto.userId );
-  if (!user) {
-    throw new BadRequestException('Usuario no encontrado');
-  }
+    const user = await this.userService.findOne(createEventDto.userId);
+    if (!user) {
+      throw new BadRequestException('Usuario no encontrado');
+    }
 
     try {
       const event = this.eventRepository.create({
-        ...createEventDto, user
+        ...createEventDto,
+        user,
       });
-      return await this.eventRepository.save(createEventDto);
+
+      const existingEvent = await this.eventRepository.findOne({
+        where: { id: event.id },
+      });
+      if (existingEvent) {
+        const existingBookingsCount = await this.bookingRepository.count({
+          where: { event: { id: event.id } },
+        });
+        if (existingBookingsCount >= existingEvent.capacity) {
+          throw new BadRequestException('Capacidad del evento superada');
+        }
+      }
+      return await this.eventRepository.save(event);
     } catch (error) {
       if (error instanceof QueryFailedError) {
         this.logger.error(
@@ -46,6 +64,9 @@ export class EventService {
           error.stack,
         );
         throw new InternalServerErrorException('Datos de evento inválidos');
+      }
+      if (error instanceof BadRequestException) {
+        throw error;
       }
       this.logger.error(
         `Error inesperado al crear el evento: ${error.message}`,
@@ -71,7 +92,10 @@ export class EventService {
 
   async getEventById(id: string): Promise<Event> {
     try {
-      const event = await this.eventRepository.findOne({ where: { id }, relations: ['user'] });
+      const event = await this.eventRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
       if (!event) {
         throw new NotFoundException(`Evento con ID ${id} no encontrado`);
       }
@@ -92,11 +116,14 @@ export class EventService {
     id: string,
     updateEventDto: UpdateEventDto,
   ): Promise<Event> {
-    const event= await this.getEventById(id);
+    const event = await this.getEventById(id);
 
-    if (updateEventDto.category && !Object.values(ExtremeSportCategory).includes(updateEventDto.category)) {
+    if (
+      updateEventDto.category &&
+      !Object.values(ExtremeSportCategory).includes(updateEventDto.category)
+    ) {
       throw new BadRequestException('Categoria de evento invalida');
-    } 
+    }
 
     try {
       this.eventRepository.merge(event, updateEventDto);
