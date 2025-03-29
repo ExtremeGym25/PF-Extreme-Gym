@@ -17,9 +17,17 @@ export const loginService = async (userData: Partial<IUserLogin>) => {
     console.log("user en servicio", user.data);
 
     return user.data;
-  } catch (error) {
-    console.log("Error al Login", error);
-    throw new Error("Error_LogIn");
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 
@@ -60,19 +68,29 @@ export const updateUser = async (
     );
     return response.data;
   } catch (error: any) {
-    console.error("Error in updateUser:", error.response?.data || error);
-    throw error;
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const uploadProfileImageService = async (
-  file: File
+  file: File,
+  id: string
 ): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("id", id);
 
   try {
     const response = await fetch("http://localhost:3000/users/profile", {
-      method: "POST",
+      method: "PATCH",
       body: formData,
     });
 
@@ -82,20 +100,35 @@ export const uploadProfileImageService = async (
 
     const data = await response.json();
     return data.imageUrl;
-  } catch (error) {
-    console.error("Error al subir la imagen:", error);
-    throw error;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
-
 export const deleteUserService = async (userId: string) => {
   try {
     const response = await axios.delete(
       `http://localhost:3000/users/${userId}`
     );
     return response.data;
-  } catch (error) {
-    console.error("Error al subir la imagen:", error);
-    throw error;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };

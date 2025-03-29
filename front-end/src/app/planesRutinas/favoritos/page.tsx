@@ -23,7 +23,8 @@ const MisPlanes = () => {
       }
 
       const data = await getMyPlans(token);
-      setRutinas(data);
+      setRutinas(data.map((item: { plan: any }) => item.plan));
+      console.log(data.map((item: { plan: any }) => item.plan));
     } catch (error: any) {
       console.error("Error al obtener mis planes:", error);
       toast.error(error.message);
@@ -57,15 +58,28 @@ const MisPlanes = () => {
         </div>
       ) : rutinas.length > 0 ? (
         <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {rutinas.map((rutina) => (
+          {rutinas.map((rutina, index) => (
             <li
-              key={rutina.id}
-              className="relative p-4 transition transform border rounded-lg shadow-md border-verde hover:scale-105 font-poppins"
+              key={rutina.id || index}
+              className="relative p-4 text-black transition transform border rounded-lg shadow-md border-verde hover:scale-105 font-poppins"
             >
               <h3 className="text-lg font-semibold text-center text-foreground">
                 {rutina.nombre}
               </h3>
-              <p className="mt-2 text-sm text-justify text-foreground">
+              {rutina.imageUrl ? (
+                <video
+                  controls
+                  className="object-cover w-full mt-2 rounded-md h-60"
+                >
+                  <source src={rutina.imageUrl} type="video/mp4" />
+                  Tu navegador no soporta el elemento de video.
+                </video>
+              ) : (
+                <p className="mt-2 text-center text-gray-400">
+                  No hay video disponible
+                </p>
+              )}
+              <p className="mt-2 text-sm text-justify text-black">
                 {rutina.descripcion}
               </p>
             </li>
