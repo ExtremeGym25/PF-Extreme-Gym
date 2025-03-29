@@ -14,10 +14,10 @@ const CategoriesFilter: React.FC<CategoriesFilterProps> = ({
 }) => {
   return (
     <div className="max-w-full p-4 rounded-lg shadow-md bg-blackP font-poppins">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 ">
         <button
           onClick={() => onCategoryChange(null)}
-          className="w-full py-2 text-black transition-colors rounded-lg shadow-md bg-fondo hover:bg-blueP"
+          className="w-full py-2 text-black transition-colors rounded-lg shadow-md bg-fondo hover:bg-verde"
         >
           Reset Filtros
         </button>
@@ -38,6 +38,12 @@ const CategoriesFilter: React.FC<CategoriesFilterProps> = ({
             </option>
           ))}
         </select>
+        <button
+          onClick={() => onCategoryChange(null)}
+          className="w-full py-2 text-black transition-colors rounded-lg shadow-md bg-fondo hover:bg-verde"
+        >
+          Guarda la categoria en tus rutinas
+        </button>
       </div>
     </div>
   );

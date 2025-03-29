@@ -3,6 +3,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { IPlans, PlanCategory } from "@/app/tipos";
 import { getPlanService } from "../servicios/planes";
 import Filtro from "./filtro";
+import ButtonPrimary from "../components/buttons/buttonPrimary";
+import Link from "next/link";
+import { routes } from "../routes/routes";
+import { useAuth } from "./../contextos/contextoAuth";
 
 const ListaRutinas = () => {
   const [rutinas, setRutinas] = useState<IPlans[]>([]);
@@ -12,6 +16,8 @@ const ListaRutinas = () => {
   const [limit, setLimit] = useState(10);
   const [categoria, setCategoria] = useState<PlanCategory | null>(null);
   const mountedRef = useRef(true);
+  const { isAuth } = useAuth();
+
   useEffect(() => {
     let isMounted = true; // variable local para controlar si el componente sigue montado
 
@@ -59,9 +65,9 @@ const ListaRutinas = () => {
   return (
     <div className="max-w-4xl p-4 mx-auto text-foreground">
       <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
-        Lista de Rutinas
+        Nuestras Rutinas
       </h2>
-      <div className="py-4">
+      <div className="py-4 ">
         <Filtro
           categories={Object.values(PlanCategory)}
           onCategoryChange={(cat) => setCategoria(cat)}
@@ -73,18 +79,37 @@ const ListaRutinas = () => {
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : rutinas.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ">
           {rutinas.map((rutina) => (
-            <li key={rutina.id} className="p-4 bg-gray-800 rounded-lg">
-              <h3 className="text-lg font-bold">{rutina.nombre}</h3>
-              <p>{rutina.descripcion}</p>
+            <li
+              key={rutina.id}
+              className="relative p-4 transition transform border rounded-lg shadow-md border-verde hover:scale-105 font-poppins"
+            >
+              <h3 className="text-lg font-semibold text-center text-foreground">
+                {rutina.nombre}
+              </h3>
               {rutina.imageUrl ? (
-                <video controls className="w-full mt-2 rounded-lg">
+                <video
+                  controls
+                  className="object-cover w-full mt-2 rounded-md h-60"
+                >
                   <source src={rutina.imageUrl} type="video/mp4" />
                   Tu navegador no soporta el elemento de video.
                 </video>
               ) : (
-                <p className="text-gray-400">No hay video disponible</p>
+                <p className="mt-2 text-center text-gray-400">
+                  No hay video disponible
+                </p>
+              )}
+              <p className="mt-2 text-sm text-justify text-foreground">
+                {rutina.descripcion}
+              </p>
+              {isAuth ? (
+                <p></p>
+              ) : (
+                <Link href={routes.login}>
+                  <ButtonPrimary>Inicia Sesión</ButtonPrimary>
+                </Link>
               )}
             </li>
           ))}
@@ -97,14 +122,14 @@ const ListaRutinas = () => {
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="px-4 py-2 text-sm font-semibold text-blue-600 transition bg-white rounded-md hover:bg-gray-200 disabled:opacity-50"
+          className="px-4 py-2 text-sm font-semibold transition bg-white rounded-md text-azul1 hover:bg-verde disabled:opacity-50"
         >
           Anterior
         </button>
         <span className="text-white">Página {page}</span>
         <button
           onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 text-sm font-semibold text-blue-600 transition bg-white rounded-md hover:bg-gray-200"
+          className="px-4 py-2 text-sm font-semibold transition bg-white rounded-md text-azul1 hover:bg-verde"
         >
           Siguiente
         </button>
