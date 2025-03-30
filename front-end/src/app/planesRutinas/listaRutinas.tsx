@@ -96,8 +96,14 @@ const ListaRutinas = () => {
                   controls
                   className="object-cover w-full mt-2 rounded-md h-60"
                 >
-                  <source src={rutina.imageUrl} type="video/mp4" />
-                  Tu navegador no soporta el elemento de video.
+                  <source
+                    src={
+                      typeof rutina.imageUrl === "string"
+                        ? rutina.imageUrl
+                        : URL.createObjectURL(rutina.imageUrl)
+                    }
+                    type="video/mp4"
+                  />
                 </video>
               ) : (
                 <p className="mt-2 text-center text-gray-400">
