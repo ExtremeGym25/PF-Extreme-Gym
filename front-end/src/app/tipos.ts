@@ -1,3 +1,5 @@
+import { Interface } from "readline";
+
 export interface IUser {
   id?: string;
   name?: string;
@@ -35,4 +37,22 @@ export interface IPlans {
   descripcion: string;
   categoria: PlanCategory;
   imageUrl?: string | File;
+}
+export enum ExtremeSportCategory {
+  AERIAL_SPORTS = "Deportes Aéreos",
+  WATER_SPORTS = "Deportes Acuáticos",
+  MOUNTAIN_SPORTS = "Deportes de Montaña",
+  MOTOR_SPORTS = "Deportes de Motor",
+  ADVENTURE_SPORTS = "Deportes de Aventura",
+  WINTER_SPORTS = "Deportes de Invierno",
+}
+export interface IEvent {
+  name: string;
+  description: string;
+  location: string;
+  date: Date;
+  time: string;
+  capacity: number;
+  category: ExtremeSportCategory;
+  userId: string;
 }
