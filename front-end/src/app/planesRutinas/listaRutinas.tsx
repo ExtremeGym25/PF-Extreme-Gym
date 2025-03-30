@@ -92,24 +92,31 @@ const ListaRutinas = () => {
                 {rutina.nombre}
               </h3>
               {rutina.imageUrl ? (
-                <video
-                  controls
-                  className="object-cover w-full mt-2 rounded-md h-60"
-                >
-                  <source
-                    src={
-                      typeof rutina.imageUrl === "string"
-                        ? rutina.imageUrl
-                        : URL.createObjectURL(rutina.imageUrl)
-                    }
-                    type="video/mp4"
-                  />
-                </video>
+                isAuth ? (
+                  <video
+                    controls
+                    className="object-cover w-full mt-2 rounded-md h-60"
+                  >
+                    <source
+                      src={
+                        typeof rutina.imageUrl === "string"
+                          ? rutina.imageUrl
+                          : URL.createObjectURL(rutina.imageUrl)
+                      }
+                      type="video/mp4"
+                    />
+                  </video>
+                ) : (
+                  <div className="mt-2 text-center text-gray-400">
+                    Debes iniciar sesión para ver el video.
+                  </div>
+                )
               ) : (
                 <p className="mt-2 text-center text-gray-400">
                   No hay video disponible
                 </p>
               )}
+
               <p className="mt-2 text-sm text-justify text-foreground">
                 {rutina.descripcion}
               </p>

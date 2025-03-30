@@ -9,16 +9,11 @@ const PlanesRutinasView = () => {
   if (isAuth === null) {
     return <div>loading</div>;
   }
-  if (isAuth) {
-    return (
-      <div className="py-10 text-black bg-fondo font-poppins">
-        <ListaRutinas />
-      </div>
-    );
-  }
 
   return (
-    <div className="py-10 text-black bg-fondo font-poppins">Paga!!!!!</div>
+    <div className="py-10 text-black bg-fondo font-poppins">
+      <ListaRutinas />
+    </div>
   );
 };
 
