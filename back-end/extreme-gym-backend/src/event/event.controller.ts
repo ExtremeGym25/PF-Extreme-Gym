@@ -9,6 +9,8 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -18,6 +20,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('events')
 @UseGuards(AuthGuard)
@@ -41,9 +44,13 @@ export class EventController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
+  @UseInterceptors(FileInterceptor('file'))
+  async createEvent(
+    @Body() createEventDto: CreateEventDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Event> {
     try {
-      return await this.eventService.createEvent(createEventDto);
+      return await this.eventService.createEvent(createEventDto, file);
     } catch (error) {
       throw new HttpException(
         error.message,
@@ -55,9 +62,11 @@ export class EventController {
   @Put(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
+  @UseInterceptors(FileInterceptor('file'))
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
     try {
       return await this.eventService.updateEvent(id, updateEventDto);
