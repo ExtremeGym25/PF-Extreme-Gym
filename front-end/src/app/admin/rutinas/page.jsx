@@ -11,10 +11,9 @@ const rutinasView = () => {
       <Sidebar />
       <div className="flex-1 p-4">
         <Header />
-        <h2 className="font-bold text-center text-blanco sm:text-xs md:text-xl lg:text-2xl">
-          Crear Rutinas
-        </h2>
-        <CreacionRutinas />
+        <div className="py-4">
+          <CreacionRutinas />
+        </div>
         <ListaRutinas />
       </div>
     </div>
