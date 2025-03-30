@@ -34,5 +34,5 @@ export interface IPlans {
   nombre: string;
   descripcion: string;
   categoria: PlanCategory;
-  imageUrl?: string;
+  imageUrl?: string | File;
 }

@@ -1,47 +1,50 @@
 "use client";
-import { createPlanService } from "../../servicios/planes";
-import React, { useEffect, useState } from "react";
+import { createPlanService, imagePlanService } from "../../servicios/planes";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { PlanCategory, IPlans } from "@/app/tipos";
 
 const validationSchema = Yup.object().shape({
-  nombre: Yup.string()
-    .min(3, "El nombre debe tener al menos 3 caracteres")
-    .max(50, "El nombre no puede tener más de 50 caracteres")
-    .required("El nombre es obligatorio"),
-
+  nombre: Yup.string().min(3).max(50).required("El nombre es obligatorio"),
   descripcion: Yup.string()
-    .min(10, "La descripción debe tener al menos 10 caracteres")
-    .max(200, "La descripción no puede tener más de 200 caracteres")
+    .min(10)
+    .max(200)
     .required("La descripción es obligatoria"),
-
   categoria: Yup.mixed<PlanCategory>()
-    .oneOf(Object.values(PlanCategory), "Categoría no válida")
-    .required("La categoría es obligatoria"),
-  imageUrl: Yup.string().optional(),
+    .oneOf(Object.values(PlanCategory))
+    .required(),
+  imageUrl: Yup.mixed<File>()
+    .nullable()
+    .test(
+      "fileSize",
+      "El video no debe superar los 15MB",
+      (value) => !value || value.size <= 15 * 1024 * 1024
+    )
+    .test("fileFormat", "Formato no permitido (MP4, WEBM, AVI)", (value) => {
+      if (!value) return true;
+      return ["video/mp4", "video/webm", "video/avi"].includes(value.type);
+    }),
 });
 
 const CreacionRutinas = () => {
   const [token, setToken] = useState<string | null>(null);
-  const [rutinas, setRutinas] = useState<IPlans[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageUrlRef = useRef<string>(""); // Evita re-renders innecesarios
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
-      setToken(storedToken);
-      console.log("Token guardado en estado.");
-    } else {
-      console.warn("⚠ No hay token en localStorage.");
+    if (storedToken && token !== storedToken) {
+      setToken(storedToken); // <- Esto podría causar re-render infinito
+    } else if (!storedToken) {
       toast.error("No hay token disponible");
     }
   }, []);
 
   return (
     <div className="flex items-center justify-center p-2">
-      <div className="w-full max-w-lg p-6 shadow-md sm:w-11/12 md:w-8/12 lg:w-6/12 bg-azul2 rounded-xl">
+      <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
         <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
           Crear Rutina
         </h2>
@@ -50,7 +53,7 @@ const CreacionRutinas = () => {
             nombre: "",
             descripcion: "",
             categoria: "",
-            imageUrl: "",
+            imageUrl: null as File | null,
           }}
           validationSchema={validationSchema}
           onSubmit={async (values, { resetForm }) => {
@@ -60,98 +63,118 @@ const CreacionRutinas = () => {
                 return;
               }
 
-              const formattedValues: IPlans = {
-                ...values,
-                categoria: values.categoria as PlanCategory,
-              };
-              console.log("Enviando datos:", formattedValues);
+              const formData = new FormData();
+              formData.append("nombre", values.nombre);
+              formData.append("descripcion", values.descripcion);
+              formData.append("categoria", values.categoria);
 
-              const nuevaRutina = await createPlanService(
-                formattedValues,
-                token
-              );
-              if (!nuevaRutina) {
-                throw new Error("No se recibió la rutina creada");
+              // 1. Crear la rutina
+              const nuevaRutina = await createPlanService(formData, token);
+
+              if (!nuevaRutina?.id) {
+                throw new Error("Error al crear la rutina");
               }
 
+              // 2. Subir imagen solo si existe
+              if (values.imageUrl) {
+                try {
+                  const uploadResponse = await imagePlanService(
+                    values.imageUrl,
+                    nuevaRutina.id,
+                    token
+                  );
+
+                  if (!uploadResponse?.imageUrl) {
+                    throw new Error("No se recibió URL de imagen válida");
+                  }
+
+                  console.log("✅ URL Cloudinary:", uploadResponse.imageUrl);
+                  imageUrlRef.current = uploadResponse.imageUrl;
+                } catch (error: any) {
+                  console.error("❌ Error subiendo imagen:", error.message);
+                  toast.error(error.message);
+                  return;
+                }
+              }
+
+              // 3. Éxito total
               toast.success("Rutina creada exitosamente");
               resetForm();
-
-              setRutinas((prevRutinas) => [...prevRutinas, nuevaRutina]);
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
+              if (fileInputRef.current) fileInputRef.current.value = "";
             } catch (error: any) {
-              console.error("Error al crear la rutina:", error);
-              toast.error(error.message || "Error al crear rutina");
+              const errorMessage =
+                error.response?.data?.message || error.message;
+              console.error("❌ Error:", errorMessage);
+              toast.error(errorMessage);
             }
           }}
         >
-          {({ isSubmitting }) => (
+          {({ isSubmitting, setFieldValue }) => (
             <Form className="flex flex-col gap-4">
-              <div>
-                <Field
-                  type="text"
-                  name="nombre"
-                  placeholder="Nombre"
-                  className="w-full p-2 text-black rounded bg-blanco"
-                />
-                <ErrorMessage
-                  name="nombre"
-                  component="div"
-                  className="text-red-500"
-                />
-              </div>
+              {/* Campos del formulario */}
+              <Field
+                type="text"
+                name="nombre"
+                placeholder="Nombre"
+                className="w-full p-2 text-black rounded bg-blanco"
+              />
+              <ErrorMessage
+                name="nombre"
+                component="div"
+                className="text-red-500"
+              />
 
-              <div>
-                <Field
-                  as="textarea"
-                  name="descripcion"
-                  placeholder="Descripción"
-                  className="w-full p-2 text-black rounded bg-blanco"
-                />
-                <ErrorMessage
-                  name="descripcion"
-                  component="div"
-                  className="text-red-500"
-                />
-              </div>
+              <Field
+                as="textarea"
+                name="descripcion"
+                placeholder="Descripción"
+                className="w-full p-2 text-black rounded bg-blanco"
+              />
+              <ErrorMessage
+                name="descripcion"
+                component="div"
+                className="text-red-500"
+              />
 
-              <div>
-                <Field
-                  as="select"
-                  name="categoria"
-                  className="w-full p-2 text-black rounded bg-blanco"
-                >
-                  <option value="">Selecciona una categoría</option>
-                  <option value="salud">Salud</option>
-                  <option value="fuerza">Fuerza</option>
-                  <option value="especializado">Especializado</option>
-                  <option value="funcional">Funcional</option>
-                  <option value="acuatico">Acuático</option>
-                  <option value="mentecuerpo">Mente y Cuerpo</option>
-                  <option value="artesmarciales">Artes Marciales</option>
-                  <option value="aerobico">Aeróbico</option>
-                </Field>
-                <ErrorMessage
-                  name="categoria"
-                  component="div"
-                  className="text-red-500"
-                />
-              </div>
+              <Field
+                as="select"
+                name="categoria"
+                className="w-full p-2 text-black rounded bg-blanco"
+              >
+                <option value="">Selecciona una categoría</option>
+                {Object.values(PlanCategory).map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="categoria"
+                component="div"
+                className="text-red-500"
+              />
 
-              <div>
-                <Field
-                  type="text"
-                  name="imageUrl"
-                  placeholder="VIDEO"
-                  className="w-full p-2 text-black rounded bg-blanco"
-                />
-              </div>
+              <input
+                type="file"
+                name="imageUrl"
+                ref={fileInputRef}
+                className="w-full p-2 text-black rounded bg-blanco"
+                onChange={(event) =>
+                  setFieldValue(
+                    "imageUrl",
+                    event.currentTarget.files?.[0] || null
+                  )
+                }
+              />
+              <ErrorMessage
+                name="imageUrl"
+                component="div"
+                className="text-red-500"
+              />
 
               <button
                 type="submit"
-                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
+                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creando..." : "Crear Rutina"}

@@ -8,7 +8,7 @@ interface ErrorResponse {
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
-export const createPlanService = async (planData: IPlans, token: string) => {
+export const createPlanService = async (planData: FormData, token: string) => {
   try {
     const plan = await axiosApiBack.post("/plans/create", planData, {
       headers: {
@@ -120,5 +120,42 @@ export const deletePlanService = async (id: string, token: string) => {
   } catch (error: any) {
     console.error("Error completo:", error.response?.data || error.message);
     throw new Error(error.response?.data?.message || "Error al eliminar");
+  }
+};
+export const imagePlanService = async (
+  file: File,
+  planId: string,
+  token: string
+) => {
+  if (!file) {
+    console.error("❌ Error: No se recibió un archivo para subir.");
+    throw new Error("No se recibió un archivo válido.");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const imagenPlan = await axiosApiBack.post(
+      `/plans/upload-image/${planId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("✅ Imagen subida con éxito:", imagenPlan.data.imageUrl);
+    return imagenPlan.data;
+  } catch (error) {
+    let errorMessage = "Error desconocido";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error("❌ Error en Cloudinary:", errorMessage); // Solo el mensaje
+    throw new Error(errorMessage);
   }
 };
