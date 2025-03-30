@@ -31,12 +31,12 @@ const validationSchema = Yup.object().shape({
 const CreacionRutinas = () => {
   const [token, setToken] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageUrlRef = useRef<string>(""); // Evita re-renders innecesarios
+  const imageUrlRef = useRef<string>("");
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken && token !== storedToken) {
-      setToken(storedToken); // <- Esto podría causar re-render infinito
+      setToken(storedToken);
     } else if (!storedToken) {
       toast.error("No hay token disponible");
     }
@@ -68,14 +68,12 @@ const CreacionRutinas = () => {
               formData.append("descripcion", values.descripcion);
               formData.append("categoria", values.categoria);
 
-              // 1. Crear la rutina
               const nuevaRutina = await createPlanService(formData, token);
 
               if (!nuevaRutina?.id) {
                 throw new Error("Error al crear la rutina");
               }
 
-              // 2. Subir imagen solo si existe
               if (values.imageUrl) {
                 try {
                   const uploadResponse = await imagePlanService(
@@ -97,7 +95,6 @@ const CreacionRutinas = () => {
                 }
               }
 
-              // 3. Éxito total
               toast.success("Rutina creada exitosamente");
               resetForm();
               if (fileInputRef.current) fileInputRef.current.value = "";

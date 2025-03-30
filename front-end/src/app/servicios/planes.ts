@@ -10,7 +10,7 @@ const axiosApiBack = axios.create({
 });
 export const createPlanService = async (planData: FormData, token: string) => {
   try {
-    const plan = await axiosApiBack.post("/plans/create", planData, {
+    const plan = await axiosApiBack.post("/plans", planData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

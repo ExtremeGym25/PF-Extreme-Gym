@@ -71,7 +71,14 @@ const MisPlanes = () => {
                   controls
                   className="object-cover w-full mt-2 rounded-md h-60"
                 >
-                  <source src={rutina.imageUrl} type="video/mp4" />
+                  <source
+                    src={
+                      typeof rutina.imageUrl === "string"
+                        ? rutina.imageUrl
+                        : URL.createObjectURL(rutina.imageUrl)
+                    }
+                    type="video/mp4"
+                  />
                   Tu navegador no soporta el elemento de video.
                 </video>
               ) : (

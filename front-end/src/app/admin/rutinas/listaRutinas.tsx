@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { IPlans } from "@/app/tipos";
-import { getPlanService } from "../../servicios/userplanes";
+import DeleteRutinas from "./deleteRutina";
+import { getPlanService, updatePlanService } from "../../servicios/planes";
 
 const ListaRutinas = () => {
   const [rutinas, setRutinas] = useState<IPlans[]>([]);
@@ -10,6 +11,10 @@ const ListaRutinas = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [categoria, setCategoria] = useState<string>("");
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [nuevaRutina, setNuevaRutina] = useState<IPlans | null>(null);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -37,6 +42,38 @@ const ListaRutinas = () => {
     fetchRutinas();
   }, [page, categoria, limit]);
 
+  const actualizarRutina = async (id: string, nuevaRutina: IPlans) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("No hay token disponible");
+      return;
+    }
+
+    try {
+      await updatePlanService(token, id, nuevaRutina);
+
+      setRutinas((prevRutinas) =>
+        prevRutinas.map((r) => (r.id === id ? { ...r, ...nuevaRutina } : r))
+      );
+
+      setEditingId(null);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+      setError("Error al actualizar la rutina");
+    }
+  };
+
+  const handlePlanDeleted = (deletedId: string) => {
+    setRutinas((prevRutinas) =>
+      prevRutinas.filter((rutina) => rutina.id !== deletedId)
+    );
+  };
+
+  console.log("Renderizando con rutinas:", rutinas);
   return (
     <div className="max-w-4xl p-4 mx-auto text-white">
       <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
@@ -76,26 +113,92 @@ const ListaRutinas = () => {
         <p className="text-center text-red-500">{error}</p>
       ) : (
         <ul className="space-y-4">
-          {rutinas.length > 0 ? (
-            rutinas.map((rutina) => (
-              <li key={rutina.id} className="p-4 bg-gray-800 rounded-lg">
-                <h3 className="text-lg font-bold">{rutina.nombre}</h3>
-                <p>{rutina.descripcion}</p>
-                {rutina.imageUrl ? (
-                  <video controls className="w-full mt-2 rounded-lg">
-                    <source src={rutina.imageUrl} type="video/mp4" />
-                    Tu navegador no soporta el elemento de video.
-                  </video>
-                ) : (
-                  <p className="text-gray-400">No hay video disponible</p>
-                )}
-              </li>
-            ))
-          ) : (
-            <p className="text-center text-gray-400">
-              No hay rutinas disponibles.
-            </p>
-          )}
+          {rutinas.map((rutina) => (
+            <li
+              key={rutina.id}
+              className="p-4 bg-gray-800 rounded-lg shadow-md"
+            >
+              {editingId === rutina.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={nuevaRutina?.nombre || ""}
+                    onChange={(e) =>
+                      setNuevaRutina((prev) =>
+                        prev ? { ...prev, nombre: e.target.value } : null
+                      )
+                    }
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                  <textarea
+                    value={nuevaRutina?.descripcion || ""}
+                    onChange={(e) =>
+                      setNuevaRutina((prev) =>
+                        prev ? { ...prev, descripcion: e.target.value } : null
+                      )
+                    }
+                    className="w-full p-2 mb-2 border rounded"
+                  />
+                  <button
+                    onClick={() => {
+                      if (editingId && nuevaRutina) {
+                        actualizarRutina(editingId, nuevaRutina);
+                      }
+                    }}
+                    disabled={
+                      nuevaRutina?.nombre ===
+                        rutinas.find((r) => r.id === editingId)?.nombre &&
+                      nuevaRutina?.descripcion ===
+                        rutinas.find((r) => r.id === editingId)?.descripcion
+                    }
+                    className="w-full px-3 py-1 text-white bg-green-500 rounded md:w-auto hover:bg-green-700"
+                  >
+                    Guardar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-lg font-bold">{rutina.nombre}</h3>
+                  <p className="text-sm">{rutina.descripcion}</p>
+
+                  {rutina.imageUrl ? (
+                    <video
+                      controls
+                      className="object-cover w-full mt-2 rounded-md h-60"
+                    >
+                      <source
+                        src={
+                          typeof rutina.imageUrl === "string"
+                            ? rutina.imageUrl
+                            : URL.createObjectURL(rutina.imageUrl)
+                        }
+                        type="video/mp4"
+                      />
+                    </video>
+                  ) : (
+                    <p className="text-gray-400">No hay video disponible</p>
+                  )}
+
+                  <div className="flex flex-col gap-2 mt-2 md:flex-row">
+                    <button
+                      onClick={() => {
+                        setEditingId(rutina.id ?? "");
+                        setNuevaRutina({ ...rutina });
+                      }}
+                      className="px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
+                    >
+                      Editar
+                    </button>
+
+                    <DeleteRutinas
+                      id={rutina.id ?? ""}
+                      onPlanDeleted={handlePlanDeleted}
+                    />
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
         </ul>
       )}
 
