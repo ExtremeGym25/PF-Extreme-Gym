@@ -37,7 +37,13 @@ const Login = () => {
       if (res?.token) {
         toast.success("Inicio de sesión exitoso");
         saveUserData(res);
-        setTimeout(() => router.push(routes.miPerfil), 1000);
+        setTimeout(() => {
+          if (res.user.isAdmin) {
+            router.push(routes.admin);
+          } else {
+            router.push(routes.miPerfil);
+          }
+        }, 1000);
       } else {
         toast.error("Credenciales incorrectas");
       }

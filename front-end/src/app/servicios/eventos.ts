@@ -12,9 +12,27 @@ const axiosApiBack = axios.create({
 
 export const createEvent = async (eventData: any) => {
     try {
-        const response = await axiosApiBack.post("/events", eventData);
+        const token = typeof window !== "undefined" ?  localStorage.getItem('token') : null;
+
+        if (!token) {
+            console.error("no se encontro un token en localStorage");
+            throw new Error("Debe iniciar sesion")
+            
+        }
+
+        const response = await axiosApiBack.post("/events", eventData, {
+            headers: {
+                Authorization: `Bearen ${token}`,
+            }
+        });
         return response.data
     } catch (error) {
+        if (error.response) {
+            console.error("Error del backend:", error.response.data);
+        } else {
+            console.error("Error en la Solicitud:", error.message);
+            
+        }
         console.error("Error al crear el evento:", error)
         throw error;        
     }
