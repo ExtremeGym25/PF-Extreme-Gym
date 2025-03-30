@@ -34,7 +34,24 @@ const Eventos = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const eventData = { ...formData, capacity: Number(formData.capacity) };
+    if (typeof window === "undefined") {
+      console.error("localStorage no esta disponible");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("no se encontro el token en localStorage");
+      alert("debe iniciar sesion para crear un evento");
+    }
+    const decoded = JSON.parse(atob(token.split(".")[1]));
+    const userId = decoded.id;
+
+    const eventData = {
+      ...formData,
+      capacity: Number(formData.capacity),
+      userId: userId,
+    };
 
     try {
       await createEvent(eventData);
@@ -48,6 +65,11 @@ const Eventos = () => {
         capacity: "",
       });
     } catch (error) {
+      if (error.response) {
+        console.error("error del backend:", error.response.data);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
       alert("Hubo un error al crear el evento");
     }
   };
@@ -92,7 +114,7 @@ const Eventos = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <input
                 type="text"
                 name="location"
@@ -111,6 +133,33 @@ const Eventos = () => {
                 className="p-2 text-black rounded bg-blanco"
                 required
               />
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="p-2 text-black rounded bg-blanco"
+                required
+              >
+                <option value="">Seleccione una categoría</option>
+                <option value="Deportes Aéreos (Paracaidismo, Parapente, BASE Jumping)">
+                  Deportes Aéreos
+                </option>
+                <option value="Deportes Acuáticos (Surf, Kitesurf, Rafting en aguas bravas)">
+                  Deportes Acuáticos
+                </option>
+                <option value="Deportes de Montaña (Escalada en roca, Esquí Alpino, Snowboarding)">
+                  Deportes de Montaña
+                </option>
+                <option value="Deportes de Motor (Motocross, Rally, Carreras de velocidad)">
+                  Deportes de Motor
+                </option>
+                <option value="Deportes de Aventura (Puenting, Ciclismo de montaña, Senderismo extremo)">
+                  Deportes de Aventura
+                </option>
+                <option value="Deportes de Invierno (Esquí extremo, Snowboard extremo, Escalada en hielo)">
+                  Deportes de Invierno
+                </option>
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

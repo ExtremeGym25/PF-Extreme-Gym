@@ -8,10 +8,11 @@ import { Subscription } from 'src/payments/entities/payment.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { FileUploadModule } from 'src/file-upload/file-upload.module';
 import { PlansModule } from 'src/plans/plans.module';
+import { Event } from 'src/event/entities/event.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Subscription]),
+    TypeOrmModule.forFeature([User, Subscription, Event]),
     FileUploadModule,
     NotificationsModule,
     PlansModule,
