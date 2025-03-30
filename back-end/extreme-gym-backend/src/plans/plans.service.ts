@@ -55,6 +55,13 @@ export class PlanService {
     if (exists) throw new ForbiddenException('Ya estás inscrito en este plan');
 
     await this.userPlanRepo.save({ userId, planId: dto.planId });
+    // Obtener el plan asociado para enviar información  
+  const plan = await this.planRepo.findOne({ where: { id: dto.planId } });  
+
+  if (plan) {  
+    // Aquí suponemos que el plan tiene un campo `imageUrl` o `videoUrl`  
+    const mediaUrl = plan.imageUrl;  
+  }
     return { message: 'Plan asignado correctamente' };
   }
 
@@ -153,7 +160,7 @@ export class PlanService {
   }
 
   async deletePlan(id: string): Promise<void> {
-    await this.userPlanRepo.delete({ planId: id }); // Primero elimina relaciones
+    await this.userPlanRepo.delete({ planId: id });
     await this.planRepo.delete(id);
   }
 

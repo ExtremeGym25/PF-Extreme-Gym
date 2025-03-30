@@ -39,10 +39,14 @@ export class FileUploadService {
     category: string,
     userId?: string,
   ): Promise<string> {
+    if (!file || file.size === 0) {  
+    throw new BadRequestException('El archivo no debe estar vacío');
+  } 
     const allowedTypes = [...this.allowedImageTypes, ...this.allowedVideoTypes];
     const errorMessage =
       'Formato de archivo no permitido. Por favor, sube un archivo de tipo imagen (PNG, JPEG, GIF) o video (MP4, WEBM, AVI).';
     this.validateFileType(file, allowedTypes, errorMessage);
+
     const resourceType = this.allowedVideoTypes.includes(file.mimetype)
       ? 'video'
       : 'image';
@@ -50,8 +54,7 @@ export class FileUploadService {
       file,
       `${category}`,
       resourceType,
-      userId,
-      category,
+      userId
     );
   }
 
@@ -142,6 +145,14 @@ export class FileUploadService {
           resolve(result);
         },
       );
+
+      if (!file.buffer) {
+        return reject(
+          new BadRequestException(
+            'El archivo no debe estar vacío; no se recibió un buffer.',
+          ),
+        );
+      }  
 
       const bufferStream = new Readable();
       bufferStream.push(file.buffer);

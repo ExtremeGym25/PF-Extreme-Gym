@@ -11,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -62,14 +63,30 @@ export class EventController {
   @Put(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseInterceptors(FileInterceptor('file'))
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
-    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
     try {
       return await this.eventService.updateEvent(id, updateEventDto);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.getStatus ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Patch(':id/upload-image')
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
+  @UseInterceptors(FileInterceptor('file'))
+  async updateEventImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Event> {
+    try {
+      return await this.eventService.updateEventImageUrl(id, file);
     } catch (error) {
       throw new HttpException(
         error.message,
