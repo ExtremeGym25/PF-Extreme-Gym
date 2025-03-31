@@ -19,8 +19,8 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: email,
         subject: '¡Bienvenido a Extreme Gym! 🏋️‍♂️',
-        template: './welcome', 
-        context: { name }, 
+        template: './welcome',
+        context: { name },
       });
       return { message: 'Correo enviado con éxito' };
     } catch (error) {
@@ -38,7 +38,7 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: user.email,
         subject: '¡Empieza tu semana con energía en Extreme Gym! 💪',
-        template: 'weekly-reminder', 
+        template: 'weekly-reminder',
         context: {
           name: user.name,
         },
@@ -65,7 +65,7 @@ export class NotificationsService {
       await this.mailerService.sendMail({
         to: email,
         subject: `Confirmación de suscripción ${tipoPlan}`,
-        template: './confirmacion', 
+        template: './confirmacion',
         context: { nombre, tipoPlan, duracion },
       });
 
@@ -79,8 +79,7 @@ export class NotificationsService {
   async sendSubscriptionExpirationReminder() {
     const today = new Date();
     const nextWeek = new Date();
-    nextWeek.setDate(today.getDate() + 7); 
-
+    nextWeek.setDate(today.getDate() + 7);
 
     const users = await this.usersRepository.find({
       where: {
@@ -113,5 +112,17 @@ export class NotificationsService {
         `✅ Correo enviado a ${user.email} - Expira el ${user.subscriptionExpirationDate}`,
       );
     }
+  }
+
+  async sendPlanAssignmentEmail(email: string, name: string, planName: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: '¡Te has suscrito a un nuevo plan!',
+      template: 'plan-assignment', // Nombre del archivo HBS
+      context: {
+        name,
+        planName,
+      },
+    });
   }
 }
