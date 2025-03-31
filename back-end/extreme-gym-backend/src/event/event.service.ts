@@ -29,10 +29,8 @@ export class EventService {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  async createEvent(
-    createEventDto: CreateEventDto,
-    file: Express.Multer.File,
-  ): Promise<Event> {
+  // Crear un evento sin la URL de la imagen
+  async createEvent(createEventDto: CreateEventDto, file: Express.Multer.File): Promise<Event> {
     if (
       !Object.values(ExtremeSportCategory).includes(createEventDto.category)
     ) {
@@ -45,15 +43,13 @@ export class EventService {
     }
 
     try {
-      // Subir la imagen y obtener la URL
-      const imageUrl = await this.fileUploadService.uploadImage(file, 'events');
-
+      // Crear el evento
       const event = this.eventRepository.create({
         ...createEventDto,
         user,
-        imageUrl,
       });
 
+      // Comprobar capacidad del evento
       const existingEvent = await this.eventRepository.findOne({
         where: { id: event.id },
       });
@@ -65,24 +61,50 @@ export class EventService {
           throw new BadRequestException('Capacidad del evento superada');
         }
       }
+
       return await this.eventRepository.save(event);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        this.logger.error(
-          `Error al crear el evento: ${error.message}`,
-          error.stack,
-        );
-        throw new InternalServerErrorException('Datos de evento inválidos');
-      }
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
+      this.handleCreateEventError(error);
+      throw new InternalServerErrorException('Error al crear el evento');
+    }
+  }
+
+  // Actualizar la URL de la imagen del evento
+  async updateEventImageUrl(
+    eventId: string,
+    file: Express.Multer.File,
+  ): Promise<Event> {
+    const event = await this.getEventById(eventId);
+
+    try {
+      // Subir la nueva imagen y obtener la nueva URL
+      const imageUrl = await this.fileUploadService.uploadImage(file, 'events');
+
+      // Actualizar la URL de la imagen
+      event.imageUrl = imageUrl;
+      return await this.eventRepository.save(event);
+    } catch (error) {
+      this.handleCreateEventError(error);
+      throw new InternalServerErrorException('Error al subir la imagen');
+    }
+  }
+
+  private handleCreateEventError(error: any): void {
+    if (error instanceof QueryFailedError) {
       this.logger.error(
-        `Error inesperado al crear el evento: ${error.message}`,
+        `Error al crear el evento: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException('No se pudo crear el evento');
+      throw new InternalServerErrorException('Datos de evento inválidos');
     }
+    if (error instanceof BadRequestException) {
+      throw error;
+    }
+    this.logger.error(
+      `Error inesperado al crear el evento: ${error.message}`,
+      error.stack,
+    );
+    throw new InternalServerErrorException('No se pudo crear el evento');
   }
 
   async getEvents(): Promise<Event[]> {
@@ -123,8 +145,7 @@ export class EventService {
 
   async updateEvent(
     id: string,
-    updateEventDto: UpdateEventDto, 
-    file?: Express.Multer.File,
+    updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     const event = await this.getEventById(id);
 
@@ -136,15 +157,6 @@ export class EventService {
     }
 
     try {
-      if (file) {
-        // Subir nueva imagen y actualizar imageUrl
-        const imageUrl = await this.fileUploadService.uploadImage(
-          file,
-          'events',
-        );
-        event.imageUrl = imageUrl;
-      }
-
       this.eventRepository.merge(event, updateEventDto);
       return await this.eventRepository.save(event);
     } catch (error) {

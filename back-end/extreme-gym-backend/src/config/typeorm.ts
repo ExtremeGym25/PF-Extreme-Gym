@@ -11,7 +11,6 @@ const config = {
   port: `${process.env.DB_PORT}`,
   entities: ['dist/**/*.entity{.ts,.js}'],
   autoLoadEntities: true,
-  dropSchema: true,
   synchronize: true,
 };
 

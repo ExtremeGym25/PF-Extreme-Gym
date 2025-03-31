@@ -5,7 +5,7 @@ export const routes = {
   carroCompras: "/carroCompra",
   home: "/",
   nosotros: "/nosotros",
-  favoritos: "/favoritos",
+  favoritos: "/planesRutinas/favoritos",
   planesRutinas: "/planesRutinas",
   casosExito: "/casosExito",
   tarifas: "/tarifas",

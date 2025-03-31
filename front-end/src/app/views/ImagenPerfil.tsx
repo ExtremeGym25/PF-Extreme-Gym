@@ -17,10 +17,10 @@ const validationSchema = Yup.object().shape({
     )
     .test(
       "fileFormat",
-      "Solo se permiten imágenes (JPG, JPEG, PNG)",
+      "Solo se permiten imágenes ( JPEG, PNG,GIF)",
       (value) =>
         value &&
-        ["image/jpeg", "image/jpg", "image/png"].includes((value as File).type)
+        ["image/jpeg", "gif", "image/png"].includes((value as File).type)
     ),
 });
 
@@ -30,9 +30,9 @@ interface FormValues {
 
 const ImagenPerfil = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { resetUserData } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
+
   return (
     <Formik<FormValues>
       initialValues={{ profileImage: null }}
@@ -44,19 +44,26 @@ const ImagenPerfil = () => {
         }
 
         try {
-          const imageUrl = await uploadProfileImageService(values.profileImage);
-          console.log("Imagen subida con éxito:", imageUrl);
-          toast.success("Imagen subida correctamente");
+          const userId = user?.id ?? "";
+          if (!userId) {
+            toast.error("Error: No se encontró el usuario");
+            return;
+          }
+          const userData = await uploadProfileImageService(
+            values.profileImage,
+            userId
+          );
+          console.log("Datos recibidos del servicio:", userData);
+
+          localStorage.setItem("user", JSON.stringify(userData));
+
+          toast.success("Imagen subida con exito");
 
           resetForm();
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
-
-          resetUserData();
-          setTimeout(() => {
-            router.push(routes.login);
-          }, 1000);
+          window.location.reload();
         } catch (error) {
           console.error("Error al subir la imagen:", error);
           toast.error("Error al subir la imagen");
@@ -68,11 +75,14 @@ const ImagenPerfil = () => {
       {({ setFieldValue, errors, touched, isSubmitting }) => (
         <Form className="flex flex-col space-y-4">
           <input
+            name="profileImage"
             ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
+                console.log("Archivo seleccionado:", e.target.files[0]);
+
                 setFieldValue("profileImage", e.target.files[0]);
               }
             }}

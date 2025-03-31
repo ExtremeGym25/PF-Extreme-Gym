@@ -77,7 +77,7 @@ const UserAuth = () => {
                   {[
                     { label: "Mi Perfil", route: routes.miPerfil },
                     { label: "Rutinas", route: routes.miPerfil },
-                    { label: "Rutinas Favoritas", route: routes.miPerfil },
+                    { label: "Rutinas Favoritas", route: routes.favoritos },
                     { label: "Notificaciones", route: routes.miPerfil },
                     { label: "Otra Cosa", route: routes.miPerfil },
                     { label: "Ayuda y Soporte", route: routes.miPerfil },
