@@ -54,7 +54,14 @@ export class FileUploadController {
     @UploadedFile() file: Express.Multer.File,
     @Body() UploadFileDto: UploadFileDto,
   ) {
-    this.validateFile(file);
+    if (!file) {
+      throw new BadRequestException('No se ha subido ningún archivo.');
+    }
+
+    // Validar que la categoría no esté vacía
+    if (!UploadFileDto.category) {
+      throw new BadRequestException('La categoría es obligatoria.');
+    }  
 
     const maxSize = UploadFileDto.category.startsWith('video')
     ? 15 * 1024 * 1024
