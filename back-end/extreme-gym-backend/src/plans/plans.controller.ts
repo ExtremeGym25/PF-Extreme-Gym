@@ -28,7 +28,7 @@ import { Role } from '../users/entities/roles.enum';
 import { Roles } from 'src/decorators/roles.decorators';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Plans')
 @Controller('plans')
@@ -48,6 +48,7 @@ export class PlanController {
   }
 
   @Post()
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Crear un nuevo plan' })
@@ -90,6 +91,7 @@ export class PlanController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Eliminar un plan por ID' })
@@ -108,6 +110,7 @@ export class PlanController {
     };
   }
   @Put(':id')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Actualizar un plan por ID' })
@@ -123,6 +126,7 @@ export class PlanController {
     return this.planService.updatePlan(id, dto);
   }
   @Get('check-expirations')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Verificar expiraciones de planes' })
@@ -139,6 +143,7 @@ export class PlanController {
     };
   }
   @Post('upload-image/:planId')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('file'))

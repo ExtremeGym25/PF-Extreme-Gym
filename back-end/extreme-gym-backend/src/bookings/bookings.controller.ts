@@ -20,7 +20,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
 import { User } from 'src/users/entities/user.entity';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Bookings')
 @Controller('bookings')
@@ -29,6 +29,7 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Obtener todas las reservas' })
@@ -41,6 +42,7 @@ export class BookingsController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Obtener una reserva por ID' })

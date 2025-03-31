@@ -18,7 +18,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('File-Upload')
 @Controller('upload')
@@ -50,6 +50,7 @@ export class FileUploadController {
   }
 
   @Post('file')
+   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('file'))

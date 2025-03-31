@@ -22,7 +22,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Events')
 @Controller('events')
@@ -54,6 +54,7 @@ export class EventController {
   }
 
   @Post()
+   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Crear un nuevo evento' })
@@ -72,6 +73,7 @@ export class EventController {
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Actualizar un evento por ID' })
@@ -98,6 +100,7 @@ export class EventController {
   }
 
   @Patch(':id/upload-image')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('file'))
@@ -127,6 +130,7 @@ export class EventController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Eliminar un evento por ID' })
