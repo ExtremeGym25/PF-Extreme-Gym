@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, IsDate, IsBoolean, IsNumber, IsPositive, IsEnum, IsUUID } from 'class-validator';
+import { IsString, IsDate, IsBoolean, IsNumber, IsPositive, IsEnum, IsUUID, IsOptional } from 'class-validator';
 
 
 export enum ExtremeSportCategory {
@@ -31,6 +31,10 @@ export class CreateEventDto {
   @IsNumber()
   @IsPositive()
   capacity: number;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 
   @IsEnum(ExtremeSportCategory)
   category: ExtremeSportCategory;

@@ -30,7 +30,7 @@ export class EventService {
   ) {}
 
   // Crear un evento sin la URL de la imagen
-  async createEvent(createEventDto: CreateEventDto, file: Express.Multer.File): Promise<Event> {
+  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
     if (
       !Object.values(ExtremeSportCategory).includes(createEventDto.category)
     ) {
