@@ -22,18 +22,29 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Events')
 @Controller('events')
 @UseGuards(AuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Obtener todos los eventos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de eventos recuperada correctamente.',
+  })
   async findAllEvents(): Promise<Event[]> {
     return this.eventService.getEvents();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un evento por ID' })
+  @ApiParam({ name: 'id', required: true, description: 'ID del evento' })
+  @ApiResponse({ status: 200, description: 'Evento encontrado.' })
+  @ApiResponse({ status: 404, description: 'Evento no encontrado.' })
   async findOneEvent(@Param('id') id: string): Promise<Event> {
     try {
       return await this.eventService.getEventById(id);
@@ -45,9 +56,11 @@ export class EventController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  async createEvent(
-    @Body() createEventDto: CreateEventDto,
-  ): Promise<Event> {
+  @ApiOperation({ summary: 'Crear un nuevo evento' })
+  @ApiBody({ type: CreateEventDto }) // Asegúrate de que CreateEventDto está correctamente definido
+  @ApiResponse({ status: 201, description: 'Evento creado exitosamente.' })
+  @ApiResponse({ status: 400, description: 'Error al crear el evento.' })
+  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
     try {
       return await this.eventService.createEvent(createEventDto);
     } catch (error) {
@@ -61,6 +74,15 @@ export class EventController {
   @Put(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
+  @ApiOperation({ summary: 'Actualizar un evento por ID' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del evento a actualizar',
+  })
+  @ApiBody({ type: UpdateEventDto }) // Asegúrate de que UpdateEventDto está correctamente definido
+  @ApiResponse({ status: 200, description: 'Evento actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Evento no encontrado.' })
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -79,6 +101,17 @@ export class EventController {
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Actualizar la imagen de un evento por ID' })
+  @ApiParam({ name: 'id', required: true, description: 'ID del evento' })
+  @ApiResponse({
+    status: 200,
+    description: 'Imagen del evento actualizada exitosamente.',
+  })
+  @ApiResponse({ status: 404, description: 'Evento no encontrado.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al actualizar la imagen del evento.',
+  })
   async updateEventImage(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -96,6 +129,14 @@ export class EventController {
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
+  @ApiOperation({ summary: 'Eliminar un evento por ID' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'ID del evento a eliminar',
+  })
+  @ApiResponse({ status: 200, description: 'Evento eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Evento no encontrado.' })
   async cancel(@Param('id') id: string): Promise<Event> {
     try {
       return await this.eventService.cancelEvent(id);
