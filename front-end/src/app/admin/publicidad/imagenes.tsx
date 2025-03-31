@@ -8,15 +8,17 @@ import { imageService } from "@/app/servicios/imagenes";
 const validationSchema = Yup.object().shape({
   imageUrl: Yup.mixed()
     .required("La imagen es obligatoria")
-    .test("fileSize", "El archivo debe ser menor a 5MB", (value) =>
-      value ? (value as File).size <= 5 * 1024 * 1024 : false
+    .test(
+      "fileSize",
+      "El archivo debe ser menor a 5MB",
+      (value) => value && (value as File).size <= 5 * 1024 * 1024
     )
-    .test("fileFormat", "Solo se permiten imágenes (JPEG, PNG, GIF)", (value) =>
-      value
-        ? ["image/jpeg", "image/gif", "image/png"].includes(
-            (value as File).type
-          )
-        : false
+    .test(
+      "fileFormat",
+      "Solo se permiten imágenes (JPEG, PNG, GIF)",
+      (value) =>
+        value &&
+        ["image/jpeg", "image/gif", "image/png"].includes((value as File).type)
     ),
 });
 
@@ -44,15 +46,17 @@ const ImagenesPublicidad = () => {
   }, []);
 
   const handleFileChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
   ) => {
     const file = event.target.files?.[0];
+
     if (!file) {
       toast.error("No se seleccionó ningún archivo.");
       return;
     }
-    console.log("Archivo seleccionado:", file);
+
+    console.log("✅ Archivo seleccionado:", file);
     setFieldValue("imageUrl", file);
   };
 
@@ -72,17 +76,19 @@ const ImagenesPublicidad = () => {
 
     const formData = new FormData();
     formData.append("file", values.imageUrl);
+    formData.append("upload_preset", "tu_upload_preset");
     formData.append("category", "image");
     formData.append("userId", values.userId);
 
+    console.log("📦 FormData antes de enviar:");
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
     try {
-      console.log("🔍 Datos enviados a la API:");
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-      }
       const response = await imageService(formData, token);
-      console.log("Imagen subida con éxito:", response.imageUrl);
-      toast.success("Imagen subida con éxito");
+      console.log(" Imagen subida con éxito:", response.imageUrl);
+      toast.success("Imagen subida correctamente");
     } catch (error: any) {
       toast.error(error.message || "Error subiendo la imagen.");
     }
@@ -107,11 +113,10 @@ const ImagenesPublicidad = () => {
           onSubmit={(values) => handleSubmit(values)}
           enableReinitialize
         >
-          {({ isSubmitting, setFieldValue, errors }) => (
+          {({ isSubmitting, setFieldValue }) => (
             <Form className="flex flex-col gap-4">
-              <Field
-                name="imageUrl"
-                render={() => (
+              <Field name="imageUrl">
+                {() => (
                   <div>
                     <input
                       type="file"
@@ -126,7 +131,8 @@ const ImagenesPublicidad = () => {
                     />
                   </div>
                 )}
-              />
+              </Field>
+
               <button
                 type="submit"
                 className="w-full px-4 py-2 mt-4 text-sm transition rounded-md bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900"

@@ -55,4 +55,5 @@ export interface IEvent {
   capacity: number;
   category: ExtremeSportCategory;
   userId: string;
+  file?: File;
 }
