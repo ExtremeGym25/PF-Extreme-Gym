@@ -2,27 +2,20 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import { createEvent, getEvents } from "../../servicios/eventos";
+import { createEvent } from "../../servicios/eventos";
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    location: "",
+    name: "Hola",
+    description: "como estas",
+    location: "bien y tu",
     date: "",
     time: "",
     capacity: "",
+    category: "",
   });
 
   const [eventos, setEventos] = useState([]);
-
-  useEffect(() => {
-    const fetchEventos = async () => {
-      const data = await getEvents();
-      setEventos(data);
-    };
-    fetchEventos();
-  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -35,26 +28,29 @@ const Eventos = () => {
     e.preventDefault();
 
     if (typeof window === "undefined") {
-      console.error("localStorage no esta disponible");
+      console.error("localStorage no está disponible");
       return;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
-      console.error("no se encontro el token en localStorage");
-      alert("debe iniciar sesion para crear un evento");
+      console.error("No se encontró el token en localStorage");
+      alert("Debe iniciar sesión para crear un evento");
+      return;
     }
+
     const decoded = JSON.parse(atob(token.split(".")[1]));
     const userId = decoded.id;
 
     const eventData = {
       ...formData,
       capacity: Number(formData.capacity),
-      userId: userId,
+      userId,
     };
+    console.log("Category seleccionada:", formData.category);
 
     try {
-      await createEvent(eventData);
+      await createEvent(eventData, token); // Aquí pasas el token como segundo parámetro
       alert("Evento creado exitosamente");
       setFormData({
         name: "",
@@ -63,10 +59,11 @@ const Eventos = () => {
         date: "",
         time: "",
         capacity: "",
+        category: "",
       });
     } catch (error) {
       if (error.response) {
-        console.error("error del backend:", error.response.data);
+        console.error("Error del backend:", error.response.data);
       } else {
         console.error("Error en la solicitud:", error.message);
       }
@@ -141,45 +138,28 @@ const Eventos = () => {
                 required
               >
                 <option value="">Seleccione una categoría</option>
-                <option value="Deportes Aéreos (Paracaidismo, Parapente, BASE Jumping)">
-                  Deportes Aéreos
-                </option>
-                <option value="Deportes Acuáticos (Surf, Kitesurf, Rafting en aguas bravas)">
-                  Deportes Acuáticos
-                </option>
-                <option value="Deportes de Montaña (Escalada en roca, Esquí Alpino, Snowboarding)">
-                  Deportes de Montaña
-                </option>
-                <option value="Deportes de Motor (Motocross, Rally, Carreras de velocidad)">
-                  Deportes de Motor
-                </option>
-                <option value="Deportes de Aventura (Puenting, Ciclismo de montaña, Senderismo extremo)">
+                <option value="Deportes Aéreos">Deportes Aéreos</option>
+                <option value="Deportes Acuáticos">Deportes Acuáticos</option>
+                <option value="Deportes de Montaña">Deportes de Montaña</option>
+                <option value="Deportes de Motor">Deportes de Motor</option>
+                <option value="Deportes de Aventura">
                   Deportes de Aventura
                 </option>
-                <option value="Deportes de Invierno (Esquí extremo, Snowboard extremo, Escalada en hielo)">
+                <option value="Deportes de Invierno">
                   Deportes de Invierno
                 </option>
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <textarea
-                name="description"
-                placeholder="Descripción"
-                value={formData.description}
-                onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
-                required
-              />
-              <div className="flex flex-col justify-center">
-                <label className="block mb-2 text-blanco">Subir Imagen</label>
-                <input
-                  type="file"
-                  name="image"
-                  className="p-2 rounded bg-blanco"
-                />
-              </div>
-            </div>
+            <textarea
+              name="description"
+              placeholder="Descripción"
+              value={formData.description}
+              onChange={handleChange}
+              className="p-2 text-black rounded bg-blanco"
+              required
+            />
+
             <button
               type="submit"
               className="p-2 mx-auto font-bold text-black rounded bg-verde w-80 hover:bg-green-600 hover:text-blanco"
@@ -189,7 +169,7 @@ const Eventos = () => {
           </form>
         </div>
         <h2 className="my-6 text-4xl font-bold text-center text-white">
-          Evento Creados
+          Eventos Creados
         </h2>
         <div className="flex flex-col items-center gap-4">
           {eventos.map((evento) => (
@@ -204,16 +184,12 @@ const Eventos = () => {
                 <div className="text-naranja">
                   {new Date(evento.date).toLocaleDateString()} - {evento.time}
                 </div>
-                <div className="col-start-4">
-                  <button className="px-4 py-2 text-white rounded bg-naranja">
-                    Actualizar
-                  </button>
-                </div>
-                <div className="col-start-5">
-                  <button className="px-4 py-2 text-white bg-red-500 rounded">
-                    Cancelar
-                  </button>
-                </div>
+                <button className="px-4 py-2 text-white rounded bg-naranja">
+                  Actualizar
+                </button>
+                <button className="px-4 py-2 text-white bg-red-500 rounded">
+                  Cancelar
+                </button>
               </div>
             </div>
           ))}
