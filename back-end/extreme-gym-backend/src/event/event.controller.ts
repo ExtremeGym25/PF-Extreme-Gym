@@ -45,13 +45,11 @@ export class EventController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
-  @UseInterceptors(FileInterceptor('file'))
   async createEvent(
     @Body() createEventDto: CreateEventDto,
-    @UploadedFile() file: Express.Multer.File,
   ): Promise<Event> {
     try {
-      return await this.eventService.createEvent(createEventDto, file);
+      return await this.eventService.createEvent(createEventDto);
     } catch (error) {
       throw new HttpException(
         error.message,
