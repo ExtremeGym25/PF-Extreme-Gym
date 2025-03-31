@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder().setTitle('ExtremeGym')
   .setDescription('Documentación de mi API')
-  .setVersion('1.0')
+  .setVersion('1.0').addBearerAuth()
   .addTag('Users')
   .build()
 
