@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../contextos/contextoAuth";
 import { deleteUserService } from "../servicios/auth";
 import { useRouter } from "next/navigation";
@@ -7,6 +7,8 @@ import { routes } from "../routes/routes";
 
 const DeleteUsuario = () => {
   const { user, resetUserData } = useAuth();
+  const [error, setError] = useState("");
+
   const router = useRouter();
 
   const handleDeleteUser = async () => {
@@ -18,7 +20,12 @@ const DeleteUsuario = () => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar tu cuenta?"))
       return;
     try {
-      await deleteUserService(user.id);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No hay token disponible");
+        return;
+      }
+      await deleteUserService(user.id, token);
       toast.success("Cuenta eliminada correctamente.");
 
       resetUserData();

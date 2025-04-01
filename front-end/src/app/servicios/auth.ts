@@ -82,7 +82,8 @@ export const updateUser = async (
 };
 export const uploadProfileImageService = async (
   file: File,
-  id: string
+  id: string,
+  token: string
 ): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
@@ -92,6 +93,9 @@ export const uploadProfileImageService = async (
     const response = await fetch("http://localhost:3000/users/profile", {
       method: "PATCH",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
@@ -100,24 +104,23 @@ export const uploadProfileImageService = async (
 
     const data = await response.json();
     return data;
-  } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      console.error(
-        "Error de Axios:",
-        error.response?.data.message || error.message
-      );
-      throw new Error(error.response?.data?.message || "Error desconocido");
-    } else {
-      console.error("Error desconocido:", error);
-      throw new Error("Ocurrió un error inesperado");
-    }
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    throw new Error("Ocurrió un error inesperado");
   }
 };
-export const deleteUserService = async (userId: string) => {
+export const deleteUserService = async (userId: string, token: string) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/users/${userId}`
+      `http://localhost:3000/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
     );
+
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
