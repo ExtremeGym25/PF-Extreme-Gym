@@ -19,6 +19,6 @@ import { Event } from 'src/event/entities/event.entity';
   ],
   controllers: [UsersController],
   providers: [UsersService, AuthService],
-  exports: [UsersService],
+  exports: [UsersService, TypeOrmModule.forFeature([User])],
 })
 export class UsersModule {}
