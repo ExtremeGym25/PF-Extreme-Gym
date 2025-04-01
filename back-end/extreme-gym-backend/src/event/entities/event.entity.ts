@@ -1,4 +1,5 @@
 import { Booking } from "src/bookings/entities/booking.entity";
+import { Publication } from "src/community/entities/publication.entity";
 import { User } from "src/users/entities/user.entity";
 import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -52,6 +53,9 @@ export class Event {
 
   @OneToMany(() => Booking, (booking) => booking.event)
   bookings: Booking[];
+
+  @OneToMany(() => Publication, (publication) => publication.event)
+  publications: Publication[];
 
   @BeforeUpdate()
   updateTimestamp() {

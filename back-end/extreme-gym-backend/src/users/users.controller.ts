@@ -79,7 +79,7 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File,
     @Body('userId') userId: string,
     @Request() req,
-  ): Promise<User | null> {
+  ): Promise<Omit<User, 'password' | 'isAdmin' | 'subscriptionType'> | null> {
     const currentUser = req.user;
     if (currentUser.id !== userId && !currentUser.isAdmin) {
       throw new ForbiddenException(
@@ -153,6 +153,7 @@ export class UsersController {
     status: 403,
     description: 'No tienes permiso para realizar esta acción',
   })
+  
   async deleteUser(
     @Param('id') userId: string,
     @Request() req,
