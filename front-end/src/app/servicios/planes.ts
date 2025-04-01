@@ -128,7 +128,7 @@ export const imagePlanService = async (
   token: string
 ) => {
   if (!file) {
-    console.error("❌ Error: No se recibió un archivo para subir.");
+    console.error(" Error: No se recibió un archivo para subir.");
     throw new Error("No se recibió un archivo válido.");
   }
 
@@ -146,7 +146,7 @@ export const imagePlanService = async (
         },
       }
     );
-    console.log("✅ Imagen subida con éxito:", imagenPlan.data.imageUrl);
+    console.log(" Imagen subida con éxito:", imagenPlan.data.imageUrl);
     return imagenPlan.data;
   } catch (error) {
     let errorMessage = "Error desconocido";
@@ -155,7 +155,7 @@ export const imagePlanService = async (
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error("❌ Error en Cloudinary:", errorMessage); // Solo el mensaje
+    console.error(" Error en Cloudinary:", errorMessage); // Solo el mensaje
     throw new Error(errorMessage);
   }
 };
