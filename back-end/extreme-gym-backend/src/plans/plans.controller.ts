@@ -9,7 +9,6 @@ import {
   Query,
   ParseIntPipe,
   Put,
-  UnauthorizedException,
   NotFoundException,
   BadRequestException,
   UseInterceptors,
