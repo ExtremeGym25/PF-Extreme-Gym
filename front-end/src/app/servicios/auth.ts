@@ -84,7 +84,7 @@ export const uploadProfileImageService = async (
 ): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("id", id);
+  formData.append("userId", id);
 
   try {
     const response = await fetch("http://localhost:3000/users/profile", {
@@ -94,16 +94,16 @@ export const uploadProfileImageService = async (
         Authorization: `Bearer ${token}`,
       },
     });
-    const responseText = await response.text(); // Captura el error en texto
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${responseText}`);
+      const errorData = await response.json();
+      throw new Error(`Error ${response.status}: ${errorData.message}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error("Error al subir la imagen:", error);
+  } catch (error: any) {
+    console.error("Error desconocido:", error);
     throw new Error("Ocurrió un error inesperado");
   }
 };
