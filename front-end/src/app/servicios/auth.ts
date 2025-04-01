@@ -24,9 +24,6 @@ export const loginService = async (userData: Partial<IUserLogin>) => {
         error.response?.data.message || error.message
       );
       throw new Error(error.response?.data?.message || "Error desconocido");
-    } else {
-      console.error("Error desconocido:", error);
-      throw new Error("Ocurrió un error inesperado");
     }
   }
 };
@@ -35,9 +32,9 @@ export const registerService = async (userData: Partial<IUser>) => {
   try {
     await axiosApiBack.post("/auth/signup", userData);
     return "Registro exitoso";
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      const errorData = error.response?.data as ErrorResponse; // Aseguramos el tipo
+      const errorData = error.response?.data as ErrorResponse;
       console.log("Error al registrarse", errorData?.message || error.message);
       throw new Error(errorData?.message || "Error_Register");
     } else {
@@ -97,9 +94,10 @@ export const uploadProfileImageService = async (
         Authorization: `Bearer ${token}`,
       },
     });
+    const responseText = await response.text(); // Captura el error en texto
 
     if (!response.ok) {
-      throw new Error("Error al subir la imagen");
+      throw new Error(`Error ${response.status}: ${responseText}`);
     }
 
     const data = await response.json();

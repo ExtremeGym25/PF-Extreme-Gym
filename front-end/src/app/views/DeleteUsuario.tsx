@@ -33,9 +33,9 @@ const DeleteUsuario = () => {
       setTimeout(() => {
         router.push(routes.registro);
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al eliminar usuario:", error);
-      toast.error("Error al eliminar la cuenta.");
+      toast.error(error.message);
     }
   };
 

@@ -47,11 +47,9 @@ const Login = () => {
       } else {
         toast.error("Credenciales incorrectas");
       }
-    } catch (error) {
-      console.error("Error al iniciar sesión", error);
-      toast.error(
-        "Error al iniciar sesión. Verifica tus datos e intenta de nuevo."
-      );
+    } catch (error: any) {
+      console.error("Error al iniciar sesión", error.message);
+      toast.error(error.message);
     } finally {
       setSubmitting(false);
     }
