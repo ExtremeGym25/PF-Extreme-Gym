@@ -41,6 +41,16 @@ export class BookingsController {
     return await this.bookingsService.findAllBookings();
   }
 
+  @Get('my-reservations')
+  @ApiOperation({ summary: 'Obtener las reservas del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de reservas del usuario recuperada exitosamente.',
+  })
+  async findMyReservations(@UserDecorator() user: User): Promise<Booking[]> {
+    return await this.bookingsService.findBookingsByUserId(user.id);
+  }
+
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
@@ -58,16 +68,6 @@ export class BookingsController {
         error.getStatus ? error.getStatus() : HttpStatus.NOT_FOUND,
       );
     }
-  }
-
-  @Get('my-reservations')
-  @ApiOperation({ summary: 'Obtener las reservas del usuario autenticado' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de reservas del usuario recuperada exitosamente.',
-  })
-  async findMyReservations(@UserDecorator() user: User): Promise<Booking[]> {
-    return await this.bookingsService.findBookingsByUserId(user.id);
   }
 
   @Post()
