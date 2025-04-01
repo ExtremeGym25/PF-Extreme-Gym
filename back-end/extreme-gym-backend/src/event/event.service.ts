@@ -17,6 +17,9 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class EventService {
+  findOne(id: string): Event | PromiseLike<Event> {
+    throw new Error('Method not implemented.');
+  }
   private readonly logger = new Logger(EventService.name);
 
   constructor(
@@ -30,7 +33,7 @@ export class EventService {
   ) {}
 
   // Crear un evento sin la URL de la imagen
-  async createEvent(createEventDto: CreateEventDto, file: Express.Multer.File): Promise<Event> {
+  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
     if (
       !Object.values(ExtremeSportCategory).includes(createEventDto.category)
     ) {
@@ -155,7 +158,6 @@ export class EventService {
     ) {
       throw new BadRequestException('Categoria de evento invalida');
     }
-
     try {
       this.eventRepository.merge(event, updateEventDto);
       return await this.eventRepository.save(event);

@@ -52,12 +52,13 @@ export class AuthService {
       const passwordMatch = await bcrypt.compare(password, finduser.password)
       if (!passwordMatch) throw new BadRequestException('bad credentials')
       
+      if (!finduser.isActive) {
+        throw new BadRequestException('Usuario inactivo');
+            }
           const userPayload = {
               id : finduser.id,
               email: finduser.email,
-              isAdmin: finduser.isAdmin,
-              
-              
+              isAdmin: finduser.isAdmin, 
           }
       const token = this.jwtService.sign(userPayload)
           const { password: _, ...userWithoutPassword } = finduser;
