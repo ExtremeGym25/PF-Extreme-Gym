@@ -35,9 +35,9 @@ const CreacionRutinas = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken && token !== storedToken) {
+    if (storedToken) {
       setToken(storedToken);
-    } else if (!storedToken) {
+    } else {
       toast.error("No hay token disponible");
     }
   }, []);
@@ -98,6 +98,7 @@ const CreacionRutinas = () => {
               toast.success("Rutina creada exitosamente");
               resetForm();
               if (fileInputRef.current) fileInputRef.current.value = "";
+              window.location.reload();
             } catch (error: any) {
               const errorMessage =
                 error.response?.data?.message || error.message;

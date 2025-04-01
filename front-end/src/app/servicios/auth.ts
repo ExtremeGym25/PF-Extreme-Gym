@@ -63,6 +63,7 @@ export const updateUser = async (
         },
       }
     );
+    console.log(response, "respuesta ");
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
