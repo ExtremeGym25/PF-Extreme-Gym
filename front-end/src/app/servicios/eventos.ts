@@ -4,9 +4,6 @@ import { IEvent } from "../tipos";
 
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 export const createEvent = async (eventData: any, token: string) => {
@@ -42,6 +39,7 @@ export const getEvents = async (token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("Respuesta de la API:", response.data);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
@@ -83,30 +81,28 @@ export const updateEventRequest = async (
     );
   }
 };
-export const deleteEventoService = async (id: string, token: string) => {
+export const deleteEventoService = async (id: string, token: string | null) => {
   if (!token) {
-    throw new Error("No hay token de autenticación");
+    console.error(" No hay token disponible. No se puede eliminar el evento.");
+    return;
   }
+
+  console.log(" Llamando al servicio de eliminación con ID:", id);
+
   try {
     const response = await axios.delete(`http://localhost:3000/events/${id}`, {
       headers: {
-        Authorization: `Bearer ${token.trim()}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-    return response.data;
+
+    console.log("✅Respuesta del servidor:", response);
+    return response;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
-      throw new Error(error.response.data.message || "Error desconocido");
-    } else if (axios.isAxiosError(error) && error.request) {
-      console.error("No hubo respuesta del servidor:", error.request);
-      throw new Error("No hubo respuesta del servidor");
-    } else {
-      console.error("Error inesperado:", (error as Error).message);
-      throw new Error((error as Error).message || "Error desconocido");
+      return { error: error.response.data.message };
     }
-    console.error("Error completo:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar");
   }
 };

@@ -1,74 +1,53 @@
-"use client";
-import React, { useState, useRef, useEffect } from "react";
-import { toast } from "react-toastify";
 import { deleteEventoService } from "@/app/servicios/eventos";
+import { IEvent } from "@/app/tipos";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
-interface Props {
+interface DeleteEventosProps {
   id: string;
-  onPlanDeleted: (id: string) => void; // Se pasa el ID eliminado
+  onDelete: (id: string) => void;
 }
 
-const DeleteEventos = ({ id, onPlanDeleted }: Props) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(true);
+const DeleteEventos: React.FC<DeleteEventosProps> = ({ id, onDelete }) => {
+  const [eventos, setEventos] = useState<IEvent[]>([]);
+  const [error, setError] = useState("");
 
-  const handleDelete = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("Debes iniciar sesión primero");
-      return;
-    }
-
-    if (!id) {
-      toast.error("ID inválido. No se puede eliminar el plan.");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
+  const handleEventDelete = async (id: string) => {
+    console.log("Intentando eliminar el evento con id:", id);
 
     try {
-      await deleteEventoService(id, token);
-      console.log(deleteEventoService)
-      toast.success("Plan eliminado correctamente");
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No hay token disponible");
+        return;
+      }
 
-      if (mountedRef.current) {
-        setTimeout(() => {
-          onPlanDeleted(id);
-        }, 1000);
+      const success = await deleteEventoService(id, token);
+
+      if (!success) {
+        throw new Error("No se pudo eliminar el evento en la base de datos.");
       }
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Error desconocido";
-      setError(
-        errorMsg.includes("jwt")
-          ? "Sesión expirada. Vuelve a iniciar sesión."
-          : errorMsg
+
+      setEventos((prevEventos) =>
+        prevEventos.filter((evento) => evento.id !== id)
       );
-      toast.error(errorMsg);
-    } finally {
-      if (mountedRef.current) {
-        setIsLoading(false);
-      }
+      console.log("Evento eliminado con éxito:", id);
+    } catch (error) {
+      console.error("Error al eliminar el evento:", error);
+      setError("Error al eliminar el evento.");
     }
   };
 
   return (
-    <div>
-      <button
-        onClick={handleDelete}
-        disabled={isLoading}
-        className={`px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins text-white ring-2 ring-opacity-100 md:text-base ${
-          isLoading
-            ? "bg-red-800 cursor-not-allowed ring-red-900"
-            : "bg-red-500 hover:bg-red-700 ring-red-900 hover:scale-110"
-        }`}
-      >
-        {isLoading ? "Cancelando..." : "Cancalar"}
-      </button>
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
-    </div>
+    <button
+      onClick={() => {
+        console.log("Botón de eliminar clickeado para ID:", id);
+        onDelete(id);
+      }}
+      className="p-2 ml-2 text-white bg-red-500 rounded"
+    >
+      Cancelar
+    </button>
   );
 };
 

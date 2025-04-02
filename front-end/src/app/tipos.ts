@@ -47,6 +47,7 @@ export enum ExtremeSportCategory {
   WINTER_SPORTS = "Deportes de Invierno",
 }
 export interface IEvent {
+  isCancelled: any;
   id: string;
   name: string;
   description: string;

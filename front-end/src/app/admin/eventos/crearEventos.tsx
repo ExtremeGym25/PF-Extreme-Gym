@@ -74,44 +74,42 @@ const Eventos = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0D1F2D]">
-      <div className="flex-1">
-        <h2 className="my-6 text-4xl font-bold text-center text-white">
+    <div className="flex w-full min-h-screen p-4 bg-azul1">
+      <div className="w-full max-w-4xl mx-auto">
+        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
           Crear Evento
         </h2>
-        <div className="p-6 mx-auto mt-6 shadow-md bg-azul2 rounded-xl w-max">
+        <div className="p-6 shadow-md bg-azul2 rounded-xl">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
                 type="text"
                 name="name"
                 placeholder="Nombre"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full col-span-2 p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black rounded bg-blanco"
                 required
               />
-              <div className="grid grid-cols-2 col-span-1 gap-3">
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="w-full p-2 text-black rounded bg-blanco"
-                  required
-                />
-                <input
-                  type="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className="w-full p-2 text-black rounded bg-blanco"
-                  required
-                />
-              </div>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full p-2 text-black rounded bg-blanco"
+                required
+              />
+              <input
+                type="time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                className="w-full p-2 text-black rounded bg-blanco"
+                required
+              />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
                 type="text"
                 name="location"
@@ -162,7 +160,7 @@ const Eventos = () => {
 
             <button
               type="submit"
-              className="p-2 mx-auto font-bold text-black rounded bg-verde w-80 hover:bg-green-600 hover:text-blanco"
+              className="w-full p-2 mx-auto font-bold text-black rounded bg-verde md:w-80 hover:bg-green-600 hover:text-blanco"
             >
               Crear Evento
             </button>
