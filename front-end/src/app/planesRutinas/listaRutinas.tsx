@@ -39,7 +39,7 @@ const ListaRutinas = () => {
           limit,
           categoria || undefined
         );
-        console.log("Datos de la API recibidos:", data);
+        console.log("Datos  recibidos Ruitans:", data);
 
         if (isMounted) {
           setRutinas([...data.data]);
@@ -68,6 +68,11 @@ const ListaRutinas = () => {
       <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
         Nuestras Rutinas
       </h2>
+      <p className="px-16 py-4 text-lg text-justify ">
+        {" "}
+        ¡No te limites! Reserva varios cupos para ti y tu acompañante y
+        disfruten juntos la experiencia. 🚀💪
+      </p>
       <div className="py-4 ">
         <Filtro
           categories={Object.values(PlanCategory)}

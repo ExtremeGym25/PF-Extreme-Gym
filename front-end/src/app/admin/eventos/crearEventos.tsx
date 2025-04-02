@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { createEvent } from "../../servicios/eventos";
+import { toast } from "react-toastify";
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const Eventos = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No se encontró el token en localStorage");
-      alert("Debe iniciar sesión para crear un evento");
+      toast.error("Debe iniciar sesión para crear un evento");
       return;
     }
 
@@ -50,8 +51,8 @@ const Eventos = () => {
     console.log("Category seleccionada:", formData.category);
 
     try {
-      await createEvent(eventData, token); // Aquí pasas el token como segundo parámetro
-      alert("Evento creado exitosamente");
+      await createEvent(eventData, token);
+      toast.success("Evento creado exitosamente");
       setFormData({
         name: "",
         description: "",
@@ -61,13 +62,14 @@ const Eventos = () => {
         capacity: "",
         category: "",
       });
+      window.location.reload();
     } catch (error: any) {
       if (error.response) {
         console.error("Error del backend:", error.response.data);
       } else {
         console.error("Error en la solicitud:", error.message);
       }
-      alert("Hubo un error al crear el evento");
+      toast.error(error.message);
     }
   };
 
