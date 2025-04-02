@@ -97,12 +97,49 @@ export const deleteEventoService = async (id: string, token: string | null) => {
       },
     });
 
-    console.log("✅Respuesta del servidor:", response);
+    console.log("Respuesta del servidor:", response);
     return response;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
       return { error: error.response.data.message };
     }
+  }
+};
+export const imagenEventService = async (
+  file: File,
+  eventId: string,
+  token: string
+) => {
+  if (!file) {
+    console.error(" Error: No se recibió un archivo para subir.");
+    throw new Error("No se recibió un archivo válido.");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const imagenEvent = await axiosApiBack.patch(
+      `/events/${eventId}/upload-image`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(" Imagen subida con éxito:", imagenEvent.data.imageUrl);
+    return imagenEvent.data;
+  } catch (error) {
+    let errorMessage = "Error desconocido";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error(" Error en Cloudinary:", errorMessage); // Solo el mensaje
+    throw new Error(errorMessage);
   }
 };

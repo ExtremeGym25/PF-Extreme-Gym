@@ -34,8 +34,6 @@ const ListasEventos = () => {
       if (Array.isArray(data)) {
         setEventos(data);
       }
-      console.log(data, " eventos que me llegan");
-      console.log("Eventos después de setEventos:", eventos);
     } catch (err) {
       console.error("Error en fetchEventos:", err);
       setError("Error al obtener Eventos");
@@ -74,8 +72,6 @@ const ListasEventos = () => {
         setError("No hay token disponible");
         return;
       }
-      console.log("ANTES DE EDITAR");
-      console.log("ID del evento a actualizar:", editedEvent?.id);
       const response = await updateEventRequest(
         editedEvent,
         token,
@@ -101,14 +97,10 @@ const ListasEventos = () => {
     });
   };
 
-  const eventosCancelados = useMemo(
-    () => eventos.filter((evento) => evento.isCancelled),
-    [eventos]
-  );
   return (
-    <div className="max-w-4xl p-4 mx-auto text-white">
-      <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
-        Eventos
+    <div className="max-w-4xl mx-auto text-white">
+      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+        Listado Eventos
       </h2>
 
       <div className="flex flex-col gap-4 mb-4 md:flex-row">
@@ -131,7 +123,7 @@ const ListasEventos = () => {
         <p className="text-center">Cargando...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
-      ) : (
+      ) : eventosFiltrados.length > 0 ? (
         <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {eventosFiltrados.map((evento) => (
             <li
@@ -161,6 +153,7 @@ const ListasEventos = () => {
                     }
                     className="w-full p-2 text-black rounded"
                   />
+
                   <button
                     onClick={handleUpdate}
                     className="w-full p-2 mt-2 text-white bg-blue-500 rounded"
@@ -172,7 +165,23 @@ const ListasEventos = () => {
                 <div className="flex flex-col h-full">
                   <h3 className="text-lg font-bold">{evento.name}</h3>
                   <p className="flex-grow text-sm">{evento.description}</p>
-
+                  {evento.imageUrl ? (
+                    <img
+                      className="object-cover w-full mt-2 rounded-md h-60"
+                      src={
+                        typeof evento.imageUrl === "string"
+                          ? evento.imageUrl
+                          : "/imagenes/default.jpg"
+                      }
+                      alt="Imagen del evento"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full mt-2 bg-gray-700 rounded-md h-60">
+                      <span className="text-gray-400">
+                        No hay imagen disponible
+                      </span>
+                    </div>
+                  )}
                   {evento.isCancelled ? (
                     <p className="mt-2 font-bold text-center text-red-500">
                       🚨 Evento Cancelado
@@ -196,30 +205,10 @@ const ListasEventos = () => {
             </li>
           ))}
         </ul>
+      ) : (
+        <p className="text-center text-gray-400">No hay eventos disponibles.</p>
       )}
-
-      <div className="max-w-4xl p-4 mx-auto text-white">
-        <h3 className="mt-4 text-xl font-bold text-red-500">
-          Eventos Cancelados
-        </h3>
-        {eventosCancelados.length > 0 ? (
-          <ul className="space-y-4">
-            {eventosCancelados.map((evento) => (
-              <li
-                key={evento.id}
-                className="p-4 bg-gray-800 rounded-lg shadow-md"
-              >
-                <h3 className="text-lg font-bold">{evento.name}</h3>
-                <p className="text-sm">{evento.description}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-400">No hay eventos cancelados.</p>
-        )}
-      </div>
     </div>
   );
 };
-
 export default ListasEventos;

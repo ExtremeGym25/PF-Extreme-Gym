@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import { createEvent } from "../../servicios/eventos";
+import React, { useState, useRef } from "react";
+import { createEvent, imagenEventService } from "../../servicios/eventos";
 import { toast } from "react-toastify";
 
 const Eventos = () => {
@@ -14,15 +12,43 @@ const Eventos = () => {
     time: "",
     capacity: "",
     category: "",
+    file: null as File | null,
   });
 
-  const [eventos, setEventos] = useState([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        file,
+      }));
+    }
+    if (!file) {
+      toast.error("Por favor, selecciona un archivo.");
+      return;
+    }
+
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Formato no válido. Usa JPG, PNG o WEBP.");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("El archivo es demasiado grande. Máximo 5MB.");
+      return;
+    }
+
+    setFormData({ ...formData, file });
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -51,7 +77,14 @@ const Eventos = () => {
     console.log("Category seleccionada:", formData.category);
 
     try {
-      await createEvent(eventData, token);
+      const evento = await createEvent(eventData, token);
+      if (!evento?.id) {
+        throw new Error("Error al crear la rutina");
+      }
+      if (formData.file) {
+        await imagenEventService(formData.file, evento.id, token);
+      }
+
       toast.success("Evento creado exitosamente");
       setFormData({
         name: "",
@@ -61,6 +94,7 @@ const Eventos = () => {
         time: "",
         capacity: "",
         category: "",
+        file: null as File | null,
       });
       window.location.reload();
     } catch (error: any) {
@@ -74,7 +108,7 @@ const Eventos = () => {
   };
 
   return (
-    <div className="flex w-full min-h-screen p-4 bg-azul1">
+    <div className="flex w-full p-4 bg-azul1">
       <div className="w-full max-w-4xl mx-auto">
         <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
           Crear Evento
@@ -156,6 +190,13 @@ const Eventos = () => {
               onChange={handleChange}
               className="p-2 text-black rounded bg-blanco"
               required
+            />
+            <input
+              type="file"
+              name="imageUrl"
+              ref={fileInputRef}
+              className="w-full p-2 text-black rounded bg-blanco"
+              onChange={handleFileChange}
             />
 
             <button
