@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Between } from 'typeorm';
+import { LessThanOrEqual, Between } from 'typeorm';
 
 @Injectable()
 export class NotificationsService {
@@ -83,13 +83,14 @@ export class NotificationsService {
 
     const users = await this.usersRepository.find({
       where: {
-        subscriptionExpirationDate: Between(
-          today.toISOString(), // Desde ahora
+        subscriptionExpirationDate: LessThanOrEqual(
           nextWeek.toISOString(), // Hasta 7 días adelante
         ),
       },
       relations: ['plan'],
     });
+
+    console.log(`📊 Usuarios encontrados: ${users.length}`);
 
     if (users.length === 0) {
       console.log('✅ No hay usuarios con suscripción próxima a vencer.');
@@ -97,21 +98,48 @@ export class NotificationsService {
     }
 
     for (const user of users) {
-      await this.mailerService.sendMail({
-        to: user.email,
-        subject: '⚠️ Tu suscripción está por vencer',
-        template: 'plan-expiracion',
-        context: {
-          nombre: user.name,
-          plan: user.plan?.name || 'Desconocido',
-          fechaExpiracion: user.subscriptionExpirationDate.split('T')[0], // Solo la fecha
-        },
-      });
-
-      console.log(
-        `✅ Correo enviado a ${user.email} - Expira el ${user.subscriptionExpirationDate}`,
+      const expirationDate = new Date(user.subscriptionExpirationDate);
+      const daysRemaining = Math.ceil(
+        (expirationDate.getTime() - today.getTime()) / (1000 * 3600 * 24),
       );
+
+      const status =
+        daysRemaining <= 0 ? 'EXPIRADO' : `POR VENCER (${daysRemaining} días)`;
+
+      console.log('\n══════════════════════════════════════');
+      console.log(`📧 Preparando correo para: ${user.email}`);
+      console.log(`👤 Nombre: ${user.name}`);
+      console.log(
+        `📅 Fecha expiración: ${expirationDate.toLocaleDateString('es-ES')}`,
+      );
+      console.log(`🔄 Estado: ${status}`);
+      console.log(`📋 Plan: ${user.plan?.name || 'Sin plan'}`);
+
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject:
+            daysRemaining <= 0
+              ? '❌ Tu suscripción ha expirado'
+              : `⚠️ Tu suscripción vence en ${daysRemaining} días`,
+          template: 'plan-expiracion',
+          context: {
+            name: user.name,
+            plan: user.plan?.name || 'Premium',
+            expirationDate: expirationDate.toLocaleDateString('es-ES'),
+            currentYear: new Date().getFullYear(),
+            isExpired: daysRemaining <= 0,
+            daysRemaining: daysRemaining,
+          },
+        });
+        console.log('✅ Correo enviado con éxito');
+      } catch (error) {
+        // Log de error
+        console.error('❌ Error al enviar correo:', error.message);
+      }
     }
+
+    console.log('\n🎉 Proceso de notificación completado');
   }
 
   async sendPlanAssignmentEmail(email: string, name: string, planName: string) {
