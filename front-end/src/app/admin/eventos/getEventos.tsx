@@ -165,6 +165,11 @@ const ListasEventos = () => {
                 <div className="flex flex-col h-full">
                   <h3 className="text-lg font-bold">{evento.name}</h3>
                   <p className="flex-grow text-sm text-justify">
+                    {" "}
+                    Id:
+                    {evento.id}
+                  </p>
+                  <p className="flex-grow text-sm text-justify">
                     {evento.description}
                   </p>
                   {evento.imageUrl ? (

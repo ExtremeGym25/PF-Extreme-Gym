@@ -1,18 +1,15 @@
-import React, { useState } from "react";
-import ButtonPrimary from "../components/buttons/buttonPrimary";
 import { toast } from "react-toastify";
-import { useAuth } from "../contextos/contextoAuth";
+import ButtonPrimary from "../components/buttons/buttonPrimary";
 import { reservaEventosService } from "../servicios/userevents";
+import { useAuth } from "../contextos/contextoAuth";
+import { useState } from "react";
 
 const Reservar = ({ eventoId }: { eventoId?: string }) => {
   const { user } = useAuth();
   const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [numberOfPeople, setnumberOfPeople] = useState(1);
-
-  const handleReservarClick = () => {
-    setShowForm(true);
-  };
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [reservaExitosa, setReservaExitosa] = useState(false);
 
   const handleOnSubmit = async () => {
     try {
@@ -35,16 +32,18 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
         toast.error("No se encontró el evento");
         return;
       }
-      const eventId = String(eventoId);
+
       const data = await reservaEventosService(
         token,
-        eventId,
+        eventoId,
         userId,
         numberOfPeople
       );
+
       if (data) {
         toast.success("Reserva realizada con éxito");
-        setShowForm(false);
+        setMostrarModal(false);
+        setReservaExitosa(true);
       } else {
         toast.error("Error al realizar la reserva");
       }
@@ -55,6 +54,7 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
         )
       ) {
         toast.error("Ya tienes una reserva para este evento.");
+        setReservaExitosa(true);
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -63,23 +63,38 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
 
   return (
     <div>
-      {!showForm ? (
-        <ButtonPrimary onClick={handleReservarClick}>Reservar</ButtonPrimary>
-      ) : (
-        <div className="p-4 bg-gray-100 border rounded shadow-md">
-          <p className="mb-2 font-semibold">
-            ¿Para cuántas personas deseas reservar?
-          </p>
-          <input
-            type="number"
-            min="1"
-            value={numberOfPeople}
-            onChange={(e) => setnumberOfPeople(Number(e.target.value))}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <ButtonPrimary onClick={handleOnSubmit}>
-            Confirmar Reserva
-          </ButtonPrimary>
+      <ButtonPrimary
+        onClick={() => setMostrarModal(true)}
+        disabled={reservaExitosa}
+      >
+        {reservaExitosa ? "Reservado" : "Reservar"}
+      </ButtonPrimary>
+      {mostrarModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+            <button
+              onClick={() => setMostrarModal(false)}
+              className="absolute text-2xl text-gray-600 top-2 right-3 hover:text-black"
+            >
+              ✖
+            </button>
+
+            <h2 className="mb-4 text-xl font-bold text-center">
+              ¿Para cuántas personas?
+            </h2>
+
+            <input
+              type="number"
+              value={numberOfPeople.toString()}
+              onChange={(e) => setNumberOfPeople(Number(e.target.value) || 1)}
+              min="1"
+              className="w-full p-2 border rounded-md"
+            />
+
+            <ButtonPrimary onClick={handleOnSubmit} className="w-full mt-4">
+              Confirmar Reserva
+            </ButtonPrimary>
+          </div>
         </div>
       )}
     </div>

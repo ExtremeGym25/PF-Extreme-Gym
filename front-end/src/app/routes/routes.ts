@@ -17,5 +17,5 @@ export const routes = {
   adminEn: "/admin/entrenadores",
   adminP: "/admin/publicidad",
   adminCE: "/admin/casosDeExito",
-  adminVP: "/admin/vistaPrevia",
+  misEventos: "/eventos/misReservas",
 };

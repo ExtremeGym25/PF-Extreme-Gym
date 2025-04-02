@@ -61,3 +61,20 @@ export interface IEvent {
   file?: File;
   numberOfPeople?: number;
 }
+
+export interface IReservas {
+  imageUrl: any;
+  isCancelled: any;
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  date: Date;
+  time: string;
+  capacity: number;
+  category: ExtremeSportCategory;
+  userId: string;
+  file?: File;
+  numberOfPeople?: number;
+  event: IEvent;
+}
