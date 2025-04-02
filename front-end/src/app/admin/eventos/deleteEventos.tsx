@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { deleteEventoService } from "@/app/servicios/eventos";
 
@@ -26,13 +26,12 @@ const DeleteEventos = ({ id, onPlanDeleted }: Props) => {
       return;
     }
 
-    if (!window.confirm("¿Estás seguro de eliminar este plan?")) return;
-
     setIsLoading(true);
     setError(null);
 
     try {
       await deleteEventoService(id, token);
+      console.log(deleteEventoService)
       toast.success("Plan eliminado correctamente");
 
       if (mountedRef.current) {
@@ -66,7 +65,7 @@ const DeleteEventos = ({ id, onPlanDeleted }: Props) => {
             : "bg-red-500 hover:bg-red-700 ring-red-900 hover:scale-110"
         }`}
       >
-        {isLoading ? "Eliminando..." : "Eliminar"}
+        {isLoading ? "Cancelando..." : "Cancalar"}
       </button>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>

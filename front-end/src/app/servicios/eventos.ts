@@ -85,8 +85,10 @@ export const updateEventRequest = async (
   }
 };
 export const deleteEventoService = async (id: string, token: string) => {
+  if (!token) {
+    throw new Error("No hay token de autenticación");
+  }
   try {
-    console.log("Token de autenticación:", token);
     const response = await axios.delete(`http://localhost:3000/events/${id}`, {
       headers: {
         Authorization: `Bearer ${token.trim()}`,
@@ -95,6 +97,16 @@ export const deleteEventoService = async (id: string, token: string) => {
     });
     return response.data;
   } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error desde el backend:", error.response.data);
+      throw new Error(error.response.data.message || "Error desconocido");
+    } else if (axios.isAxiosError(error) && error.request) {
+      console.error("No hubo respuesta del servidor:", error.request);
+      throw new Error("No hubo respuesta del servidor");
+    } else {
+      console.error("Error inesperado:", (error as Error).message);
+      throw new Error((error as Error).message || "Error desconocido");
+    }
     console.error("Error completo:", error.response?.data || error.message);
     throw new Error(error.response?.data?.message || "Error al eliminar");
   }
