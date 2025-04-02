@@ -59,4 +59,5 @@ export interface IEvent {
   category: ExtremeSportCategory;
   userId: string;
   file?: File;
+  numberOfPeople?: number;
 }

@@ -68,10 +68,11 @@ const ListaRutinas = () => {
       <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
         Nuestras Rutinas
       </h2>
-      <p className="px-16 py-4 text-lg text-justify ">
+      <p className="px-16 py-4 text-lg text-center ">
         {" "}
-        ¡No te limites! Reserva varios cupos para ti y tu acompañante y
-        disfruten juntos la experiencia. 🚀💪
+        💪🔥 ¡Desafía tus límites y lleva tu energía al máximo! Entrena con
+        intensidad, supera cada reto y siente la satisfacción de avanzar. ¡Tú
+        puedes, el momento es ahora! 🚀🏋️‍♂️
       </p>
       <div className="py-4 ">
         <Filtro

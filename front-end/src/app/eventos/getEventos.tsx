@@ -4,7 +4,7 @@ import { getEvents } from "../servicios/eventos";
 import { toast } from "react-toastify";
 import { ExtremeSportCategory, IEvent } from "../tipos";
 import FiltroEventos from "./filtroEventos";
-import ButtonPrimary from "../components/buttons/buttonPrimary";
+import Reservar from "./reservar";
 
 const GetEventos = () => {
   const [eventos, setEventos] = useState<IEvent[]>([]);
@@ -23,7 +23,7 @@ const GetEventos = () => {
         }
         const data = await getEvents(token);
         setEventos(data);
-        console.log("Datos  recibidos Ruitans:", data);
+        console.log("Datos  recibidos eventos:", data);
       } catch (error: any) {
         console.error("Error en eventos", error.message);
         toast.error(error.message);
@@ -45,20 +45,18 @@ const GetEventos = () => {
     <div className="max-w-4xl p-4 mx-auto text-foreground">
       <h1 className="mb-6 text-4xl font-bold text-center">Nuestros Eventos</h1>
 
-      <p className="px-16 py-4 text-lg text-center ">
-        {" "}
+      <p className="px-16 py-4 text-lg text-center">
         ¡No te limites! Reserva varios cupos para ti y tu acompañante y
         disfruten juntos la experiencia. 🚀💪
       </p>
-      <div>
-        <FiltroEventos
-          categories={Object.values(ExtremeSportCategory)}
-          onCategoryChange={(cat) => setCategoria(cat)}
-          currentCategory={categoria}
-        />
-      </div>
+
+      <FiltroEventos
+        categories={Object.values(ExtremeSportCategory)}
+        onCategoryChange={(cat) => setCategoria(cat)}
+        currentCategory={categoria}
+      />
+
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex flex-col gap-4 mb-4 md:flex-row"></div>
         {eventosFiltrados.length === 0 ? (
           <p className="text-2xl text-center text-black">
             No hay eventos disponibles.
@@ -67,15 +65,23 @@ const GetEventos = () => {
           eventosFiltrados.map((evento) => (
             <div
               key={evento.id}
-              className="flex flex-col items-center p-4 border rounded-lg shadow-lg bg-blanco border-verde md:flex-row"
+              className="flex flex-col p-4 border rounded-lg shadow-lg bg-blanco border-verde md:flex-row md:items-center md:gap-6"
             >
-              {/* {evento.image && ( */}
-              <img
-                src="https://png.pngtree.com/thumb_back/fh260/background/20230521/pngtree-sunflower-full-screen-backdrop-widescreen-photos-image_2684387.jpg"
-                alt={evento.name}
-                className="object-cover w-40 h-40 mb-4 rounded-lg md:mb-0 md:mr-6"
-              />
-              {/* )} */}
+              <div className="w-[300px] h-[200px] flex-shrink-0">
+                {evento.imageUrl ? (
+                  <img
+                    className="object-cover w-full h-full rounded-md"
+                    src={evento.imageUrl}
+                    alt="Imagen del evento"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-700 rounded-md">
+                    <span className="text-gray-400">
+                      No hay imagen disponible
+                    </span>
+                  </div>
+                )}
+              </div>
               <div className="flex-1">
                 <h2 className="text-xl font-semibold uppercase text-foreground">
                   {evento.name}
@@ -83,7 +89,9 @@ const GetEventos = () => {
                 <p className="text-foreground">
                   {new Date(evento.date).toLocaleDateString()} - {evento.time}
                 </p>
-                <p className="mt-2 text-foreground">{evento.description}</p>
+                <p className="mt-2 text-justify text-foreground line-clamp-3">
+                  {evento.description}
+                </p>
                 <p className="mt-2 uppercase text-foreground">
                   {evento.location}
                 </p>
@@ -91,7 +99,8 @@ const GetEventos = () => {
                   Capacidad: {evento.capacity}
                 </p>
               </div>
-              <ButtonPrimary>Reservar</ButtonPrimary>
+
+              <Reservar eventoId={evento.id} />
             </div>
           ))
         )}

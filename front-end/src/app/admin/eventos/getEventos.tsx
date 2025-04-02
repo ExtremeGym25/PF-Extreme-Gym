@@ -164,14 +164,16 @@ const ListasEventos = () => {
               ) : (
                 <div className="flex flex-col h-full">
                   <h3 className="text-lg font-bold">{evento.name}</h3>
-                  <p className="flex-grow text-sm">{evento.description}</p>
+                  <p className="flex-grow text-sm text-justify">
+                    {evento.description}
+                  </p>
                   {evento.imageUrl ? (
                     <img
                       className="object-cover w-full mt-2 rounded-md h-60"
                       src={
                         typeof evento.imageUrl === "string"
                           ? evento.imageUrl
-                          : "/imagenes/default.jpg"
+                          : "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_2_tjw1rv.png"
                       }
                       alt="Imagen del evento"
                     />
