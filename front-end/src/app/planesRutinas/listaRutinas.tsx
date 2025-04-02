@@ -20,7 +20,7 @@ const ListaRutinas = () => {
   const { isAuth } = useAuth();
 
   useEffect(() => {
-    let isMounted = true; // variable local para controlar si el componente sigue montado
+    let isMounted = true;
 
     const fetchRutinas = async () => {
       setLoading(true);
