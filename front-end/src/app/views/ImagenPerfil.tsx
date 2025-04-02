@@ -71,9 +71,9 @@ const ImagenPerfil = () => {
             fileInputRef.current.value = "";
           }
           window.location.reload();
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error al subir la imagen:", error);
-          toast.error("Error al subir la imagen");
+          toast.error(error.message);
         } finally {
           setSubmitting(false);
         }

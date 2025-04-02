@@ -74,9 +74,9 @@ const UpdatePerfilUsuario = () => {
       saveUserData({ user: updatedUser, token });
       toast.success("¡Datos actualizados correctamente!");
       router.push(routes.login);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al actualizar datos:", error);
-      toast.error("Hubo un error al actualizar los datos.");
+      toast.error(error.message);
     }
   };
 
