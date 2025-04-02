@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import axios from "axios";
 import { IEvent } from "../tipos";
