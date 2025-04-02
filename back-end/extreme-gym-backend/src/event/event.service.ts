@@ -8,12 +8,15 @@ import {
 import { CreateEventDto, ExtremeSportCategory } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryFailedError, Repository } from 'typeorm';
-import { Event } from './entities/event.entity'
+import { Event } from './entities/event.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { MailerService } from '@nestjs-modules/mailer';
+import { NotificationsService } from '../notifications/notifications.service';
+import { Notification } from '../notifications/entities/notification.entity';
 
 @Injectable()
 export class EventService {
@@ -30,6 +33,12 @@ export class EventService {
     private readonly bookingRepository: Repository<Booking>,
     private readonly userService: UsersService,
     private readonly fileUploadService: FileUploadService,
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
+    @InjectRepository(Notification)
+    private notificationRepo: Repository<Notification>,
+    private readonly mailService: MailerService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // Crear un evento sin la URL de la imagen
@@ -64,8 +73,17 @@ export class EventService {
           throw new BadRequestException('Capacidad del evento superada');
         }
       }
+      // Guardar el evento
+      const savedEvent = await this.eventRepository.save(event);
 
-      return await this.eventRepository.save(event);
+      // Enviar notificaciones a todos los usuarios (en segundo plano)
+      this.notificationsService
+        .sendNewEventNotification(savedEvent)
+        .catch((error) => {
+          this.logger.error('Error enviando notificaciones de evento:', error);
+        });
+
+      return savedEvent;
     } catch (error) {
       this.handleCreateEventError(error);
       throw new InternalServerErrorException('Error al crear el evento');

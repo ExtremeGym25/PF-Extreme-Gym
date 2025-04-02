@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { LessThanOrEqual, Between } from 'typeorm';
+import { Event } from '../event/entities/event.entity';
 
 @Injectable()
 export class NotificationsService {
@@ -12,6 +13,7 @@ export class NotificationsService {
     private readonly mailerService: MailerService,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly logger: Logger = new Logger(NotificationsService.name),
   ) {}
 
   async sendWelcomeEmail(email: string, name: string) {
@@ -152,5 +154,58 @@ export class NotificationsService {
         planName,
       },
     });
+  }
+
+  //NOTIFICACIONES DE EVENTOS
+
+  async sendNewEventNotification(event: {
+    name: string;
+    date: Date | string;
+    description: string;
+    category: string;
+    location: string;
+  }) {
+    try {
+      const users = await this.getUsersToNotify();
+
+      // Conversión de fecha en línea
+      let eventDate: Date;
+      if (event.date instanceof Date && !isNaN(event.date.getTime())) {
+        eventDate = event.date;
+      } else if (typeof event.date === 'string') {
+        eventDate = new Date(event.date);
+        if (isNaN(eventDate.getTime())) {
+          this.logger.warn('Fecha inválida, usando fecha actual');
+          eventDate = new Date();
+        }
+      } else {
+        eventDate = new Date();
+      }
+
+      for (const user of users) {
+        try {
+          await this.mailerService.sendMail({
+            to: user.email,
+            subject: '¡Nuevo evento disponible en Extreme Gym! 🎉',
+            template: './new-event',
+            context: {
+              name: user.name,
+              eventName: event.name,
+              eventDate: eventDate.toLocaleDateString('es-ES'),
+              eventDescription: event.description,
+              eventCategory: event.category,
+              eventLocation: event.location,
+            },
+          });
+        } catch (error) {
+          this.logger.error(`Error enviando a ${user.email}: ${error.message}`);
+        }
+      }
+
+      return { success: true, usersNotified: users.length };
+    } catch (error) {
+      this.logger.error(`Error general: ${error.message}`);
+      throw new Error('No se pudieron enviar las notificaciones');
+    }
   }
 }
