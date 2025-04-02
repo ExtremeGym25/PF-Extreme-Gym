@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { IEvent } from "@/app/tipos";
-import { getEvents, updateEventRequest } from "@/app/servicios/eventos";
+import { deleteEventoService, getEvents, updateEventRequest } from "@/app/servicios/eventos";
 import DeleteEventos from "./deleteEventos";
 import { useMemo } from "react";
 
@@ -14,6 +14,7 @@ const ListasEventos = () => {
   const [editedEvent, setEditedEvent] = useState<IEvent | null>(null);
   const [categoria, setCategoria] = useState<string>("");
 
+  useEffect(() => {
   const fetchEventos = async () => {
     setLoading(true);
     setError("");
@@ -39,7 +40,7 @@ const ListasEventos = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
+  
     fetchEventos();
   }, []);
 
@@ -73,17 +74,28 @@ const ListasEventos = () => {
       console.error("Error en updateEvent:", err);
       setError("Error al actualizar el evento");
     }
-    const handleEventDeleted = (deletedId: string) => {
-      setEventos((prevEventos) =>
-        prevEventos.filter((eventos) => eventos.id !== deletedId)
-      );
-    };
-
     console.log("Renderizando con rutinas:");
   };
-  function handleEventDeleted(id: string): void {
-    throw new Error("Function not implemented.");
-  }
+
+  const handleEventDelete =  (id: string) => {
+    setEventos((prevEvento) =>
+    prevEvento.filter((eventos) => eventos.id !== id))
+    // try {
+    //   const token = localStorage.getItem("token");
+    //   if (!token) {
+    //     setError("No hay token disponible");
+    //     return;
+    //   }
+
+    //   console.log("ID del evento a eliminar:", id);
+
+    //   await deleteEventoService(id, token); 
+    //   setEventos((prevEventos) => prevEventos.filter((evento) => evento.id !== id));
+
+    // } catch (err) {
+    //   console.error("Error en Cancelar el evento:", err);
+    //   setError("Error al eliminar el evento");
+  };
 
   return (
     <div className="max-w-4xl p-4 mx-auto text-white">
@@ -156,8 +168,7 @@ const ListasEventos = () => {
                     Editar
                   </button>
                   <DeleteEventos
-                    id={evento.id ?? ""}
-                    onPlanDeleted={handleEventDeleted}
+                    id = {evento.id ?? ""} onPlanDeleted={handleEventDelete}
                   />
                 </div>
               )}
