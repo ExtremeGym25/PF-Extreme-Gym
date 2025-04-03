@@ -21,6 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { adminModule } from './admin/admin.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ExpirationTask } from './plans/expiration.task';
+import { GeolocationService } from './geolocation/geolocation.service';
 
 @Module({
   imports: [
@@ -61,7 +62,7 @@ import { ExpirationTask } from './plans/expiration.task';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway, ExpirationTask],
+  providers: [AppService, ChatGateway, ExpirationTask, GeolocationService],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}
