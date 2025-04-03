@@ -64,4 +64,9 @@ export class NotificationsController {
         'Correos de expiración enviados (si había usuarios próximos a expirar)',
     };
   }
+
+  @Get('trigger-reminders')
+  async testReminders() {
+    return this.notificationsService.testReminders();
+  }
 }
