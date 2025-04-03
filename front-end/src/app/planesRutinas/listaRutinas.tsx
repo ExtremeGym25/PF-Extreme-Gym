@@ -40,6 +40,7 @@ const ListaRutinas = () => {
           categoria || undefined
         );
         console.log("Datos  recibidos Ruitans:", data);
+        console.log("Datos  recibidos Ruitans:", data);
 
         if (isMounted) {
           setRutinas([...data.data]);

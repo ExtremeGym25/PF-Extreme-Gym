@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
@@ -38,7 +38,7 @@ import * as path from 'path';
     }),
   ],
   controllers: [NotificationsController],
-  providers: [NotificationsService],
+  providers: [NotificationsService, Logger],
   exports: [NotificationsService],
 })
 export class NotificationsModule {}

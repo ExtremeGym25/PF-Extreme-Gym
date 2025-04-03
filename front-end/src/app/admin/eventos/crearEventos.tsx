@@ -63,6 +63,7 @@ const Eventos = () => {
     if (!token) {
       console.error("No se encontró el token en localStorage");
       toast.error("Debe iniciar sesión para crear un evento");
+      toast.error("Debe iniciar sesión para crear un evento");
       return;
     }
 
@@ -106,6 +107,7 @@ const Eventos = () => {
       } else {
         console.error("Error en la solicitud:", error.message);
       }
+      toast.error(error.message);
       toast.error(error.message);
     }
   };

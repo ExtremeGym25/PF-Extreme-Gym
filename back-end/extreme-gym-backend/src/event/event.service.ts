@@ -8,12 +8,16 @@ import {
 import { CreateEventDto, ExtremeSportCategory } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryFailedError, Repository } from 'typeorm';
-import { Event } from './entities/event.entity'
+import { Event } from './entities/event.entity';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { MailerService } from '@nestjs-modules/mailer';
+import { NotificationsService } from '../notifications/notifications.service';
+import { Notification } from '../notifications/entities/notification.entity';
+import { GeolocationService } from '../geolocation/geolocation.service';
 
 @Injectable()
 export class EventService {
@@ -30,6 +34,13 @@ export class EventService {
     private readonly bookingRepository: Repository<Booking>,
     private readonly userService: UsersService,
     private readonly fileUploadService: FileUploadService,
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
+    @InjectRepository(Notification)
+    private notificationRepo: Repository<Notification>,
+    private readonly mailService: MailerService,
+    private readonly notificationsService: NotificationsService,
+    private readonly geolocationService: GeolocationService,
   ) {}
 
   // Crear un evento sin la URL de la imagen
@@ -45,11 +56,34 @@ export class EventService {
       throw new BadRequestException('Usuario no encontrado');
     }
 
+    let latitude = createEventDto.latitude;
+    let longitude = createEventDto.longitude;
+
+    if (!latitude || !longitude) {
+      if (createEventDto.location) {
+        const coordinates = await this.geolocationService.geocodeAddress(
+          createEventDto.location,
+        );
+        if (coordinates) {
+          latitude = coordinates.lat;
+          longitude = coordinates.lng;
+        } else {
+          throw new BadRequestException(
+            'No se pudo obtener la geolocalización de la dirección proporcionada.',
+          );
+        }
+      } else {
+        throw new BadRequestException(
+          'Se requiere latitud y longitud o dirección.',
+        );
+      }
+    }
     try {
-      // Crear el evento
       const event = this.eventRepository.create({
         ...createEventDto,
-        user,
+        user: await this.userService.findOne(createEventDto.userId),
+        latitude: createEventDto.latitude,
+        longitude: createEventDto.longitude,
       });
 
       // Comprobar capacidad del evento
@@ -64,6 +98,15 @@ export class EventService {
           throw new BadRequestException('Capacidad del evento superada');
         }
       }
+      // Guardar el evento
+      const savedEvent = await this.eventRepository.save(event);
+
+      // Enviar notificaciones a todos los usuarios (en segundo plano)
+      this.notificationsService
+        .sendNewEventNotification(savedEvent)
+        .catch((error) => {
+          this.logger.error('Error enviando notificaciones de evento:', error);
+        });
 
       return await this.eventRepository.save(event);
     } catch (error) {
@@ -158,8 +201,32 @@ export class EventService {
     ) {
       throw new BadRequestException('Categoria de evento invalida');
     }
+
+    let latitude = updateEventDto.latitude;
+    let longitude = updateEventDto.longitude;
+
+    if (!latitude || !longitude) {
+      if (updateEventDto.location) {
+        const coordinates = await this.geolocationService.geocodeAddress(
+          updateEventDto.location,
+        );
+        if (coordinates) {
+          latitude = coordinates.lat;
+          longitude = coordinates.lng;
+        } else {
+          throw new BadRequestException(
+            'No se pudo obtener la geolocalización de la dirección proporcionada.',
+          );
+        }
+      }
+    }
+    
     try {
-      this.eventRepository.merge(event, updateEventDto);
+      this.eventRepository.merge(event, {
+        ...updateEventDto,
+        latitude,
+        longitude,
+      });
       return await this.eventRepository.save(event);
     } catch (error) {
       if (error instanceof NotFoundException) {
