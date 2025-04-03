@@ -1,11 +1,14 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAuth } from "../contextos/contextoAuth";
 
 const MiPerfilUsuario = () => {
   const { user } = useAuth();
-
+  useEffect(() => {
+    console.log("Usuario actualizado:", user);
+  }, [user]);
   console.log("Imagen de perfil:", user?.profileImage);
+  console.log("Estado actual de user:", user);
 
   const profileImage = useMemo(
     () =>

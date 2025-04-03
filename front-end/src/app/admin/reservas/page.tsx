@@ -1,21 +1,20 @@
 import React from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import CrearEvento from "./crearEventos";
-import ListasEventos from "./getEventos";
-const eventosView = () => {
+import GetReservasAdmin from "./getReservas";
+
+const ReservasAdminView = () => {
   return (
     <div className="flex w-full min-h-screen bg-azul1">
       <Sidebar />
       <div className="flex-1 p-4">
         <Header />
         <div className="py-4">
-          <CrearEvento />
-          <ListasEventos />
+          <GetReservasAdmin />
         </div>
       </div>
     </div>
   );
 };
 
-export default eventosView;
+export default ReservasAdminView;

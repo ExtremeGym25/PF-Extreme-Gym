@@ -1,17 +1,16 @@
 import React from "react";
-import { deleteEventoService } from "@/app/servicios/eventos";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { cancelarBookingsService } from "@/app/servicios/reservas";
 
-interface DeleteEventosProps {
+interface CancelarBookingsProps {
   id: string;
 }
-
-const DeleteEventos: React.FC<DeleteEventosProps> = ({ id }) => {
+const CancelarBookings: React.FC<CancelarBookingsProps> = ({ id }) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
-    console.log("Intentando eliminar el evento con id:", id);
+    console.log("Intentando eliminar la reserva con id:", id);
     setLoading(true);
 
     try {
@@ -22,18 +21,18 @@ const DeleteEventos: React.FC<DeleteEventosProps> = ({ id }) => {
         return;
       }
 
-      const success = await deleteEventoService(id, token);
+      const success = await cancelarBookingsService(id, token);
       if (!success) {
         throw new Error("No se pudo eliminar el evento.");
       }
 
-      toast.success("Evento cancelado");
+      toast.success("Reserva Cancelada Exitosamente");
       setTimeout(() => {
         window.location.reload();
       }, 2000);
-    } catch (error) {
-      console.error("Error al eliminar el evento:", error);
-      toast.error("Error al cancelar el evento");
+    } catch (error: any) {
+      console.error("Error al cancelar reserva:", error);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -50,4 +49,4 @@ const DeleteEventos: React.FC<DeleteEventosProps> = ({ id }) => {
   );
 };
 
-export default DeleteEventos;
+export default CancelarBookings;

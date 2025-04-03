@@ -71,9 +71,9 @@ const UpdatePerfilUsuario = () => {
 
     try {
       const updatedUser = await updateUser(user.id, dataToSend, token);
-      saveUserData({ user: updatedUser, token });
+      saveUserData({ user: updatedUser.user, token });
       toast.success("¡Datos actualizados correctamente!");
-      router.push(routes.login);
+      router.push(routes.miPerfil);
     } catch (error: any) {
       console.error("Error al actualizar datos:", error);
       toast.error(error.message);

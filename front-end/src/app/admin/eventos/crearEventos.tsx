@@ -1,27 +1,54 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import { createEvent } from "../../servicios/eventos";
+import React, { useState, useRef } from "react";
+import { createEvent, imagenEventService } from "../../servicios/eventos";
+import { toast } from "react-toastify";
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
-    name: "Hola",
-    description: "como estas",
-    location: "bien y tu",
+    name: "Prueba 1",
+    description: "Las pruebas desde el front :)",
+    location: "Colombia",
     date: "",
     time: "",
     capacity: "",
     category: "",
+    file: null as File | null,
   });
 
-  const [eventos, setEventos] = useState([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        file,
+      }));
+    }
+    if (!file) {
+      toast.error("Por favor, selecciona un archivo.");
+      return;
+    }
+
+    const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Formato no válido. Usa JPG, PNG o WEBP.");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("El archivo es demasiado grande. Máximo 5MB.");
+      return;
+    }
+
+    setFormData({ ...formData, file });
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -35,7 +62,8 @@ const Eventos = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No se encontró el token en localStorage");
-      alert("Debe iniciar sesión para crear un evento");
+      toast.error("Debe iniciar sesión para crear un evento");
+      toast.error("Debe iniciar sesión para crear un evento");
       return;
     }
 
@@ -50,8 +78,16 @@ const Eventos = () => {
     console.log("Category seleccionada:", formData.category);
 
     try {
-      await createEvent(eventData, token); // Aquí pasas el token como segundo parámetro
-      alert("Evento creado exitosamente");
+      const evento = await createEvent(eventData, token);
+      if (!evento?.id) {
+        throw new Error("Error al crear la rutina");
+      }
+      if (formData.file) {
+        await imagenEventService(formData.file, evento.id, token);
+      }
+      console.log("Evento creado exitosamente - Toast debería mostrarse");
+
+      toast.success("Evento creado exitosamente");
       setFormData({
         name: "",
         description: "",
@@ -60,56 +96,59 @@ const Eventos = () => {
         time: "",
         capacity: "",
         category: "",
+        file: null as File | null,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: any) {
       if (error.response) {
         console.error("Error del backend:", error.response.data);
       } else {
         console.error("Error en la solicitud:", error.message);
       }
-      alert("Hubo un error al crear el evento");
+      toast.error(error.message);
+      toast.error(error.message);
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0D1F2D]">
-      <div className="flex-1">
-        <h2 className="my-6 text-4xl font-bold text-center text-white">
+    <div className="flex w-full p-4 bg-azul1">
+      <div className="w-full max-w-4xl mx-auto">
+        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
           Crear Evento
         </h2>
-        <div className="p-6 mx-auto mt-6 shadow-md bg-azul2 rounded-xl w-max">
+        <div className="p-6 shadow-md bg-azul2 rounded-xl">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
                 type="text"
                 name="name"
                 placeholder="Nombre"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full col-span-2 p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black rounded bg-blanco"
                 required
               />
-              <div className="grid grid-cols-2 col-span-1 gap-3">
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="w-full p-2 text-black rounded bg-blanco"
-                  required
-                />
-                <input
-                  type="time"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className="w-full p-2 text-black rounded bg-blanco"
-                  required
-                />
-              </div>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full p-2 text-black rounded bg-blanco"
+                required
+              />
+              <input
+                type="time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                className="w-full p-2 text-black rounded bg-blanco"
+                required
+              />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
                 type="text"
                 name="location"
@@ -157,10 +196,17 @@ const Eventos = () => {
               className="p-2 text-black rounded bg-blanco"
               required
             />
+            <input
+              type="file"
+              name="imageUrl"
+              ref={fileInputRef}
+              className="w-full p-2 text-black rounded bg-blanco"
+              onChange={handleFileChange}
+            />
 
             <button
               type="submit"
-              className="p-2 mx-auto font-bold text-black rounded bg-verde w-80 hover:bg-green-600 hover:text-blanco"
+              className="w-full p-2 mx-auto font-bold text-black rounded bg-verde md:w-80 hover:bg-green-600 hover:text-blanco"
             >
               Crear Evento
             </button>
