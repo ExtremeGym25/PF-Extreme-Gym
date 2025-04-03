@@ -6,6 +6,8 @@ import { getEvents, updateEventRequest } from "@/app/servicios/eventos";
 import { useMemo } from "react";
 import DeleteEventos from "./deleteEventos";
 import { useCallback } from "react";
+import { toast } from "react-toastify";
+import MapaEventos from "@/app/components/map/MapEventos";
 
 const ListasEventos = () => {
   const [eventos, setEventos] = useState<IEvent[]>([]);
@@ -58,7 +60,11 @@ const ListasEventos = () => {
 
   const handleEdit = (evento: IEvent) => {
     setEditingId(evento.id);
-    setEditedEvent({ ...evento });
+    setEditedEvent({
+      ...evento,
+      latitude: evento.latitude ? parseFloat(evento.latitude as any) : 0,
+      longitude: evento.longitude ? parseFloat(evento.longitude as any) : 0,
+    });
   };
 
   const handleUpdate = async () => {
@@ -70,8 +76,13 @@ const ListasEventos = () => {
         setError("No hay token disponible");
         return;
       }
+      const updatedEvent = {
+        ...editedEvent,
+        latitude: parseFloat(editedEvent.latitude as any) || 0,
+        longitude: parseFloat(editedEvent.longitude as any) || 0,
+      };
       const response = await updateEventRequest(
-        editedEvent,
+        updatedEvent,
         token,
         editedEvent.id
       );
@@ -80,23 +91,31 @@ const ListasEventos = () => {
       );
       setEditingId(null);
       console.log(response, "respuesta");
-    } catch (err) {
-      console.error("Error en updateEvent:", err);
+      toast.success("Evento Editado");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error: any) {
+      console.error("Error en updateEvent:", error);
+      toast.error(error.message);
       setError("Error al actualizar el evento");
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto text-white">
-      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
-        Listado Eventos
+    <div className="max-w-6xl p-6 mx-auto text-white">
+      <h2 className="my-6 text-3xl font-extrabold text-center font-poppins md:text-5xl">
+        Listado de Eventos
       </h2>
 
-      <div className="flex flex-col gap-4 mb-4 md:flex-row">
+      <div className="flex flex-col gap-4 mb-6 md:flex-row">
         <select
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
-          className="w-full p-2 border rounded bg-azul1 md:w-auto"
+          className="w-full p-3 text-white bg-gray-800 border border-gray-600 rounded md:w-auto"
         >
           <option value="">Seleccione una categoría</option>
           <option value="Deportes Aéreos">Deportes Aéreos</option>
@@ -109,28 +128,25 @@ const ListasEventos = () => {
       </div>
 
       {loading ? (
-        <p className="text-center">Cargando...</p>
+        <p className="text-lg text-center text-gray-300">Cargando...</p>
       ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-lg text-center text-red-500">{error}</p>
       ) : eventosFiltrados.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+        <ul className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
           {eventosFiltrados.map((evento) => (
             <li
               key={evento.id}
-              className="flex flex-col justify-between p-4 bg-gray-800 rounded-lg shadow-md"
+              className="p-6 transition-transform bg-gray-900 shadow-lg rounded-xl hover:scale-105"
             >
               {editingId === evento.id ? (
-                <div>
+                <div className="space-y-4">
                   <input
                     type="text"
                     value={editedEvent?.name || ""}
                     onChange={(e) =>
-                      setEditedEvent({
-                        ...editedEvent!,
-                        name: e.target.value,
-                      })
+                      setEditedEvent({ ...editedEvent!, name: e.target.value })
                     }
-                    className="w-full p-2 mb-2 text-black rounded"
+                    className="w-full p-2 rounded text-foreground"
                   />
                   <textarea
                     value={editedEvent?.description || ""}
@@ -140,64 +156,152 @@ const ListasEventos = () => {
                         description: e.target.value,
                       })
                     }
-                    className="w-full p-2 text-black rounded"
+                    className="w-full p-2 rounded text-foreground"
                   />
-
-                  <button
-                    onClick={handleUpdate}
-                    className="w-full p-2 mt-2 text-white bg-blue-500 rounded"
-                  >
-                    Guardar
-                  </button>
+                  <input
+                    type="number"
+                    value={editedEvent?.capacity || ""}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent!,
+                        capacity: e.target.value
+                          ? parseInt(e.target.value, 10)
+                          : 0,
+                      })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                  />
+                  <input
+                    type="text"
+                    value={editedEvent?.location || ""}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent!,
+                        location: e.target.value,
+                      })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                  />
+                  <input
+                    type="number"
+                    value={editedEvent?.longitude || ""}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent!,
+                        longitude: e.target.value
+                          ? parseFloat(e.target.value)
+                          : 0,
+                      })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                    step="any"
+                  />
+                  <input
+                    type="number"
+                    value={editedEvent?.latitude || ""}
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent!,
+                        latitude: e.target.value
+                          ? parseFloat(e.target.value)
+                          : 0,
+                      })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                    step="any"
+                  />
+                  <input
+                    type="date"
+                    value={
+                      editedEvent?.date
+                        ? new Date(editedEvent.date).toISOString().split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setEditedEvent({
+                        ...editedEvent!,
+                        date: e.target.value
+                          ? new Date(e.target.value)
+                          : evento.date,
+                      })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                  />
+                  <input
+                    type="time"
+                    value={editedEvent?.time || ""}
+                    onChange={(e) =>
+                      setEditedEvent({ ...editedEvent!, time: e.target.value })
+                    }
+                    className="w-full p-2 rounded text-foreground"
+                  />
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleUpdate}
+                      className="w-full p-2 text-white bg-green-600 rounded-lg"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="w-full p-2 text-white bg-red-600 rounded-lg"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="flex flex-col h-full">
-                  <h3 className="text-lg font-bold capitalize ">
-                    {evento.name}
-                  </h3>
-                  <p className="flex-grow text-sm text-justify capitalize ">
-                    {evento.description}
-                  </p>
-                  <p className="flex-grow text-sm text-justify capitalize ">
-                    Capacidad:
-                    {evento.capacity}
-                  </p>
-                  <p className="flex-grow text-sm text-justify capitalize ">
-                    Lugar:{evento.location}
-                  </p>
-                  <p className="flex-grow text-sm text-justify capitalize ">
-                    Fecha:{new Date(evento.date).toLocaleDateString()}
-                  </p>
-                  <p className="flex-grow text-sm text-justify capitalize ">
-                    Hora:{evento.time}
-                  </p>
-
-                  {evento.imageUrl ? (
-                    <img
-                      className="object-cover w-full mt-2 rounded-md h-60"
-                      src={
-                        typeof evento.imageUrl === "string"
-                          ? evento.imageUrl
-                          : "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_2_tjw1rv.png"
-                      }
-                      alt="Imagen del evento"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full mt-2 bg-gray-700 rounded-md h-60">
-                      <span className="text-gray-400">
-                        No hay imagen disponible
-                      </span>
+                <div className="flex flex-col">
+                  <div className="flex flex-col gap-6 md:flex-row">
+                    <div className="w-full md:w-1/2">
+                      {evento.imageUrl ? (
+                        <img
+                          className="object-cover w-full rounded-md h-80"
+                          src={evento.imageUrl}
+                          alt="Imagen del evento"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full bg-gray-700 rounded-md h-80">
+                          <span className="text-gray-400">
+                            No hay imagen disponible
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <div className="w-full space-y-3 md:w-1/2">
+                      <h3 className="text-xl font-semibold">{evento.name}</h3>
+                      <p className="text-gray-300">{evento.description}</p>
+                      <p className="text-gray-400">
+                        Capacidad: {evento.capacity}
+                      </p>
+                      <p className="text-gray-400">Lugar: {evento.location}</p>
+                      <p className="text-gray-400">
+                        Latitud: {evento.latitude}
+                      </p>
+                      <p className="text-gray-400">
+                        Longitud: {evento.longitude}
+                      </p>
+                      <p className="text-gray-400">
+                        Fecha: {new Date(evento.date).toLocaleDateString()}
+                      </p>
+                      <p className="text-gray-400">Hora: {evento.time}</p>
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <MapaEventos
+                      latitude={+evento.latitude}
+                      longitude={+evento.longitude}
+                    />
+                  </div>
                   {evento.isCancelled ? (
-                    <p className="mt-2 font-bold text-center text-red-500">
+                    <p className="mt-2 text-lg font-bold text-center text-red-500">
                       🚨 Evento Cancelado
                     </p>
                   ) : (
                     <div className="flex flex-col gap-2 mt-4 md:flex-row">
                       <button
                         onClick={() => handleEdit(evento)}
-                        className="w-full p-2 text-white bg-yellow-500 rounded md:w-auto"
+                        className="w-full p-2 text-white bg-yellow-500 rounded-lg"
                       >
                         Editar
                       </button>
@@ -210,7 +314,9 @@ const ListasEventos = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-center text-gray-400">No hay eventos disponibles.</p>
+        <p className="text-lg text-center text-gray-400">
+          No hay eventos disponibles.
+        </p>
       )}
     </div>
   );
