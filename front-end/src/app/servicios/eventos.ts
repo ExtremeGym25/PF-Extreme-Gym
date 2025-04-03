@@ -81,13 +81,16 @@ export const updateEventRequest = async (
     );
   }
 };
-export const deleteEventoService = async (id: string, token: string | null) => {
+export const deleteEventoService = async (
+  id: string,
+  token: string | null
+): Promise<boolean> => {
   if (!token) {
-    console.error(" No hay token disponible. No se puede eliminar el evento.");
-    return;
+    console.error("No hay token disponible. No se puede eliminar el evento.");
+    return false;
   }
 
-  console.log(" Llamando al servicio de eliminación con ID:", id);
+  console.log("Llamando al servicio de eliminación con ID:", id);
 
   try {
     const response = await axios.delete(`http://localhost:3000/events/${id}`, {
@@ -97,13 +100,13 @@ export const deleteEventoService = async (id: string, token: string | null) => {
       },
     });
 
-    console.log("Respuesta del servidor:", response);
-    return response;
+    console.log("Respuesta del servidor:", response.data);
+    return response.status === 200; // Retorna `true` si la eliminación fue exitosa
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
-      return { error: error.response.data.message };
     }
+    return false; // Retorna `false` en caso de error
   }
 };
 export const imagenEventService = async (
