@@ -54,11 +54,11 @@ export class EventController {
   }
 
   @Post()
-   @ApiBearerAuth()
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Crear un nuevo evento' })
-  @ApiBody({ type: CreateEventDto }) // Asegúrate de que CreateEventDto está correctamente definido
+  @ApiBody({ type: CreateEventDto })
   @ApiResponse({ status: 201, description: 'Evento creado exitosamente.' })
   @ApiResponse({ status: 400, description: 'Error al crear el evento.' })
   async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {

@@ -10,6 +10,7 @@ import { FileUploadModule } from 'src/file-upload/file-upload.module';
 import { Notification } from '../notifications/entities/notification.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { GeolocationService } from 'src/geolocation/geolocation.service';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     NotificationsModule,
   ],
   controllers: [EventController],
-  providers: [EventService, NotificationsModule],
+  providers: [EventService, NotificationsModule, GeolocationService],
   exports: [EventService],
 })
 export class EventModule {}
