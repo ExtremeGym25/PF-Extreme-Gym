@@ -5,9 +5,9 @@ import { toast } from "react-toastify";
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
-    name: "Hola",
-    description: "como estas",
-    location: "bien y tu",
+    name: "Prueba 1",
+    description: "Las pruebas desde el front :)",
+    location: "Colombia",
     date: "",
     time: "",
     capacity: "",
@@ -84,6 +84,7 @@ const Eventos = () => {
       if (formData.file) {
         await imagenEventService(formData.file, evento.id, token);
       }
+      console.log("Evento creado exitosamente - Toast debería mostrarse");
 
       toast.success("Evento creado exitosamente");
       setFormData({
@@ -96,7 +97,9 @@ const Eventos = () => {
         category: "",
         file: null as File | null,
       });
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: any) {
       if (error.response) {
         console.error("Error del backend:", error.response.data);

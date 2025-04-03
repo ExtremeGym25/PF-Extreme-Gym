@@ -54,10 +54,10 @@ const MisReservas = () => {
               key={booking.id}
               className="flex flex-col items-center p-4 text-center bg-white border border-gray-300 rounded-lg shadow-md"
             >
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg font-semibold capitalize">
                 {booking?.event.name ?? "Evento sin nombre"}
               </h3>
-              <p className="text-justify text-gray-600">
+              <p className="text-justify text-gray-600 capitalize">
                 <strong> Descripcion:</strong>{" "}
                 {booking?.event.description ?? "Evento sin nombre"}
               </p>
@@ -68,7 +68,7 @@ const MisReservas = () => {
               <p className="text-gray-600">
                 <strong> Hora:</strong> {booking.event.time}
               </p>
-              <p className="text-gray-600">
+              <p className="text-gray-600 capitalize">
                 <strong>📍 Ubicación:</strong>{" "}
                 {booking?.event.location ?? "No especificada"}
               </p>

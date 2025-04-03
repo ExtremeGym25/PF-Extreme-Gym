@@ -1,52 +1,49 @@
-import { deleteEventoService } from "@/app/servicios/eventos";
-import { IEvent } from "@/app/tipos";
-import { useState } from "react";
+import { deleteEventoService, getEvents } from "@/app/servicios/eventos";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 interface DeleteEventosProps {
   id: string;
-  onDelete: (id: string) => void;
+  onSuccess?: (updatedEvents: any[]) => void;
 }
 
-const DeleteEventos: React.FC<DeleteEventosProps> = ({ id, onDelete }) => {
-  const [eventos, setEventos] = useState<IEvent[]>([]);
-  const [error, setError] = useState("");
+const DeleteEventos: React.FC<DeleteEventosProps> = ({ id, onSuccess }) => {
+  const [loading, setLoading] = useState(false);
 
-  const handleEventDelete = async (id: string) => {
+  const handleDelete = async () => {
     console.log("Intentando eliminar el evento con id:", id);
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("No hay token disponible");
+        toast.error("No hay token disponible");
         return;
       }
 
       const success = await deleteEventoService(id, token);
-
       if (!success) {
-        throw new Error("No se pudo eliminar el evento en la base de datos.");
+        throw new Error("No se pudo eliminar el evento.");
       }
 
-      setEventos((prevEventos) =>
-        prevEventos.filter((evento) => evento.id !== id)
-      );
-      console.log("Evento eliminado con éxito:", id);
-    } catch (error) {
-      console.error("Error al eliminar el evento:", error);
-      setError("Error al eliminar el evento.");
+      toast.success("Evento Cancelado ");
+
+      const updatedEvents = await getEvents(token);
+      onSuccess?.(updatedEvents);
+      console.error("Error al eliminar el evento:", Error);
+      toast.error("Error al cancelar el evento ");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <button
-      onClick={() => {
-        console.log("Botón de eliminar clickeado para ID:", id);
-        onDelete(id);
-      }}
+      onClick={handleDelete}
       className="p-2 ml-2 text-white bg-red-500 rounded"
+      disabled={loading}
     >
-      Cancelar
+      {loading ? "Cancelando..." : "Cancelar"}
     </button>
   );
 };

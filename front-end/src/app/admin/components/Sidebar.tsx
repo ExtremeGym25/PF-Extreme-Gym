@@ -26,6 +26,14 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
+              href="/admin/rutinas"
+              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
+            >
+              Rutinas
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/admin/eventos"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
@@ -34,12 +42,13 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="/admin/rutinas"
+              href="/admin/reservas"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
-              Rutinas
+              Reservas Eventos
             </Link>
           </li>
+
           <li>
             <Link
               href="/admin/entrenadores"

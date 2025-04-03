@@ -5,6 +5,7 @@ import { IEvent } from "@/app/tipos";
 import { getEvents, updateEventRequest } from "@/app/servicios/eventos";
 import { useMemo } from "react";
 import DeleteEventos from "./deleteEventos";
+import { useCallback } from "react";
 
 const ListasEventos = () => {
   const [eventos, setEventos] = useState<IEvent[]>([]);
@@ -47,20 +48,17 @@ const ListasEventos = () => {
     fetchEventos();
   }, []);
 
-  useEffect(() => {
-    console.log("Eventos actualizados:", eventos);
-  }, [eventos]);
-
   const eventosFiltrados = useMemo(() => {
     if (!categoria) return eventos;
     return eventos.filter((evento) => evento.category === categoria);
   }, [categoria, eventos]);
+
   console.log("Eventos filtrados:", eventosFiltrados);
   eventos.forEach((evento) => console.log(evento.category));
 
   const handleEdit = (evento: IEvent) => {
     setEditingId(evento.id);
-    setEditedEvent(evento);
+    setEditedEvent({ ...evento });
   };
 
   const handleUpdate = async () => {
@@ -86,15 +84,6 @@ const ListasEventos = () => {
       console.error("Error en updateEvent:", err);
       setError("Error al actualizar el evento");
     }
-  };
-
-  const handleEventDelete = (id: string) => {
-    console.log("Intentando eliminar el evento con id:", id);
-    setEventos((prevEventos) => {
-      const nuevosEventos = prevEventos.filter((evento) => evento.id !== id);
-      console.log("Eventos después de eliminar:", nuevosEventos);
-      return nuevosEventos;
-    });
   };
 
   return (
@@ -163,13 +152,15 @@ const ListasEventos = () => {
                 </div>
               ) : (
                 <div className="flex flex-col h-full">
-                  <h3 className="text-lg font-bold">{evento.name}</h3>
+                  <h3 className="text-lg font-bold capitalize ">
+                    {evento.name}
+                  </h3>
                   <p className="flex-grow text-sm text-justify">
                     {" "}
                     Id:
                     {evento.id}
                   </p>
-                  <p className="flex-grow text-sm text-justify">
+                  <p className="flex-grow text-sm text-justify capitalize ">
                     {evento.description}
                   </p>
                   {evento.imageUrl ? (
@@ -203,7 +194,7 @@ const ListasEventos = () => {
                       </button>
                       <DeleteEventos
                         id={evento.id}
-                        onDelete={handleEventDelete}
+                        onSuccess={(updatedEvents) => setEventos(updatedEvents)}
                       />
                     </div>
                   )}

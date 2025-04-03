@@ -47,6 +47,7 @@ export enum ExtremeSportCategory {
   WINTER_SPORTS = "Deportes de Invierno",
 }
 export interface IEvent {
+  isActive: boolean;
   imageUrl: any;
   isCancelled: any;
   id: string;
@@ -63,18 +64,13 @@ export interface IEvent {
 }
 
 export interface IReservas {
-  imageUrl: any;
   isCancelled: any;
   id: string;
   name: string;
-  description: string;
-  location: string;
-  date: Date;
-  time: string;
+  bookingsDate: Date;
   capacity: number;
-  category: ExtremeSportCategory;
   userId: string;
-  file?: File;
   numberOfPeople?: number;
   event: IEvent;
+  user: IUser;
 }

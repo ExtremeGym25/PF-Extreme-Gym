@@ -13,6 +13,7 @@ export const routes = {
   admin: "/admin",
   adminU: "/admin/usuarios",
   adminE: "/admin/eventos",
+  adminRes: "/admin/reservas",
   adminR: "/admin/rutinas",
   adminEn: "/admin/entrenadores",
   adminP: "/admin/publicidad",

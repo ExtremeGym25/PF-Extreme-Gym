@@ -38,7 +38,10 @@ const GetEventos = () => {
   }, []);
   const eventosFiltrados = useMemo(() => {
     if (!categoria) return eventos;
-    return eventos.filter((evento) => evento.category === categoria);
+    return eventos.filter(
+      (evento) =>
+        evento.isActive && (!categoria || evento.category === categoria)
+    );
   }, [categoria, eventos]);
 
   return (
@@ -83,16 +86,16 @@ const GetEventos = () => {
                 )}
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-semibold uppercase text-foreground">
+                <h2 className="text-xl font-semibold capitalize text-foreground">
                   {evento.name}
                 </h2>
                 <p className="text-foreground">
                   {new Date(evento.date).toLocaleDateString()} - {evento.time}
                 </p>
-                <p className="mt-2 text-justify text-foreground line-clamp-3">
+                <p className="mt-2 text-justify capitalize text-foreground line-clamp-3">
                   {evento.description}
                 </p>
-                <p className="mt-2 uppercase text-foreground">
+                <p className="mt-2 capitalize text-foreground">
                   {evento.location}
                 </p>
                 <p className="font-semibold text-verde">

@@ -13,7 +13,7 @@ export const reservaEventosService = async (
   console.log("planId enviado:", eventId);
   try {
     const response = await axiosApiBack.post(
-      "/Bookings",
+      "/bookings",
       { eventId, userId, numberOfPeople },
       {
         headers: {
@@ -21,6 +21,27 @@ export const reservaEventosService = async (
         },
       }
     );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
+  }
+};
+export const getMyBookings = async (token: string) => {
+  try {
+    const response = await axiosApiBack.get("/bookings/my-reservations", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
