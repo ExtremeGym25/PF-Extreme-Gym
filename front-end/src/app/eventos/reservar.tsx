@@ -2,7 +2,9 @@ import { toast } from "react-toastify";
 import ButtonPrimary from "../components/buttons/buttonPrimary";
 import { reservaEventosService } from "../servicios/userevents";
 import { useAuth } from "../contextos/contextoAuth";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getBookings } from "../servicios/reservas";
+import { IReservas } from "../tipos";
 
 const Reservar = ({ eventoId }: { eventoId?: string }) => {
   const { user } = useAuth();
@@ -10,6 +12,7 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [reservaExitosa, setReservaExitosa] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOnSubmit = async () => {
     try {
@@ -69,6 +72,7 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
       >
         {reservaExitosa ? "Reservado" : "Reservar"}
       </ButtonPrimary>
+
       {mostrarModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative w-full max-w-md p-6 bg-white rounded-lg shadow-lg">

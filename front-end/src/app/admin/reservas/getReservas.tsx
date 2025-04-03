@@ -1,10 +1,13 @@
 "use client";
-import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
-import { getBookings, getBookingsId } from "@/app/servicios/reservas";
+import {
+  getBookings,
+  getBookingsId,
+  updateBookingService,
+} from "@/app/servicios/reservas";
 import { IReservas } from "@/app/tipos";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import DeleteBookings from "./deleteBookings";
+import CancelarBookings from "./cancelarBookings";
 
 const GetReservasAdmin = () => {
   const [bookings, setBookings] = useState<IReservas[]>([]);
@@ -14,9 +17,12 @@ const GetReservasAdmin = () => {
   const [searchedBooking, setSearchedBooking] = useState<IReservas | null>(
     null
   );
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedBooking, setEditedBooking] = useState<IReservas | null>(null);
   const fetchBookings = useCallback(async () => {
     setLoading(true);
     setError("");
+    console.log("bookings:", bookings);
 
     try {
       const token = localStorage.getItem("token");
@@ -63,6 +69,42 @@ const GetReservasAdmin = () => {
     } catch (error) {
       setSearchedBooking(null);
       toast.error("Reserva no encontrada");
+    }
+  };
+  const handleEdit = (booking: IReservas) => {
+    console.log("Editando reserva:", booking.id);
+    setEditingId(booking.id);
+
+    setEditedBooking({ ...booking });
+  };
+  const handleUpdate = async () => {
+    if (!editedBooking) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No hay token disponible");
+        return;
+      }
+      const payload = {
+        ...editedBooking,
+        userId: editedBooking.userId,
+      };
+
+      const response = await updateBookingService(
+        token,
+        editedBooking.id,
+        editedBooking.userId,
+        editedBooking.numberOfPeople ?? 1
+      );
+      setBookings((prev) =>
+        prev.map((evt) => (evt.id === editedBooking.id ? editedBooking : evt))
+      );
+      setEditingId(null);
+      console.log(response, "respuesta");
+    } catch (err) {
+      console.error("Error en updateEvent:", err);
+      setError("Error al actualizar el evento");
     }
   };
   return (
@@ -131,65 +173,75 @@ const GetReservasAdmin = () => {
         </div>
       )}
 
-      {bookings.length > 0 ? (
-        <div className="flex flex-col gap-4">
-          {bookings.map((booking) => (
-            <div
-              key={booking.id}
-              className="flex flex-col items-center justify-between w-full p-4 text-white rounded-lg shadow-md md:flex-row bg-azul2"
-            >
-              <div className="flex flex-col">
-                <p>
-                  <strong>Nombre Usuario:</strong> {booking.user.name}
-                </p>
-                <p>
-                  <strong>Numero Reserva:</strong> {booking.id}
-                </p>
-                <p>
-                  <strong>Fecha de Reserva:</strong>{" "}
-                  {new Date(booking.bookingsDate).toLocaleDateString()}
-                </p>
-                <p className="capitalize">
-                  <strong>Evento:</strong>{" "}
-                  {booking?.event.name ?? "Evento sin nombre"}
-                </p>
-                <p>
-                  <strong>Contacto Usuario:</strong> {booking.user.phone}
-                </p>
-                <p>
-                  <strong>Personas en la reserva:</strong>{" "}
-                  {booking.numberOfPeople}
-                </p>
-                <p>
-                  <strong>Estado Reserva:</strong>{" "}
-                  {booking.isCancelled ? "Cancelada" : "Activa"}
-                </p>
-              </div>
-
-              {/* {booking.isCancelled ? (
-                <p className="font-bold text-red-500">🚨 Evento Cancelado</p>
-              ) : (
-                // <div className="flex gap-4">
-                //   <button
-                //     onClick={() => handleEdit(booking)}
-                //     className="px-4 py-2 text-white bg-yellow-500 rounded"
-                //   >
-                //     Editar
-                //   </button>
-                //   <DeleteBookings
-                //     id={booking.id}
-                //     onSuccess={(updatedEvents) => setEventos(updatedEvents)}
-                //   />
-                // </div>
-              )} */}
+      <div className="flex flex-col gap-4">
+        {bookings.map((booking) => (
+          <div
+            key={booking.id}
+            className="flex items-center justify-between w-full p-4 text-white rounded-lg shadow-md bg-azul2"
+          >
+            <div className="flex flex-col">
+              <h3 className="text-lg font-bold capitalize">
+                {booking.event.name}
+              </h3>
+              <p>
+                <strong>Usuario:</strong> {booking.user.name}
+              </p>
+              <p>
+                <strong>Fecha:</strong>{" "}
+                {new Date(booking.bookingsDate).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Estado:</strong>{" "}
+                {booking.isCancelled ? "Cancelada" : "Activa"}
+              </p>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500">No tienes reservas aún.</p>
-      )}
+
+            <div className="flex items-center gap-4">
+              {editingId === booking.id ? (
+                <>
+                  <input
+                    type="number"
+                    value={editedBooking?.numberOfPeople || ""}
+                    onChange={(e) =>
+                      setEditedBooking({
+                        ...editedBooking!,
+                        numberOfPeople: Number(e.target.value),
+                      })
+                    }
+                    className="w-20 p-2 text-black rounded"
+                  />
+                  <button
+                    onClick={handleUpdate}
+                    className="p-2 text-white bg-green-500 rounded"
+                  >
+                    Guardar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm">
+                    <strong>Personas:</strong> {booking.numberOfPeople}
+                  </p>
+                  <button
+                    onClick={() => handleEdit(booking)}
+                    className="p-2 text-white bg-yellow-500 rounded"
+                  >
+                    Editar
+                  </button>
+                </>
+              )}
+              {booking.isCancelled ? (
+                <p className="font-bold text-red-500">Reserva Cancelada</p>
+              ) : (
+                <div className="flex gap-4">
+                  <CancelarBookings id={booking.id} />
+                </div>
+              )}{" "}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
 export default GetReservasAdmin;

@@ -113,7 +113,7 @@ const ListasEventos = () => {
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : eventosFiltrados.length > 0 ? (
-        <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
           {eventosFiltrados.map((evento) => (
             <li
               key={evento.id}
@@ -155,14 +155,23 @@ const ListasEventos = () => {
                   <h3 className="text-lg font-bold capitalize ">
                     {evento.name}
                   </h3>
-                  <p className="flex-grow text-sm text-justify">
-                    {" "}
-                    Id:
-                    {evento.id}
-                  </p>
                   <p className="flex-grow text-sm text-justify capitalize ">
                     {evento.description}
                   </p>
+                  <p className="flex-grow text-sm text-justify capitalize ">
+                    Capacidad:
+                    {evento.capacity}
+                  </p>
+                  <p className="flex-grow text-sm text-justify capitalize ">
+                    Lugar:{evento.location}
+                  </p>
+                  <p className="flex-grow text-sm text-justify capitalize ">
+                    Fecha:{new Date(evento.date).toLocaleDateString()}
+                  </p>
+                  <p className="flex-grow text-sm text-justify capitalize ">
+                    Hora:{evento.time}
+                  </p>
+
                   {evento.imageUrl ? (
                     <img
                       className="object-cover w-full mt-2 rounded-md h-60"
@@ -192,10 +201,7 @@ const ListasEventos = () => {
                       >
                         Editar
                       </button>
-                      <DeleteEventos
-                        id={evento.id}
-                        onSuccess={(updatedEvents) => setEventos(updatedEvents)}
-                      />
+                      <DeleteEventos id={evento.id} />
                     </div>
                   )}
                 </div>
