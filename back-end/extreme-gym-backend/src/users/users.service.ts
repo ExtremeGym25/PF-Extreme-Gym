@@ -14,9 +14,7 @@ export class UsersService {
 
   async findAll() {
     const users = await this.userRepository.find();
-    return users.map(
-      ({ password, isAdmin, ...user }) => user,
-    );
+    return users.map(({ password, isAdmin, ...user }) => user);
   }
 
   async findOne(id: string) {
@@ -61,8 +59,7 @@ export class UsersService {
     Object.assign(existingUser, updateUserDto);
 
     const savedUser = await this.userRepository.save(existingUser);
-    const { password, isAdmin, ...userWithoutSensitiveData } =
-      savedUser;
+    const { password, isAdmin, ...userWithoutSensitiveData } = savedUser;
 
     return {
       message: `El usuario "${savedUser.name}" ha sido actualizado correctamente.`,
@@ -74,8 +71,12 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id: userId } });
   }
 
-  async profileUpdate(user: User): Promise<User | null> {
-    return this.userRepository.save(user);
+  async profileUpdate(
+    user: User,
+  ): Promise<Omit<User, 'password' | 'isAdmin' | 'subscriptionType'> | null> {
+    const savedUser = await this.userRepository.save(user);
+    const { password, isAdmin, ...userWithoutSensitiveData } = savedUser;
+    return userWithoutSensitiveData;
   }
 
   async remove(userId: string): Promise<void> {
@@ -89,5 +90,13 @@ export class UsersService {
 
     user.isActive = false;
     await this.userRepository.save(user);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async findProfile(id: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
   }
 }

@@ -11,11 +11,11 @@ const usePrivate = (): boolean => {
 
   useEffect(() => {
     if (isAuth === null) {
-      setIsLoading(true); // Cargando si el estado aún no está determinado
+      setIsLoading(true);
     } else if (!isAuth) {
       router.push(routes.home);
     } else {
-      setIsLoading(false); // Deja de cargar si el usuario está autenticado
+      setIsLoading(false);
     }
   }, [isAuth, router]);
 

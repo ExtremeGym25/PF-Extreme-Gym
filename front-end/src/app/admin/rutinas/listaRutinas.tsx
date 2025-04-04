@@ -76,7 +76,7 @@ const ListaRutinas = () => {
   console.log("Renderizando con rutinas:", rutinas);
   return (
     <div className="max-w-4xl p-4 mx-auto text-white">
-      <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
+      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
         Lista de Rutinas
       </h2>
 
@@ -185,7 +185,7 @@ const ListaRutinas = () => {
                         setEditingId(rutina.id ?? "");
                         setNuevaRutina({ ...rutina });
                       }}
-                      className="px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
+                      className="px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
                     >
                       Editar
                     </button>

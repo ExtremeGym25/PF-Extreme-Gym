@@ -7,7 +7,18 @@ interface VisibleWrapperProps {
   children: React.ReactNode;
 }
 
-const hidePages = [routes.login, routes.registro, routes.admin, routes.adminU, routes.adminE, routes.adminR, routes.adminEn, routes.adminP, routes.adminCE, routes.adminVP];
+const hidePages = [
+  routes.login,
+  routes.registro,
+  routes.admin,
+  routes.adminU,
+  routes.adminE,
+  routes.adminR,
+  routes.adminEn,
+  routes.adminP,
+  routes.adminCE,
+  routes.adminRes,
+];
 
 const VisibleWrapper: FC<VisibleWrapperProps> = ({ children }) => {
   //hook next el children es la nvbar

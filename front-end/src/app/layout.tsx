@@ -1,3 +1,5 @@
+import React from "react";
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "../app/styles/globals.css";
@@ -6,6 +8,8 @@ import Navbar from "./components/navbarFooter/navbar";
 import Footer from "./components/navbarFooter/footer";
 import { AuthProvider } from "./contextos/contextoAuth";
 import VisibleWrapper from "./wrapper/visibleWrapper";
+import Script from "next/script";
+import { Auth0ProviderWrapper } from "./contextos/contextoAuth0";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -35,33 +39,37 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${poppins.variable} antialiased`}>
         {" "}
-        <AuthProvider>
-          <VisibleWrapper>
-            <Navbar />
-          </VisibleWrapper>
-          <div>{children}</div>
-          <VisibleWrapper>
-            <Footer />
-          </VisibleWrapper>
-          <ToastContainer
-            position="top-center"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            transition={Bounce}
-            toastClassName="custom-toast"
-          />
-        </AuthProvider>
+        <Auth0ProviderWrapper>
+          <AuthProvider>
+            <VisibleWrapper>
+              <Navbar />
+            </VisibleWrapper>
+            <div>{children}</div>
+            <VisibleWrapper>
+              <Footer />
+            </VisibleWrapper>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+              toastClassName="custom-toast"
+            />
+          </AuthProvider>
+        </Auth0ProviderWrapper>
+        <script
+          src="//code.tidio.co/d5nlufbj8mjvzlknyy2qjjfsgfyn9thb.js"
+          async
+        ></script>
       </body>
     </html>
   );
