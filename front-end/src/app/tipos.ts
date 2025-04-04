@@ -61,6 +61,8 @@ export interface IEvent {
   userId: string;
   file?: File;
   numberOfPeople?: number;
+  latitude: number;
+  longitude: number;
 }
 
 export interface IReservas {

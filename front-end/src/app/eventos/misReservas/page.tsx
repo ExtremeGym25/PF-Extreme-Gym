@@ -1,6 +1,7 @@
 "use client";
 import CancelarBookings from "@/app/admin/reservas/cancelarBookings";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
+import MapaEventos from "@/app/components/map/MapEventos";
 import { useAuth } from "@/app/contextos/contextoAuth";
 import { routes } from "@/app/routes/routes";
 import { updateBookingService } from "@/app/servicios/reservas";
@@ -74,15 +75,18 @@ const MisReservas = () => {
       setBookings((prev) =>
         prev.map((evt) => (evt.id === editedBooking.id ? editedBooking : evt))
       );
+      toast.success("Reserva Modificada");
       setEditingId(null);
       console.log(response, "respuesta");
-    } catch (err) {
-      console.error("Error en updateEvent:", err);
+    } catch (error: any) {
+      console.error("Error en updateEvent:", error);
+      toast.error(error.message);
+
       setError("Error al actualizar el evento");
     }
   };
   return (
-    <div className="max-w-4xl p-6 mx-auto">
+    <div className="max-w-4xl p-6 pt-8 mx-auto font-poppins">
       <h2 className="mb-6 text-3xl font-bold text-center text-foreground">
         Mis Reservas
       </h2>
@@ -92,7 +96,7 @@ const MisReservas = () => {
           {bookings.map((booking) => (
             <div
               key={booking.id}
-              className="flex items-center justify-between p-4 border border-gray-700 rounded-lg shadow-lg bg-fondo"
+              className="flex items-center justify-between p-4 border rounded-lg shadow-lg border-verde bg-fondo"
             >
               <img
                 src={
@@ -111,14 +115,26 @@ const MisReservas = () => {
                   <strong>Fecha:</strong>{" "}
                   {new Date(booking.bookingsDate).toLocaleDateString()}
                 </p>
+                <p>
+                  <strong>Descripción:</strong> {booking.event.description}
+                </p>
+                <p>
+                  <strong>Locación:</strong> {booking.event.location}
+                </p>
                 <p
-                  className={`font-semibold ${
+                  className={` ${
                     booking.isCancelled ? "text-red-500" : "text-verde"
                   }`}
                 >
                   <strong>Estado:</strong>{" "}
                   {booking.isCancelled ? "Cancelada" : "Activa"}
                 </p>
+                <div className="mt-1">
+                  <MapaEventos
+                    latitude={+booking.event.latitude}
+                    longitude={+booking.event.longitude}
+                  />
+                </div>
               </div>
 
               <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -126,6 +142,7 @@ const MisReservas = () => {
                   <>
                     <input
                       type="number"
+                      className="w-20 p-2 bg-white border rounded text-foreground"
                       value={editedBooking?.numberOfPeople || ""}
                       onChange={(e) =>
                         setEditedBooking({
@@ -133,23 +150,26 @@ const MisReservas = () => {
                           numberOfPeople: Number(e.target.value),
                         })
                       }
-                      className="w-20 p-2 rounded text-foreground"
                     />
-                    <ButtonPrimary onClick={handleUpdate} className="p-2">
-                      Guardar
-                    </ButtonPrimary>
+
+                    <button
+                      onClick={handleUpdate}
+                      className="px-2 py-2 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
+                    >
+                      Editar{" "}
+                    </button>
                   </>
                 ) : (
                   <>
                     <p className="text-sm">
                       <strong>Personas:</strong> {booking.numberOfPeople}
                     </p>
-                    <ButtonPrimary
+                    <button
                       onClick={() => handleEdit(booking)}
-                      className="p-2 "
+                      className="py-2 text-sm transition rounded-md x-2 md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
                     >
-                      Editar
-                    </ButtonPrimary>
+                      Guardar
+                    </button>
                   </>
                 )}
                 {!booking.isCancelled && <CancelarBookings id={booking.id} />}
