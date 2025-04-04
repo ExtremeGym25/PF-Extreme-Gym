@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import axios from "axios";
 import { IEvent } from "../tipos";
 
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 export const createEvent = async (eventData: any, token: string) => {
@@ -43,6 +39,7 @@ export const getEvents = async (token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("Respuesta de la API:", response.data);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
@@ -84,30 +81,68 @@ export const updateEventRequest = async (
     );
   }
 };
-export const deleteEventoService = async (id: string, token: string) => {
+export const deleteEventoService = async (
+  id: string,
+  token: string | null
+): Promise<boolean> => {
   if (!token) {
-    throw new Error("No hay token de autenticación");
+    console.error("No hay token disponible. No se puede eliminar el evento.");
+    return false;
   }
+
+  console.log("Llamando al servicio de eliminación con ID:", id);
+
   try {
     const response = await axios.delete(`http://localhost:3000/events/${id}`, {
       headers: {
-        Authorization: `Bearer ${token.trim()}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-    return response.data;
+
+    console.log("Respuesta del servidor:", response.data);
+    return response.status === 200; // Retorna `true` si la eliminación fue exitosa
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
-      throw new Error(error.response.data.message || "Error desconocido");
-    } else if (axios.isAxiosError(error) && error.request) {
-      console.error("No hubo respuesta del servidor:", error.request);
-      throw new Error("No hubo respuesta del servidor");
-    } else {
-      console.error("Error inesperado:", (error as Error).message);
-      throw new Error((error as Error).message || "Error desconocido");
     }
-    console.error("Error completo:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar");
+    return false; // Retorna `false` en caso de error
+  }
+};
+export const imagenEventService = async (
+  file: File,
+  eventId: string,
+  token: string
+) => {
+  if (!file) {
+    console.error(" Error: No se recibió un archivo para subir.");
+    throw new Error("No se recibió un archivo válido.");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const imagenEvent = await axiosApiBack.patch(
+      `/events/${eventId}/upload-image`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(" Imagen subida con éxito:", imagenEvent.data.imageUrl);
+    return imagenEvent.data;
+  } catch (error) {
+    let errorMessage = "Error desconocido";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error(" Error en Cloudinary:", errorMessage); // Solo el mensaje
+    throw new Error(errorMessage);
   }
 };
