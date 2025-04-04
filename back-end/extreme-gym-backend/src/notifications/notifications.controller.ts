@@ -65,8 +65,11 @@ export class NotificationsController {
     };
   }
 
-  @Get('trigger-reminders')
+  // endpoint para enviar recordatorios de reservas
+  @Get('test-reminders')
   async testReminders() {
     return this.notificationsService.testReminders();
   }
+
+  
 }

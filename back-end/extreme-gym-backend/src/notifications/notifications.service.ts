@@ -212,16 +212,14 @@ export class NotificationsService {
     }
   }
 
-  // NOTIFICACACIONES DE RESERVA DE EVENTOS
+  // NOTIFICACACIONES De EVENTOS
 
-  // Notificación de confirmación de reserva
+  // Método mejorado para parsear fechas
   private parseEventDate(dateInput: Date | string): Date {
-    // Si ya es un Date válido
     if (dateInput instanceof Date && !isNaN(dateInput.getTime())) {
       return dateInput;
     }
 
-    // Si es string, intentar convertirlo
     if (typeof dateInput === 'string') {
       const parsedDate = new Date(dateInput);
       if (!isNaN(parsedDate.getTime())) {
@@ -229,27 +227,26 @@ export class NotificationsService {
       }
     }
 
-    // Fallback a fecha actual
     this.logger.warn('Fecha inválida, usando fecha actual como fallback');
     return new Date();
   }
 
-  // Método público que usa parseEventDate
+  // Método para enviar confirmación de reserva
   async sendBookingConfirmation(data: {
     userEmail: string;
     userName: string;
     eventName: string;
     eventDate: Date | string;
+    eventTime: string;
     eventLocation: string;
     numberOfPeople: number;
-  }) {
+  }): Promise<void> {
     try {
-      // USO CORRECTO DEL MÉTODO PRIVADO
       const eventDate = this.parseEventDate(data.eventDate);
 
       await this.mailerService.sendMail({
         to: data.userEmail,
-        subject: '¡Reserva confirmada en Extreme Gym! ✅',
+        subject: `Confirmación de reserva para ${data.eventName}`,
         template: './booking-confirmation',
         context: {
           name: data.userName,
@@ -260,45 +257,172 @@ export class NotificationsService {
             month: 'long',
             day: 'numeric',
           }),
-          eventTime: eventDate.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
+          eventTime: data.eventTime,
           eventLocation: data.eventLocation,
           numberOfPeople: data.numberOfPeople,
+          currentYear: new Date().getFullYear(),
         },
       });
     } catch (error) {
-      this.logger.error(`Error enviando confirmación: ${error.message}`);
-      throw new Error('No se pudo enviar la confirmación');
+      this.logger.error(
+        `Error enviando confirmación a ${data.userEmail}: ${error.message}`,
+      );
+      throw error;
     }
   }
 
-  // Recordatorio 1 día antes del evento (CRON)
+  // Método mejorado para recordatorios
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
   async sendEventReminders() {
+    try {
+      this.logger.log('Iniciando envío automático de recordatorios...');
+
+      // 1. Configurar el rango de fechas (mañana)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const startDate = new Date(tomorrow.setHours(0, 0, 0, 0));
+      const endDate = new Date(tomorrow.setHours(23, 59, 59, 999));
+
+      const bookings = await this.bookingRepository.find({
+        where: {
+          event: {
+            date: Between(startDate, endDate),
+            isCancelled: false, // Excluye eventos cancelados
+          },
+        },
+        relations: ['user', 'event'],
+      });
+
+      this.logger.log(`Encontradas ${bookings.length} reservas para recordar`);
+
+      // 3. Enviar un correo por cada reserva
+      for (const booking of bookings) {
+        try {
+          await this.mailerService.sendMail({
+            to: booking.user.email,
+            subject: 'Recordatorio: Tu evento en Extreme Gym es mañana ⏰',
+            template: './event-reminder',
+            context: {
+              name: booking.user.name,
+              eventName: booking.event.name,
+              eventDate: booking.event.date.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }),
+              eventTime:
+                booking.event.time ||
+                booking.event.date.toLocaleTimeString('es-ES', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+              eventLocation: booking.event.location,
+              numberOfPeople: booking.numberOfPeople,
+            },
+          });
+          this.logger.log(`Recordatorio enviado a ${booking.user.email}`);
+        } catch (error) {
+          this.logger.error(
+            `Error enviando a ${booking.user.email}: ${error.message}`,
+          );
+        }
+      }
+
+      this.logger.log('Proceso de recordatorios completado');
+    } catch (error) {
+      this.logger.error(`Error en el proceso automático: ${error.message}`);
+    }
+  }
+
+  // Método privado para enviar email de recordatorio
+  private async sendReminderEmail(booking: Booking): Promise<void> {
+    try {
+      const eventDate = this.parseEventDate(booking.event.date);
+
+      await this.mailerService.sendMail({
+        to: booking.user.email,
+        subject: 'Recordatorio: Tu evento en Extreme Gym es mañana ⏰',
+        template: './event-reminder',
+        context: {
+          name: booking.user.name,
+          eventName: booking.event.name,
+          eventDate: eventDate.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+          eventTime:
+            booking.event.time ||
+            eventDate.toLocaleTimeString('es-ES', {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          eventLocation: booking.event.location,
+          numberOfPeople: booking.numberOfPeople,
+          currentYear: new Date().getFullYear(),
+        },
+      });
+    } catch (error) {
+      this.logger.error(
+        `Error enviando recordatorio a ${booking.user.email}: ${error.message}`,
+      );
+    }
+  }
+
+  // Método para pruebas
+  public async testReminders(): Promise<{
+    success: boolean;
+    message: string;
+    remindersSent: number;
+  }> {
+    this.logger.warn('EJECUTANDO PRUEBA MANUAL DE RECORDATORIOS - MODO DEBUG');
+
+    // 1. Configurar fechas para mañana
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
-    // Formatear a fecha sin hora (YYYY-MM-DD)
-    const tomorrowDateString = tomorrow.toISOString().split('T')[0];
+    const tomorrowEnd = new Date(tomorrow);
+    tomorrowEnd.setHours(23, 59, 59, 999);
 
+    // 2. Debug: Mostrar las fechas que se están usando
+    this.logger.debug(`Buscando eventos entre: ${tomorrow} y ${tomorrowEnd}`);
+
+    // 3. Buscar eventos con relaciones cargadas
     const bookings = await this.bookingRepository.find({
       where: {
         event: {
-          date: Between(
-            new Date(`${tomorrowDateString}T00:00:00`),
-            new Date(`${tomorrowDateString}T23:59:59`),
-          ),
+          date: Between(tomorrow, tomorrowEnd),
+          isCancelled: false,
         },
       },
-      relations: ['user', 'event'],
+      relations: ['user', 'event'], // Asegurar que las relaciones se carguen
+      loadEagerRelations: true, // Carga todas las relaciones necesarias
     });
 
-    this.logger.log(`Enviando ${bookings.length} recordatorios de eventos`);
+    // 4. Debug: Mostrar eventos encontrados
+    this.logger.debug(
+      `Eventos encontrados: ${JSON.stringify(
+        bookings.map((b) => ({
+          id: b.event?.id,
+          name: b.event?.name,
+          date: b.event?.date,
+          user: b.user?.email,
+        })),
+      )}`,
+    );
 
+    // 5. Enviar recordatorios
+    let remindersSent = 0;
     for (const booking of bookings) {
       try {
+        if (!booking.user || !booking.event) {
+          this.logger.warn(`Reserva ${booking.id} sin usuario o evento`);
+          continue;
+        }
+
         await this.mailerService.sendMail({
           to: booking.user.email,
           subject: 'Recordatorio: Tu evento en Extreme Gym es mañana ⏰',
@@ -312,26 +436,27 @@ export class NotificationsService {
               month: 'long',
               day: 'numeric',
             }),
-            eventTime: booking.event.date.toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
+            eventTime: booking.event.time || 'Por definir',
             eventLocation: booking.event.location,
             numberOfPeople: booking.numberOfPeople,
+            currentYear: new Date().getFullYear(),
           },
         });
+        remindersSent++;
       } catch (error) {
         this.logger.error(
-          `Error enviando recordatorio a ${booking.user.email}: ${error.message}`,
+          `Error enviando a ${booking.user?.email}: ${error.message}`,
         );
       }
     }
-  }
 
-  // Método para forzar el envío de recordatorios (sin cambiar el cron original)
-  public async testReminders(): Promise<string> {
-    this.logger.warn('EJECUTANDO PRUEBA MANUAL DE RECORDATORIOS');
-    await this.sendEventReminders(); // Llama al mismo método que usa el cron
-    return 'Prueba de recordatorios ejecutada. Revisa los logs para ver los resultados.';
+    return {
+      success: true,
+      message:
+        remindersSent > 0
+          ? `Prueba exitosa. ${remindersSent} recordatorios enviados.`
+          : 'Prueba completada pero no se enviaron recordatorios. Verifica logs.',
+      remindersSent,
+    };
   }
 }
