@@ -39,9 +39,9 @@ export class FileUploadService {
     category: string,
     userId?: string,
   ): Promise<string> {
-    if (!file || file.size === 0) {  
-    throw new BadRequestException('El archivo no debe estar vacío');
-  } 
+    if (!file || file.size === 0) {
+      throw new BadRequestException('El archivo no debe estar vacío');
+    }
     const allowedTypes = [...this.allowedImageTypes, ...this.allowedVideoTypes];
     const errorMessage =
       'Formato de archivo no permitido. Por favor, sube un archivo de tipo imagen (PNG, JPEG, GIF) o video (MP4, WEBM, AVI).';
@@ -54,8 +54,18 @@ export class FileUploadService {
       file,
       `${category}`,
       resourceType,
-      userId
+      userId,
     );
+  }
+
+  async getFileUploadUrl(id: string): Promise<{ url: string }> {
+    const fileUpload = await this.fileUploadRepository.findOneBy({ id });
+
+    if (!fileUpload) {
+      throw new BadRequestException('URL no encontrada.');
+    }
+
+    return { url: fileUpload.url };
   }
 
   private async uploadToResource(
@@ -66,7 +76,12 @@ export class FileUploadService {
     context?: string,
   ): Promise<string> {
     const result = await this.uploadFileCloudinary(file, folder, resourceType);
-    return await this.saveFileUpload(result, resourceType, userId || null, context || null);
+    return await this.saveFileUpload(
+      result,
+      resourceType,
+      userId || null,
+      context || null,
+    );
   }
 
   async uploadProfilePicture(
@@ -152,7 +167,7 @@ export class FileUploadService {
             'El archivo no debe estar vacío; no se recibió un buffer.',
           ),
         );
-      }  
+      }
 
       const bufferStream = new Readable();
       bufferStream.push(file.buffer);

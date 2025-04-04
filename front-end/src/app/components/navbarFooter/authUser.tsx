@@ -76,9 +76,12 @@ const UserAuth = () => {
                   <hr className="w-full my-2 border-t-1 border-verde" />
                   {[
                     { label: "Mi Perfil", route: routes.miPerfil },
-                    { label: "Rutinas", route: routes.miPerfil },
-                    { label: "Rutinas Favoritas", route: routes.favoritos },
-                    { label: "Notificaciones", route: routes.miPerfil },
+                    { label: "Rutinas", route: routes.planesRutinas },
+                    { label: "Mis Rutinas Favoritas", route: routes.favoritos },
+                    {
+                      label: "Mis Eventos Reservados",
+                      route: routes.misEventos,
+                    },
                     { label: "Otra Cosa", route: routes.miPerfil },
                     { label: "Ayuda y Soporte", route: routes.miPerfil },
                   ].map(({ label, route }) => (

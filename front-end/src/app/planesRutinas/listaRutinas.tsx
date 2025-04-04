@@ -20,7 +20,7 @@ const ListaRutinas = () => {
   const { isAuth } = useAuth();
 
   useEffect(() => {
-    let isMounted = true; // variable local para controlar si el componente sigue montado
+    let isMounted = true;
 
     const fetchRutinas = async () => {
       setLoading(true);
@@ -39,7 +39,8 @@ const ListaRutinas = () => {
           limit,
           categoria || undefined
         );
-        console.log("Datos de la API recibidos:", data);
+        console.log("Datos  recibidos Ruitans:", data);
+        console.log("Datos  recibidos Ruitans:", data);
 
         if (isMounted) {
           setRutinas([...data.data]);
@@ -68,6 +69,12 @@ const ListaRutinas = () => {
       <h2 className="mb-4 text-lg font-bold text-center md:text-2xl">
         Nuestras Rutinas
       </h2>
+      <p className="px-16 py-4 text-lg text-center ">
+        {" "}
+        💪🔥 ¡Desafía tus límites y lleva tu energía al máximo! Entrena con
+        intensidad, supera cada reto y siente la satisfacción de avanzar. ¡Tú
+        puedes, el momento es ahora! 🚀🏋️‍♂️
+      </p>
       <div className="py-4 ">
         <Filtro
           categories={Object.values(PlanCategory)}

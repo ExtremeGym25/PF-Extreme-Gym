@@ -35,9 +35,9 @@ const CreacionRutinas = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken && token !== storedToken) {
+    if (storedToken) {
       setToken(storedToken);
-    } else if (!storedToken) {
+    } else {
       toast.error("No hay token disponible");
     }
   }, []);
@@ -86,10 +86,10 @@ const CreacionRutinas = () => {
                     throw new Error("No se recibió URL de imagen válida");
                   }
 
-                  console.log("✅ URL Cloudinary:", uploadResponse.imageUrl);
+                  console.log(" URL Cloudinary:", uploadResponse.imageUrl);
                   imageUrlRef.current = uploadResponse.imageUrl;
                 } catch (error: any) {
-                  console.error("❌ Error subiendo imagen:", error.message);
+                  console.error(" Error subiendo imagen:", error.message);
                   toast.error(error.message);
                   return;
                 }
@@ -98,17 +98,17 @@ const CreacionRutinas = () => {
               toast.success("Rutina creada exitosamente");
               resetForm();
               if (fileInputRef.current) fileInputRef.current.value = "";
+              window.location.reload();
             } catch (error: any) {
               const errorMessage =
                 error.response?.data?.message || error.message;
-              console.error("❌ Error:", errorMessage);
+              console.error(" Error:", errorMessage);
               toast.error(errorMessage);
             }
           }}
         >
           {({ isSubmitting, setFieldValue }) => (
             <Form className="flex flex-col gap-4">
-              {/* Campos del formulario */}
               <Field
                 type="text"
                 name="nombre"

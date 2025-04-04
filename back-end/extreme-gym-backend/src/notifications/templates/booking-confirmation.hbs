@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Confirmación de Reserva</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      .header {
+        color: #2c3e50;
+      }
+      .details {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #7f8c8d;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class='header'>¡Hola {{name}}!</h1>
+    <p>Tu reserva en <strong>Extreme Gym</strong> ha sido confirmada.</p>
+
+    <div class='details'>
+      <h2>Detalles de tu reserva:</h2>
+      <p><strong>Evento:</strong> {{eventName}}</p>
+      <p><strong>Fecha:</strong> {{eventDate}}</p>
+      <p><strong>Hora:</strong> {{eventTime}}</p>
+      <p><strong>Lugar:</strong> {{eventLocation}}</p>
+      <p><strong>Número de personas:</strong> {{numberOfPeople}}</p>
+    </div>
+
+    <p>Presenta este correo al llegar al evento.</p>
+
+    <div class='footer'>
+      <p>Equipo de Extreme Gym</p>
+      <p>Si tienes alguna pregunta, contáctanos a info@extremegym.com</p>
+    </div>
+  </body>
+</html>

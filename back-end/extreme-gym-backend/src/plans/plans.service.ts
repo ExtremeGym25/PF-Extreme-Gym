@@ -30,6 +30,7 @@ export class PlanService {
     @InjectRepository(Notification)
     private notificationRepo: Repository<Notification>,
     private readonly mailService: MailerService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async assignPlan(userId: string, dto: AssignPlanDto) {
@@ -51,17 +52,31 @@ export class PlanService {
     }
 
     // Evitar duplicados
-    const exists = user.plans.some((up) => up.planId === dto.planId);
-    if (exists) throw new ForbiddenException('Ya estás inscrito en este plan');
+    const exists = await this.userPlanRepo.findOne({
+      where: { userId, planId: dto.planId },
+    });
+
+    if (exists) {
+      throw new ForbiddenException('Ya estás inscrito en este plan');
+    }
 
     await this.userPlanRepo.save({ userId, planId: dto.planId });
-    // Obtener el plan asociado para enviar información  
-  const plan = await this.planRepo.findOne({ where: { id: dto.planId } });  
+    // Obtener el plan asociado para enviar información
+    const plan = await this.planRepo.findOne({ where: { id: dto.planId } });
 
-  if (plan) {  
-    // Aquí suponemos que el plan tiene un campo `imageUrl` o `videoUrl`  
-    const mediaUrl = plan.imageUrl;  
-  }
+    if (plan) {
+      // Enviar correo de confirmación
+      await this.notificationsService.sendPlanAssignmentEmail(
+        user.email,
+        user.name,
+        plan.nombre,
+      );
+    }
+
+    if (plan) {
+      // Aquí suponemos que el plan tiene un campo `imageUrl` o `videoUrl`
+      const mediaUrl = plan.imageUrl;
+    }
     return { message: 'Plan asignado correctamente' };
   }
 
@@ -127,15 +142,25 @@ export class PlanService {
     const plans = await this.userPlanRepo.find({
       where: { userId },
       relations: ['plan'],
-      select: {
-        plan: { id: true, nombre: true, descripcion: true },
-      },
     });
+
     if (!plans) {
       throw new NotFoundException(`Error al cargar los planes`);
     }
+    const plansWithMedia = await Promise.all(
+      plans.map(async (userPlan) => {
+        const plan = await this.planRepo.findOne({
+          where: { id: userPlan.planId },
+        });
 
-    return plans;
+        return {
+          ...userPlan,
+          plan: plan,
+        };
+      }),
+    );
+
+    return plansWithMedia;
   }
 
   async findAll(

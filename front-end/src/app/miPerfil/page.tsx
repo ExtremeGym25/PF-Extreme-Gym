@@ -55,12 +55,6 @@ const MiPerfil = () => {
           <MiPerfilUsuario />
         </div>
       </div>
-
-      <div className="py-6">
-        <h2 className="text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
-          Eventos
-        </h2>
-      </div>
     </div>
   );
 };
