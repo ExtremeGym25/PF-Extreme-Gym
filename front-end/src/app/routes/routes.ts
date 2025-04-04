@@ -10,6 +10,7 @@ export const routes = {
   casosExito: "/casosExito",
   tarifas: "/tarifas",
   eventos: "/eventos",
+  Comunidad: "/comunidad",
   admin: "/admin",
   adminU: "/admin/usuarios",
   adminE: "/admin/eventos",
