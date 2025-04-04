@@ -109,7 +109,7 @@ const GetReservasAdmin = () => {
   };
   return (
     <div className="max-w-4xl p-6 mx-auto">
-      <h2 className="mb-6 text-2xl font-bold text-center text-white">
+      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
         Reservas
       </h2>
 
@@ -124,7 +124,7 @@ const GetReservasAdmin = () => {
         {searchId && (
           <button
             onClick={handleSearch}
-            className="px-4 py-2 text-white bg-blue-600 rounded"
+            className="px-4 py-2 text-white bg-verde"
           >
             Buscar
           </button>
@@ -224,7 +224,7 @@ const GetReservasAdmin = () => {
                   </p>
                   <button
                     onClick={() => handleEdit(booking)}
-                    className="p-2 text-white bg-yellow-500 rounded"
+                    className="p-2 text-white rounded bg-verde"
                   >
                     Editar
                   </button>

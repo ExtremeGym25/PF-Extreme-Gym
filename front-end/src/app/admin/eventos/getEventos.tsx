@@ -107,7 +107,7 @@ const ListasEventos = () => {
 
   return (
     <div className="max-w-6xl p-6 mx-auto text-white">
-      <h2 className="my-6 text-3xl font-extrabold text-center font-poppins md:text-5xl">
+      <h2 className="my-6 text-2xl font-bold text-center md:text-4xl">
         Listado de Eventos
       </h2>
 
@@ -301,7 +301,7 @@ const ListasEventos = () => {
                     <div className="flex flex-col gap-2 mt-4 md:flex-row">
                       <button
                         onClick={() => handleEdit(evento)}
-                        className="w-full p-2 text-white bg-yellow-500 rounded-lg"
+                        className="w-full p-2 text-white rounded-lg bg-verde"
                       >
                         Editar
                       </button>
