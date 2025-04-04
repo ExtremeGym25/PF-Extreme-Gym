@@ -12,12 +12,14 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
+import { Publication } from 'src/community/entities/publication.entity';
+import { Comment } from 'src/community/entities/comment.entity';
 
 @Entity({
   name: 'USER',
 })
 export class User {
-  // [x: string]: any;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -69,7 +71,6 @@ export class User {
     default: true,
   })
   isActive: boolean;
-  // user: any;
 
   @Column({ nullable: true })
   role: string;
@@ -88,5 +89,9 @@ export class User {
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
-  
+  @OneToMany(() => Publication, (publication) => publication.user)
+  publications: Publication[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

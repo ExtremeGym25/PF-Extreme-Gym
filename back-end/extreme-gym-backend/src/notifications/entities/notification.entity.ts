@@ -12,6 +12,7 @@ export class Notification {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fecha: Date;
 
+
   @ManyToOne(() => User, (user) => user.notifications)
   user: User;
 }

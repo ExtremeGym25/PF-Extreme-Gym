@@ -26,14 +26,6 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="/admin/eventos"
-              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
-            >
-              Eventos
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/admin/rutinas"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
@@ -42,10 +34,27 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
+              href="/admin/eventos"
+              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
+            >
+              Eventos
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/reservas"
+              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
+            >
+              Reservas Eventos
+            </Link>
+          </li>
+
+          <li>
+            <Link
               href="/admin/entrenadores"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
-              Entrenadores
+              Imagenes Entrenadores
             </Link>
           </li>
           <li>
@@ -66,10 +75,10 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="/admin/vistaPrevia"
+              href="/"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
-              Vista Previa
+              Home
             </Link>
           </li>
         </ul>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
@@ -32,6 +32,7 @@ const ImagenPerfil = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const router = useRouter();
+  const [error, setError] = useState("");
 
   return (
     <Formik<FormValues>
@@ -44,6 +45,11 @@ const ImagenPerfil = () => {
         }
 
         try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            setError("No hay token disponible");
+            return;
+          }
           const userId = user?.id ?? "";
           if (!userId) {
             toast.error("Error: No se encontró el usuario");
@@ -51,7 +57,8 @@ const ImagenPerfil = () => {
           }
           const userData = await uploadProfileImageService(
             values.profileImage,
-            userId
+            userId,
+            token
           );
           console.log("Datos recibidos del servicio:", userData);
 
@@ -64,9 +71,9 @@ const ImagenPerfil = () => {
             fileInputRef.current.value = "";
           }
           window.location.reload();
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error al subir la imagen:", error);
-          toast.error("Error al subir la imagen");
+          toast.error(error.message);
         } finally {
           setSubmitting(false);
         }

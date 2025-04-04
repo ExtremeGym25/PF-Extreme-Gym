@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserPlan } from './user-plan.entity';
+import { Publication } from 'src/community/entities/publication.entity';
 
 export enum PlanCategory {
   SALUD = 'salud',
@@ -35,4 +36,7 @@ export class Plan {
 
   @OneToMany(() => UserPlan, (userPlan) => userPlan.plan)
   userPlans: UserPlan[];
+
+  @OneToMany(() => Publication, (publication) => publication.plan)
+  publications: Publication[];
 }

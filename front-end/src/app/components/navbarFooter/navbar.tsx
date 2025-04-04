@@ -69,6 +69,9 @@ const Navbar = () => {
             <Link href={routes.eventos} className="transition hover:text-verde">
               Eventos
             </Link>
+            <Link href={routes.Comunidad} className="transition hover:text-verde">
+              Comunidad
+            </Link>
             <div className="flex items-center justify-end mt-4 lg:mt-0">
               <UserAuth />
             </div>

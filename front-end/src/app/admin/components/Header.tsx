@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contextos/contextoAuth";
+import { IoIosLogOut } from "react-icons/io";
 
 export default function Header() {
   const { user, resetUserData } = useAuth();
@@ -20,9 +21,10 @@ export default function Header() {
         </span>
         <button
           onClick={handlelogout}
-          className="text-white bg-red-500 rounded md:px-3 md:py-1 xl:px-3 xl:py-3 lg:px-3 lg:py-3 sm:px-1 sm:py-1 hover:bg-red-600"
+          className="flex items-center text-sm text-white rounded gap-x-2 md:px-2 md:py-1 xl:px-3 xl:py-3 lg:px-3 lg:py-3 sm:px-1 sm:py-1 hover:bg-red-600"
         >
-          Cerrar Sesión
+          Salir <p></p>
+          <IoIosLogOut />
         </button>
       </div>
     </header>

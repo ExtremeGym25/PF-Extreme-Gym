@@ -41,4 +41,12 @@ export class CreateEventDto {
 
   @IsUUID()
   userId: string;
+
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
 }
