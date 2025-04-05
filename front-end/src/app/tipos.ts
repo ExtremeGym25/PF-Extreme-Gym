@@ -61,6 +61,8 @@ export interface IEvent {
   userId: string;
   file?: File;
   numberOfPeople?: number;
+  latitude: number;
+  longitude: number;
 }
 
 export interface IReservas {
@@ -74,3 +76,28 @@ export interface IReservas {
   event: IEvent;
   user: IUser;
 }
+export interface IPublication {
+  id: string;
+  content: string;
+  date: Date; 
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  plan?: {
+    id: string;
+    name: string;
+  } | null;
+  event?: {
+    id: string;
+    title: string;
+  } | null;
+  comments: {
+    id: string;
+    content: string;
+    userId: string;
+    userName: string;
+  }[];
+}
+

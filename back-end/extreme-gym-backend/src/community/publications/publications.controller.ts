@@ -19,11 +19,11 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 
 @ApiTags('Publications')
 @Controller('publications')
-@UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PublicationsController {
   constructor(private readonly publicationsService: PublicationsService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Crear una nueva publicación' })
   @ApiBody({ type: CreatePublicationDto })
@@ -47,6 +47,7 @@ export class PublicationsController {
     return this.publicationsService.getPublications();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una publicación por ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la publicación' })
@@ -56,6 +57,7 @@ export class PublicationsController {
     return this.publicationsService.getPublicationById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar una publicación por ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la publicación' })
@@ -72,6 +74,7 @@ export class PublicationsController {
     return this.publicationsService.updatePublication(id, updatePublicationDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar una publicación por ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la publicación' })

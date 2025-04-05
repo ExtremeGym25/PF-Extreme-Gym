@@ -8,6 +8,8 @@ const Eventos = () => {
     name: "Prueba 1",
     description: "Las pruebas desde el front :)",
     location: "Colombia",
+    longitude: "",
+    latitude: "",
     date: "",
     time: "",
     capacity: "",
@@ -74,6 +76,8 @@ const Eventos = () => {
       ...formData,
       capacity: Number(formData.capacity),
       userId,
+      latitude: parseFloat(formData.latitude) || 0,
+      longitude: parseFloat(formData.longitude) || 0,
     };
     console.log("Category seleccionada:", formData.category);
 
@@ -92,6 +96,8 @@ const Eventos = () => {
         name: "",
         description: "",
         location: "",
+        longitude: "",
+        latitude: "",
         date: "",
         time: "",
         capacity: "",
@@ -107,7 +113,6 @@ const Eventos = () => {
       } else {
         console.error("Error en la solicitud:", error.message);
       }
-      toast.error(error.message);
       toast.error(error.message);
     }
   };
@@ -157,6 +162,26 @@ const Eventos = () => {
                 onChange={handleChange}
                 className="p-2 text-black rounded bg-blanco"
                 required
+              />{" "}
+              <input
+                type="number"
+                name="latitude"
+                placeholder="Ingresa la latitud de la ubicacion"
+                value={formData.latitude}
+                onChange={handleChange}
+                className="p-2 text-black rounded bg-blanco"
+                required
+                step="any"
+              />
+              <input
+                type="number"
+                name="longitude"
+                placeholder="Ingresa la longitud de la ubicacion"
+                value={formData.longitude}
+                onChange={handleChange}
+                className="p-2 text-black rounded bg-blanco"
+                required
+                step="any"
               />
               <input
                 type="number"

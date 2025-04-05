@@ -11,6 +11,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 import { IUser } from "../tipos";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Que queremos guardar en el contexto
 interface AuthContextType {
@@ -30,6 +31,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const {
+    loginWithRedirect,
+    logout,
+    user: auth0User,
+    isAuthenticated,
+  } = useAuth0();
 
   const saveUserData = (data: { user: IUser; token: string }) => {
     setUser(data.user);
@@ -92,6 +99,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   }, []);
+  useEffect(() => {
+    if (isAuthenticated && auth0User) {
+      const auth0UserData: IUser = {
+        id: auth0User.sub || "",
+        name: auth0User.name || "",
+        email: auth0User.email || "",
+        profileImage: auth0User.picture || "",
+      };
+      setUser(auth0UserData);
+      setIsAuth(true);
+    }
+  }, [isAuthenticated, auth0User]);
 
   if (loading) {
     return <div>Cargando...</div>;

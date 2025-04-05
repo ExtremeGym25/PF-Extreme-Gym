@@ -24,7 +24,19 @@ export class PublicationsService {
   }
 
   async getPublications(): Promise<Publication[]> {
-    return this.publicationsRepository.find();
+    return this.publicationsRepository
+    .createQueryBuilder('publication')
+    .leftJoinAndSelect('publication.user', 'user') 
+    .select([
+      'publication.id',
+      'publication.content',
+      'publication.date',
+      'publication.userId',
+      'user.id',
+      'user.name' 
+    ])
+    .orderBy('publication.date', 'DESC')
+    .getMany();
   }
 
   async getPublicationById(id: string): Promise<Publication> {
