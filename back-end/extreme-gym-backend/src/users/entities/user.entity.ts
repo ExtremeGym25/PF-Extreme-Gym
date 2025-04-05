@@ -1,7 +1,6 @@
 import { IsDateString } from 'class-validator';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
-import { Subscription } from 'src/payments/entities/payment.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
 import { UserPlan } from 'src/plans/entities/user-plan.entity';
 import { Account } from '../../auth/entities/account.entity';
@@ -52,12 +51,27 @@ export class User {
   })
   profileImage?: string;
 
+<<<<<<< Updated upstream
   @Column({ type: 'varchar', nullable: true })
   provider?: string; // 'local', 'google', 'facebook'
 
   @ManyToOne(() => Subscription)
   @JoinColumn({ name: 'planid' })
   plan: Subscription;
+=======
+  @Column({
+    type: 'enum',
+    enum: ['free', 'premium'],
+    default: 'free',
+  })
+  subscriptionType: 'free' | 'premium';
+
+  @Column({ nullable: true })
+  stripeCustomerId: string;
+
+  @Column({ nullable: true })
+  stripeSubscriptionId: string;
+>>>>>>> Stashed changes
 
   @Column({ nullable: true })
   @IsDateString()
@@ -77,6 +91,7 @@ export class User {
 
   @Column({ nullable: true })
   role: string;
+  
 
   @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Booking[];
