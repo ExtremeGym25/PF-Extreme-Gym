@@ -7,11 +7,12 @@ import { User } from '../users/entities/user.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { requiresAuth } from 'express-openid-connect';
+import { Account } from './entities/account.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([User, Subscription]),
+    TypeOrmModule.forFeature([User, Account, Subscription]),
     NotificationsModule,
   ],
   controllers: [AuthController],
