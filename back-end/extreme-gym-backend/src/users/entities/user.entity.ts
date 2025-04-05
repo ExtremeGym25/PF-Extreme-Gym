@@ -4,6 +4,7 @@ import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
 import { UserPlan } from 'src/plans/entities/user-plan.entity';
+import { Account } from '../../auth/entities/account.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -19,7 +20,6 @@ import { Comment } from 'src/community/entities/comment.entity';
   name: 'USER',
 })
 export class User {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,7 +29,7 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 80, nullable: false })
+  @Column({ type: 'varchar', length: 80, nullable: true })
   password: string;
 
   @Column({ type: 'bigint', nullable: true })
@@ -51,6 +51,9 @@ export class User {
       'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
   })
   profileImage?: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  provider?: string; // 'local', 'google', 'facebook'
 
   @ManyToOne(() => Subscription)
   @JoinColumn({ name: 'planid' })
@@ -94,4 +97,7 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => Account, (account) => account.user)
+  accounts: Account[];
 }

@@ -8,12 +8,14 @@ import * as bcrypt from 'bcrypt';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { UsersService } from '../users/users.service';
-
+import { Account } from './entities/account.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>,
     private jwtService: JwtService,
     private readonly notificationsService: NotificationsService,
     private readonly usersService: UsersService,
@@ -76,5 +78,93 @@ export class AuthService {
       user: userWithoutPassword,
       message: 'Success',
     };
+  }
+
+  // perfiles de inicio de sesion por terceros
+
+  private generateJwt(user: User): string {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      provider: user.provider,
+    };
+
+    return this.jwtService.sign(payload);
+  }
+
+  async validateOAuthLogin(
+    profile: any,
+    provider: string,
+  ): Promise<{ user: User; accessToken: string }> {
+    // 1. Buscar usuario por email
+    const user = await this.usersRepository.findOne({
+      where: { email: profile.email },
+      relations: ['accounts'],
+    });
+
+    // 2. Si el usuario existe
+    if (user) {
+      // Verificar si ya tiene esta cuenta vinculada
+      const accountExists = user.accounts.some(
+        (acc) =>
+          acc.provider === provider && acc.providerAccountId === profile.sub,
+      );
+
+      // Si no existe, crear la cuenta
+      if (!accountExists) {
+        const newAccount = this.accountRepository.create({
+          type: 'oauth',
+          provider,
+          providerAccountId: profile.sub,
+          access_token: profile.accessToken,
+          expires_at: profile.expires_in,
+          token_type: profile.token_type,
+          scope: profile.scope,
+          user,
+        });
+        await this.accountRepository.save(newAccount);
+      }
+
+      // Actualizar datos del usuario si es necesario
+      if (!user.provider || user.provider !== provider) {
+        user.provider = provider;
+        if (profile.picture) user.profileImage = profile.picture;
+        await this.usersRepository.save(user);
+      }
+
+      // Generar JWT
+      const accessToken = this.generateJwt(user);
+      return { user, accessToken };
+    }
+
+    // 3. Si el usuario no existe, crearlo
+    const newUser = this.usersRepository.create({
+      email: profile.email,
+      name: profile.name || profile.email.split('@')[0],
+      profileImage: profile.picture,
+      provider,
+      isActive: true,
+    });
+
+    const savedUser = await this.usersRepository.save(newUser);
+
+    // Crear cuenta asociada
+    const newAccount = this.accountRepository.create({
+      type: 'oauth',
+      provider,
+      providerAccountId: profile.sub,
+      access_token: profile.accessToken,
+      expires_at: profile.expires_in,
+      token_type: profile.token_type,
+      scope: profile.scope,
+      user: savedUser,
+    });
+    await this.accountRepository.save(newAccount);
+
+    // Generar JWT
+    const accessToken = this.generateJwt(savedUser);
+    return { user: savedUser, accessToken };
   }
 }

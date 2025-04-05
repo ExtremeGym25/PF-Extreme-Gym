@@ -21,7 +21,7 @@ const Contacto = () => {
           </h2>
           <Image
             src="/contacto.png"
-            width={300} // Ajusta el tamaño según lo necesites
+            width={300}
             height={300}
             alt="imagendecontacto"
             className="mx-auto transition-transform duration-300 hover:scale-110"

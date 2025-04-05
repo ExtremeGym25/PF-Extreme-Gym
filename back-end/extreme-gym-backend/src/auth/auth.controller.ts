@@ -1,8 +1,17 @@
-import { Controller, Post, Body, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Req,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from '../users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Response } from 'express'; 
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,5 +46,30 @@ export class AuthController {
 
     console.log('Access Token:', req.oidc?.accessToken);
     return req.oidc?.user;
+  }
+
+  // endpoitn de next auth
+
+  @Post('oauth/callback')
+  async handleOAuthCallback(
+    @Body() body: { profile: any; provider: string },
+    @Res() res: Response,
+  ) {
+    try {
+      const { user, accessToken } = await this.authService.validateOAuthLogin(
+        body.profile,
+        body.provider,
+      );
+
+      return res.status(HttpStatus.OK).json({
+        user,
+        accessToken,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        message: 'OAuth authentication failed',
+        error: error.message,
+      });
+    }
   }
 }

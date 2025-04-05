@@ -73,7 +73,7 @@ export const cancelarBookingsService = async (
     );
 
     console.log("Respuesta del servidor:", response.data);
-    return response.status === 200; // Retorna `true` si la eliminación fue exitosa
+    return response.status === 200;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
