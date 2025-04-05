@@ -64,4 +64,12 @@ export class NotificationsController {
         'Correos de expiración enviados (si había usuarios próximos a expirar)',
     };
   }
+
+  // endpoint para enviar recordatorios de reservas
+  @Get('test-reminders')
+  async testReminders() {
+    return this.notificationsService.testReminders();
+  }
+
+  
 }
