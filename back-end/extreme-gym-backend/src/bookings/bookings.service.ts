@@ -30,10 +30,24 @@ export class BookingsService {
   async createBooking(createBookingDto: CreateBookingDto): Promise<Booking> {
     const user = await this.userRepository.findOne({
       where: { id: createBookingDto.userId },
+      relations: ['plan']
     });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
+
+        const now = new Date();
+        const hasActiveSubscription =
+          user.plan &&
+          user.subscriptionType === 'premium' && // Verificar el tipo de suscripción directamente
+          user.subscriptionExpirationDate &&
+          new Date(user.subscriptionExpirationDate) > now;
+
+        if (!hasActiveSubscription) {
+          throw new BadRequestException(
+            'El usuario debe tener una suscripción Premium activa para crear una reserva.',
+          );
+        }
 
     const event = await this.eventRepository.findOne({
       where: { id: createBookingDto.eventId },
@@ -86,7 +100,7 @@ export class BookingsService {
     return savedBooking;
   }
 
-  //  metodo privado paa envair la notiifcacion de reserva 
+  //  metodo privado para enviar la notiifcacion de reserva 
   private async sendBookingConfirmation(booking: Booking): Promise<void> {
     try {
       await this.notificationsService.sendBookingConfirmation({
