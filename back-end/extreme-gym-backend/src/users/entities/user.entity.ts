@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 import { Publication } from 'src/community/entities/publication.entity';
 import { Comment } from 'src/community/entities/comment.entity';
+import { Subscription } from 'src/payments/entities/payment.entity';
 
 @Entity({
   name: 'USER',
@@ -51,14 +52,6 @@ export class User {
   })
   profileImage?: string;
 
-<<<<<<< Updated upstream
-  @Column({ type: 'varchar', nullable: true })
-  provider?: string; // 'local', 'google', 'facebook'
-
-  @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'planid' })
-  plan: Subscription;
-=======
   @Column({
     type: 'enum',
     enum: ['free', 'premium'],
@@ -71,7 +64,13 @@ export class User {
 
   @Column({ nullable: true })
   stripeSubscriptionId: string;
->>>>>>> Stashed changes
+
+  @Column({ type: 'varchar', nullable: true })
+  provider?: string; // 'local', 'google', 'facebook'
+
+  @ManyToOne(() => Subscription)
+  @JoinColumn({ name: 'planid' })
+  plan: Subscription;
 
   @Column({ nullable: true })
   @IsDateString()
@@ -91,7 +90,6 @@ export class User {
 
   @Column({ nullable: true })
   role: string;
-  
 
   @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Booking[];
