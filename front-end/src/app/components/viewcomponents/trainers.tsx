@@ -47,9 +47,7 @@ const TrainersCarousel = () => {
                     height={500}
                     className="rounded-md "
                   />
-                  <p className="mt-2 font-semibold text-center text-white">
-                    {trainer.name}
-                  </p>
+                  <p className="mt-2 text-center text-white">{trainer.name}</p>
                 </div>
 
                 <div

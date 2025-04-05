@@ -22,7 +22,7 @@ const Beneficios = () => {
           <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
             <div className="flex items-center h-40">
               <img
-                src="/home1.png"
+                src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743870277/home1_vob5wv.png"
                 alt="imagenhome1"
                 className="object-cover w-full h-full pb-2"
               />
@@ -40,7 +40,7 @@ const Beneficios = () => {
           <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
             <div className="flex items-center h-40">
               <img
-                src="/home2.png"
+                src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743870102/home2_vqvtp2.png"
                 alt="Imagen 2 home 2"
                 className="object-cover w-full h-full pb-2"
               />
@@ -58,7 +58,7 @@ const Beneficios = () => {
           <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
             <div className="flex items-center h-40">
               <img
-                src="/home3.png"
+                src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743871139/home_3_3_lbve7r.png"
                 alt="imagen home 3"
                 className="object-cover w-full h-full pb-2"
               />
@@ -74,7 +74,11 @@ const Beneficios = () => {
             <p></p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
-            <img src="/home4.png" alt="imagen home 4" className="h-40 pb-0" />
+            <img
+              src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743870808/Home_3_2_n1slul.png"
+              alt="imagen home 4"
+              className="h-40 pb-0"
+            />
             <h3 className="pt-0 pb-2 font-bold text-center ">
               Acceso a Clases Exclusivas y Eventos Extremos
             </h3>
@@ -88,7 +92,7 @@ const Beneficios = () => {
           <div className="flex flex-col items-center justify-center p-4 transition-transform duration-300 border rounded-lg shadow border-verde hover:scale-110">
             <div className="flex items-center h-40">
               <img
-                src="/home5.png"
+                src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743871004/home_4_rb1boz.png"
                 alt="imagen home 5"
                 className="object-cover w-full h-full pb-2"
               />

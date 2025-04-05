@@ -20,13 +20,13 @@ const Contacto = () => {
             Contact Center
           </h2>
           <Image
-            src="/contacto.png"
+            src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743871712/xTREME_GYM_3_xkgxku.png"
             width={300}
             height={300}
             alt="imagendecontacto"
             className="mx-auto transition-transform duration-300 hover:scale-110"
           ></Image>{" "}
-          <div className="flex flex-col items-center justify-center space-y-2 ">
+          <div className="flex flex-col items-center justify-center pt-2 space-y-2 ">
             <div className="flex items-center gap-2">
               <GrCaretNext />
               <h3>Asesoría y Servicio al Cliente</h3>
@@ -46,12 +46,11 @@ const Contacto = () => {
           </div>
           <a href="https://wa.me/573216599736">
             <Image
-              src="/whatsapp.png"
+              src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743871343/Blue_and_White_Modern_Robot_Icon_Technology_Platform_Logo_3_qbz7m6.png"
               alt="imagen"
-              layout="responsive"
-              width={256}
-              height={96}
-              className="h-24 mx-auto transition-transform duration-300 animate-pulse hover:scale-110"
+              width={204}
+              height={94}
+              className="mx-auto transition-transform duration-300 hover:scale-110"
             ></Image>
           </a>
         </div>
