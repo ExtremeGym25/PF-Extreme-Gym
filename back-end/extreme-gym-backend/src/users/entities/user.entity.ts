@@ -11,10 +11,13 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Publication } from 'src/community/entities/publication.entity';
 import { Comment } from 'src/community/entities/comment.entity';
-import { Subscription } from 'rxjs/internal/Subscription';
+import { Subscription } from 'src/payments/entities/payment.entity';
+import { Event } from '../../event/entities/event.entity'; // Asegúrate de la ruta correcta
 
 @Entity({
   name: 'USER',
@@ -52,12 +55,6 @@ export class User {
   })
   profileImage?: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  provider?: string; // 'local', 'google', 'facebook'
-
-  @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'planid' })
-  plan: Subscription;
   @Column({
     type: 'enum',
     enum: ['free', 'premium'],
@@ -70,6 +67,13 @@ export class User {
 
   @Column({ nullable: true })
   stripeSubscriptionId: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  provider?: string; // 'local', 'google', 'facebook'
+
+  @ManyToOne(() => Subscription)
+  @JoinColumn({ name: 'planid' })
+  plan: Subscription;
 
   @Column({ nullable: true })
   @IsDateString()
@@ -112,4 +116,15 @@ export class User {
 
   @OneToMany(() => Account, (account) => account.user)
   accounts: Account[];
+
+  @ManyToMany(() => Event, (event) => event.attendees) // <---- Asegúrate de que la propiedad sea 'attendees'
+  @JoinTable({
+    name: 'user_events',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'eventId', referencedColumnName: 'id' },
+  })
+  attendedEvents: Event[];
+
+  @OneToMany(() => Event, (event) => event.user)
+  createdEvents: Event[];
 }

@@ -8,7 +8,7 @@ export class GeolocationService {
 
   constructor() {
     this.client = new Client({});
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.GOOGLE_API_KEY;
     if (!apiKey) {
       throw new InternalServerErrorException('API_KEY Google no esta definida en .env');
     }

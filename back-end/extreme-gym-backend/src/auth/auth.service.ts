@@ -25,8 +25,37 @@ export class AuthService {
     const { email, password, confirmPassword, ...userWithoutConfirmation } =
       user;
 
-    const finduser = await this.usersRepository.findOneBy({ email });
-    if (finduser) throw new BadRequestException('user already registered');
+      const existingUser = await this.usersRepository.findOne({
+        where: { email },
+      });
+
+      if (existingUser) {
+        if (!existingUser.isActive) {
+          // Si el usuario existe pero está inactivo, reactivarlo
+          existingUser.isActive = true;
+          Object.assign(existingUser, userWithoutConfirmation); // Actualizar otros datos proporcionados
+          if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            existingUser.password = hashedPassword; // Actualizar la contraseña si se proporciona
+          }
+          const reactivatedUser = await this.usersRepository.save(existingUser);
+
+          await this.notificationsService.sendWelcomeEmail(
+            reactivatedUser.email,
+            reactivatedUser.name,
+          );
+
+          const {
+            password: _,
+            isAdmin,
+            ...userWithoutPassword
+          } = reactivatedUser;
+          return userWithoutPassword;
+        } else {
+          // Si el usuario ya está activo, lanzar un error
+          throw new BadRequestException('user already registered');
+        }
+      }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersRepository.save({
@@ -37,6 +66,7 @@ export class AuthService {
       premium: false,
       profileImage:
         'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
+      isActive: true,
     });
 
     await this.notificationsService.sendWelcomeEmail(
