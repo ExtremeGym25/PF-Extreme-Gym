@@ -1,7 +1,16 @@
-import { Booking } from "src/bookings/entities/booking.entity";
-import { Publication } from "src/community/entities/publication.entity";
-import { User } from "src/users/entities/user.entity";
-import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from '../../users/entities/user.entity';
+import {
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+} from 'typeorm';
+import { Booking } from 'src/bookings/entities/booking.entity';
+import { Publication } from 'src/community/entities/publication.entity';
 
 @Entity({
   name: 'EVENTS',
@@ -47,7 +56,7 @@ export class Event {
   @Column({ type: 'varchar', nullable: true })
   imageUrl: string;
 
-  @ManyToOne(() => User, (user) => user.fileUploads)
+  @ManyToOne(() => User, (user) => user.createdEvents) // Asumiendo que renombraste la propiedad
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -62,6 +71,9 @@ export class Event {
 
   @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
   longitude: number;
+
+  @ManyToMany(() => User, (user) => user.attendedEvents)
+  attendees: User[]; // <---- Asegúrate de que esta propiedad se llame así
 
   @BeforeUpdate()
   updateTimestamp() {
