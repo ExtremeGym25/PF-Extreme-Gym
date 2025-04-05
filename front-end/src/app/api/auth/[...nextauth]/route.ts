@@ -22,7 +22,8 @@ interface ExtendedSession extends Session {
   accessToken: string;
   user: ExtendedUser;
 }
-
+console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -53,7 +54,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/oauth/callback`,
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth/callback`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

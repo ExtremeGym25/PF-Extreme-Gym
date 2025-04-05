@@ -119,12 +119,7 @@ const Login = () => {
             </Form>
           )}
         </Formik>
-        <button
-          onClick={() => signIn("google")}
-          className="px-6 py-3 text-white bg-blue-500 rounded-lg"
-        >
-          Iniciar sesión con Google
-        </button>
+
         <div className="mt-4 text-center text-foreground">
           ¿No tienes una cuenta?{" "}
           <Link
@@ -134,6 +129,12 @@ const Login = () => {
             Regístrate aquí
           </Link>
         </div>
+        <button
+          onClick={() => signIn("google")}
+          className="px-6 py-3 text-white bg-blue-500 rounded-lg"
+        >
+          Iniciar sesión con Google
+        </button>
       </div>
     </div>
   );
