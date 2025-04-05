@@ -100,11 +100,16 @@ export const updatePlanService = async (
     console.log(response.data, "respuesta servicio");
     return response.data;
   } catch (error: any) {
-    console.error("Error en updatePlanService:", error);
-
-    throw new Error(
-      error.response?.data?.message || "Error al actualizar el plan."
-    );
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const deletePlanService = async (id: string, token: string) => {
@@ -118,8 +123,16 @@ export const deletePlanService = async (id: string, token: string) => {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error completo:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar");
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const imagePlanService = async (
@@ -155,7 +168,7 @@ export const imagePlanService = async (
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error(" Error en Cloudinary:", errorMessage); // Solo el mensaje
+    console.error(" Error en Cloudinary:", errorMessage);
     throw new Error(errorMessage);
   }
 };

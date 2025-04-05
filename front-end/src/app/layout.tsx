@@ -10,6 +10,8 @@ import { AuthProvider } from "./contextos/contextoAuth";
 import VisibleWrapper from "./wrapper/visibleWrapper";
 import Script from "next/script";
 import { Auth0ProviderWrapper } from "./contextos/contextoAuth0";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { Providers } from "./providers";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -41,7 +43,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${poppins.variable} antialiased`}>
         {" "}
-        <Auth0ProviderWrapper>
+        <Providers>
           <AuthProvider>
             <VisibleWrapper>
               <Navbar />
@@ -65,7 +67,7 @@ export default function RootLayout({
               toastClassName="custom-toast"
             />
           </AuthProvider>
-        </Auth0ProviderWrapper>
+        </Providers>
         <script
           src="//code.tidio.co/d5nlufbj8mjvzlknyy2qjjfsgfyn9thb.js"
           async

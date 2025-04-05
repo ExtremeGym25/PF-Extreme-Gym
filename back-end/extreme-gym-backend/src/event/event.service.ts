@@ -86,18 +86,18 @@ export class EventService {
         longitude: createEventDto.longitude,
       });
 
-      // Comprobar capacidad del evento
-      const existingEvent = await this.eventRepository.findOne({
-        where: { id: event.id },
-      });
-      if (existingEvent) {
-        const existingBookingsCount = await this.bookingRepository.count({
-          where: { event: { id: event.id } },
-        });
-        if (existingBookingsCount >= existingEvent.capacity) {
-          throw new BadRequestException('Capacidad del evento superada');
-        }
-      }
+      // // Comprobar capacidad del evento
+      // const existingEvent = await this.eventRepository.findOne({
+      //   where: { id: event.id },
+      // });
+      // if (existingEvent) {
+      //   const existingBookingsCount = await this.bookingRepository.count({
+      //     where: { event: { id: event.id } },
+      //   });
+      //   if (existingBookingsCount >= existingEvent.capacity) {
+      //     throw new BadRequestException('Capacidad del evento superada');
+      //   }
+      // }
       // Guardar el evento
       const savedEvent = await this.eventRepository.save(event);
 
@@ -220,7 +220,7 @@ export class EventService {
         }
       }
     }
-    
+
     try {
       this.eventRepository.merge(event, {
         ...updateEventDto,

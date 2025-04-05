@@ -27,7 +27,7 @@ const MapaEventos: React.FC<MapaProps> = ({ latitude, longitude }) => {
         className="text-sm text-verde"
         onClick={() => setMostrarModal(true)}
       >
-        Mirar Mapa
+        Ver Mapa
       </button>
       {mostrarModal && (
         <div className="fixed inset-0 flex items-center justify-center pt-32 bg-black bg-opacity-50 ">

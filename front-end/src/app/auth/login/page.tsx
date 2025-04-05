@@ -12,6 +12,7 @@ import { routes } from "@/app/routes/routes";
 import { loginService } from "@/app/servicios/auth";
 import { useRouter } from "next/navigation";
 import usePublic from "@/app/hooks/usePublic";
+import { signIn } from "next-auth/react";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -118,14 +119,12 @@ const Login = () => {
             </Form>
           )}
         </Formik>
-
         <button
-          onClick={() => login()}
-          className="w-full p-3 px-6 py-2 mt-4 font-semibold text-white transition bg-blue-600 rounded-md text-foreground font-poppins hover:bg-blue-700 hover:scale-110 ring-2 ring-gray-300 ring-opacity-100"
+          onClick={() => signIn("google")}
+          className="px-6 py-3 text-white bg-blue-500 rounded-lg"
         >
-          Iniciar sesión con Auth0
+          Iniciar sesión con Google
         </button>
-
         <div className="mt-4 text-center text-foreground">
           ¿No tienes una cuenta?{" "}
           <Link
