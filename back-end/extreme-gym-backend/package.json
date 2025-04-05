@@ -76,6 +76,7 @@
     "@types/node": "^22.10.7",
     "@types/passport-jwt": "^4.0.1",
     "@types/socket.io": "^3.0.1",
+    "@types/stripe": "^8.0.416",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.0.1",
