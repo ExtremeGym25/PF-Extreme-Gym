@@ -254,19 +254,14 @@ const ListasEventos = () => {
                 <div className="flex flex-col">
                   <div className="flex flex-col gap-6 md:flex-row">
                     <div className="w-full md:w-1/2">
-                      {evento.imageUrl ? (
-                        <img
-                          className="object-cover w-full rounded-md h-80"
-                          src={evento.imageUrl}
-                          alt="Imagen del evento"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center w-full bg-gray-700 rounded-md h-80">
-                          <span className="text-gray-400">
-                            No hay imagen disponible
-                          </span>
-                        </div>
-                      )}
+                      <img
+                        className="object-cover w-full rounded-md h-80"
+                        src={
+                          evento.imageUrl ||
+                          "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png"
+                        }
+                        alt="Imagen del evento"
+                      />
                     </div>
                     <div className="w-full space-y-3 md:w-1/2">
                       <h3 className="text-xl font-semibold">{evento.name}</h3>

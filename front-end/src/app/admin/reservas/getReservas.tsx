@@ -66,9 +66,9 @@ const GetReservasAdmin = () => {
       setSearchedBooking(reserva);
       toast.success("Reserva encontrada");
       setSearchId("");
-    } catch (error) {
+    } catch (error: any) {
       setSearchedBooking(null);
-      toast.error("Reserva no encontrada");
+      toast.error(error.message);
     }
   };
   const handleEdit = (booking: IReservas) => {

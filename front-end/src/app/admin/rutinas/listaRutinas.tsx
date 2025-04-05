@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { IPlans } from "@/app/tipos";
 import DeleteRutinas from "./deleteRutina";
 import { getPlanService, updatePlanService } from "../../servicios/planes";
+import { toast } from "react-toastify";
 
 const ListaRutinas = () => {
   const [rutinas, setRutinas] = useState<IPlans[]>([]);
@@ -52,7 +53,7 @@ const ListaRutinas = () => {
 
     try {
       await updatePlanService(token, id, nuevaRutina);
-
+      toast.success("Rutina modificada con exito");
       setRutinas((prevRutinas) =>
         prevRutinas.map((r) => (r.id === id ? { ...r, ...nuevaRutina } : r))
       );
@@ -61,9 +62,10 @@ const ListaRutinas = () => {
       setTimeout(() => {
         window.location.reload();
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al actualizar:", error);
       setError("Error al actualizar la rutina");
+      toast.error(error.message);
     }
   };
 
