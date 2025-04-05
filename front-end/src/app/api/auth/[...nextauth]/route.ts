@@ -1,38 +1,107 @@
-import NextAuth from "next-auth";
-import { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
+import { Session, User } from "next-auth";
+
+// 1. Define el tipo de usuario extendido
+interface ExtendedUser extends User {
+  id: string;
+  role?: string;
+  provider?: string;
+  profileImage?: string;
+}
+
+// 2. Tipo para el token JWT
+interface ExtendedJWT extends JWT {
+  accessToken: string;
+  user: ExtendedUser;
+}
+
+// 3. Tipo para la sesión
+interface ExtendedSession extends Session {
+  accessToken: string;
+  user: ExtendedUser;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    // Tus proveedores OAuth (Google, etc.)
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
-      // Mantén exactamente lo que tenías
-      if (account && user) {
-        token.accessToken = account?.access_token;
-        token.user = {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role, // Asegúrate que user.role viene del backend
-          provider: user.provider, // Asegúrate que user.provider viene del backend
-          profileImage: user.profileImage,
-        };
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      // Session mantiene la estructura que esperas
-      session.accessToken = token.accessToken;
-      session.user = {
-        ...session.user,
-        ...token.user, // Incluye todas las propiedades personalizadas
+    async jwt({
+      token,
+      account,
+      profile,
+    }: {
+      token: JWT;
+      account: any;
+      profile?: any;
+    }): Promise<ExtendedJWT> {
+      const extendedToken: ExtendedJWT = {
+        ...token,
+        accessToken: "",
+        user: {
+          id: "",
+          name: null,
+          email: null,
+        },
       };
-      return session;
+
+      if (account?.provider === "google") {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/oauth/callback`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                profile: {
+                  email: profile?.email,
+                  name: profile?.name,
+                  sub: profile?.sub,
+                  picture: profile?.picture,
+                },
+                provider: account.provider,
+              }),
+            }
+          );
+
+          const { user, accessToken } = await response.json();
+
+          extendedToken.accessToken = accessToken;
+          extendedToken.user = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            provider: user.provider,
+            profileImage: user.profileImage,
+          };
+        } catch (error) {
+          console.error("Error al conectar con el backend:", error);
+        }
+      }
+      return extendedToken;
     },
-  },
-  session: {
-    strategy: "jwt",
+    async session({
+      session,
+      token,
+    }: {
+      session: Session;
+      token: ExtendedJWT;
+    }): Promise<ExtendedSession> {
+      return {
+        ...session,
+        accessToken: token.accessToken,
+        user: {
+          ...session.user,
+          ...token.user,
+        },
+      };
+    },
   },
 };
 
