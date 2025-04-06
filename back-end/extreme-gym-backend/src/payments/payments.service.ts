@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { NotificationsService } from '../notifications/notifications.service';
+import { Role } from 'src/users/entities/roles.enum';
 
 @Injectable()
 export class PaymentsService {
@@ -41,7 +42,16 @@ export class PaymentsService {
     }
   }
 
-  async assignPremiumMonthlyPlan(userId: string): Promise<User> {
+  async assignPremiumMonthlyPlan(
+    userId: string,
+    requestingUser: any,
+  ): Promise<User> {
+    if (!requestingUser?.roles?.includes(Role.Admin)) {
+      throw new BadRequestException(
+        'No tienes permiso para asignar planes premium.',
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['plan'],
@@ -79,7 +89,17 @@ export class PaymentsService {
     }
   }
 
-  async assignPremiumYearlyPlan(userId: string): Promise<User> {
+  async assignPremiumYearlyPlan(
+    userId: string,
+    requestingUser: any,
+  ): Promise<User> {
+
+        if (!requestingUser?.roles?.includes(Role.Admin)) {
+          throw new BadRequestException(
+            'No tienes permiso para asignar planes premium.',
+          );
+        }
+
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['plan'],
