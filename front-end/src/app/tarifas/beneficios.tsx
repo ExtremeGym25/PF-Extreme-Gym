@@ -2,7 +2,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-import ButtonPrimary from "../buttons/buttonPrimary";
+import ButtonPrimary from "../components/buttons/buttonPrimary";
+import Precios from "./Precios";
 
 const Beneficios = () => {
   return (
@@ -106,36 +107,6 @@ const Beneficios = () => {
           </div>
         </div>
       </motion.div>
-      <div>
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 1 }}
-        >
-          <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
-            Nuestras Tarifas
-          </h2>
-          <div className="flex items-center justify-center p-4">
-            <div className="relative w-full h-0 pb-[56.25%]"></div>
-          </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 1 }}
-        >
-          <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-4">
-            <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
-              ¿Estas Listo?
-            </h2>
-            <div>
-              <ButtonPrimary> Registrate</ButtonPrimary>
-            </div>
-          </div>
-        </motion.div>
-      </div>
     </div>
   );
 };

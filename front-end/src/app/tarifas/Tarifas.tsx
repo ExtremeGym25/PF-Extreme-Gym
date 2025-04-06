@@ -9,13 +9,13 @@ const Tarifas = () => {
       <div className="grid items-center grid-cols-1 gap-6 pt-2 md:grid-cols-2">
         <div className="flex justify-center w-full">
           <img
-            src="/landing1.webp"
+            src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743015236/landing1_lzoasu.webp"
             alt="Banner"
             className="w-full h-auto max-w-md transition-transform duration-500 rounded-lg shadow-lg md:max-w-lg hover:scale-105"
           />
         </div>
 
-        <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <div className="flex flex-col items-center text-center ">
           <h2 className="py-2 text-2xl font-bold transition-transform duration-300 hover:scale-110">
             Atrévete
           </h2>

@@ -239,12 +239,12 @@ const Registro = () => {
               component="div"
               className="text-sm text-red-500"
             />
-            <button
+            {/* <button
               onClick={() => signIn("google")}
               className="px-6 py-3 text-white bg-blue-500 rounded-lg"
             >
               Iniciar sesión con Google
-            </button>
+            </button> */}
             <ButtonPrimary type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Registrando..." : "Registrarse"}
             </ButtonPrimary>

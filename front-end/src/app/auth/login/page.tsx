@@ -129,12 +129,12 @@ const Login = () => {
             Regístrate aquí
           </Link>
         </div>
-        <button
+        {/* <button
           onClick={() => signIn("google")}
           className="px-6 py-3 text-white bg-blue-500 rounded-lg"
         >
           Iniciar sesión con Google
-        </button>
+        </button> */}
       </div>
     </div>
   );

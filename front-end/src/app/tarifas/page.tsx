@@ -1,6 +1,7 @@
 import React from "react";
-import Tarifas from "../views/Tarifas";
-import Beneficios from "../components/viewcomponents/beneficios";
+import Tarifas from "./Tarifas";
+import Beneficios from "./beneficios";
+import Precios from "./Precios";
 
 const tarifasView = () => {
   return (
@@ -8,6 +9,7 @@ const tarifasView = () => {
       {" "}
       <Tarifas></Tarifas>
       <Beneficios></Beneficios>
+      <Precios />
     </div>
   );
 };
