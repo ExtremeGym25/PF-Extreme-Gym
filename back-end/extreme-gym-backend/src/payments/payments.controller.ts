@@ -35,7 +35,6 @@ export class PaymentsController {
     status: 403,
     description: 'Forbidden. Requiere rol de Administrador.',
   })
-  @Roles(Role.Admin)
   async assignPremiumMonthly(
     @Param('userId') userId: string,
     @Request() req: any,
@@ -67,11 +66,6 @@ export class PaymentsController {
     status: 400,
     description: 'Error al asignar el plan Premium anual.',
   })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden. Requiere rol de Administrador.',
-  })
-  @Roles(Role.Admin)
   async assignPremiumYearly(
     @Param('userId') userId: string,
     @Request() req: any,
