@@ -6,7 +6,7 @@ const axiosApiBack = axios.create({
 export const subscribeMonthly = async (userId: string) => {
   try {
     const response = await axiosApiBack.post(
-      `/payments/subscribe/monthly/${userId}`
+      `assign-premium-monthly/${userId}`
     );
     console.log(" Mensual:", response.data);
 
@@ -27,7 +27,7 @@ export const subscribeMonthly = async (userId: string) => {
 export const subscribeYearly = async (userId: string) => {
   try {
     const response = await axiosApiBack.post(
-      `payments/subscribe/yearly/${userId}`
+      `payments/assign-premium-yearly/${userId}`
     );
     console.log("Anual:", response.data);
 

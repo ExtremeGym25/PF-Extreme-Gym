@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 export interface IUser {
+  isAdmin?: boolean;
   isActive?: boolean;
   subscriptionExpirationDate?: Date | null | undefined;
   subscriptionType?: string;

@@ -8,9 +8,9 @@ export default function NotFound() {
       <p className="mt-2 text-2xl">Página no encontrada</p>
 
       <img
-        src="/Imagenerror.png"
+        src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743015555/logox_iy2aee.png"
         alt="Imagen pagina no existe"
-        className="object-cover h-40 transition-transform duration-300 hover:scale-110"
+        className="object-cover pt-2 transition-transform duration-300 h-28 hover:scale-110"
       ></img>
       <Link href="/">
         <ButtonPrimary>Volver al inicio</ButtonPrimary>

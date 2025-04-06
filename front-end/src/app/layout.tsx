@@ -9,8 +9,7 @@ import Footer from "./components/navbarFooter/footer";
 import { AuthProvider } from "./contextos/contextoAuth";
 import VisibleWrapper from "./wrapper/visibleWrapper";
 import Script from "next/script";
-import { Auth0ProviderWrapper } from "./contextos/contextoAuth0";
-import ProtectedRoute from "./components/ProtectedRoute";
+
 import { Providers } from "./providers";
 
 const poppins = Poppins({

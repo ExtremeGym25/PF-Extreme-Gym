@@ -25,7 +25,7 @@ const registroView = () => {
             <ButtonPrimary>inicia Sesion</ButtonPrimary>
           </Link>
           <img
-            src="/logo.png"
+            src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743015555/logox_iy2aee.png"
             alt="Logo"
             className="h-16 pt-8 transition-transform duration-300 animate-pulse hover:scale-110"
           ></img>

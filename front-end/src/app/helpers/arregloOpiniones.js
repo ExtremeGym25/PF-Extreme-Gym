@@ -27,7 +27,7 @@ export const opinionesUsuarios = [
   {
     image:
       "https://res.cloudinary.com/dixcrmeue/image/upload/v1743372790/smiling-beautiful-woman-holding-phone-doing-sports-morning-park_wg4yyg.jpg",
-    text: "Camila Rojas – “Los entrenadores explican cada ejercicio de forma clara y corrigen la postura. ¡Me siento acompañado en todo momento!”",
+    text: "Camila R – “Los entrenadores explican cada ejercicio de forma clara y corrigen la postura. ¡Me siento acompañado en todo momento!”",
   },
   {
     image:
@@ -41,7 +41,7 @@ export const opinionesUsuarios = [
   },
   {
     image:
-      "https://res.cloudinary.com/dixcrmeue/image/upload/v1743375147/landing2_fk6hjo.jpg",
-    text: "Camila R. - Preparación funcional para trail running con ejercicios enfocados en resistencia y técnica. ¡Se nota la diferencia en cada carrera!",
+      "https://res.cloudinary.com/dixcrmeue/image/upload/v1743978920/portrait-athletic-woman-participating-cross-country_eobiwh.jpg",
+    text: "Lina R. - Preparación funcional para trail running con ejercicios enfocados en resistencia y técnica. ¡Se nota la diferencia en cada carrera!",
   },
 ];
