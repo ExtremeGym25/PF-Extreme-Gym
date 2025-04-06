@@ -1,11 +1,14 @@
-import { Interface } from "readline";
+import { ReactNode } from "react";
 
 export interface IUser {
-  id?: string;
+  isActive?: boolean;
+  subscriptionExpirationDate?: Date | null | undefined;
+  subscriptionType?: string;
+  id?: string | null;
   name?: string;
   email?: string;
   address?: string;
-  phone?: number;
+  phone?: number | number;
   password?: string;
   confirmPassword?: string;
   country?: string;
@@ -79,7 +82,7 @@ export interface IReservas {
 export interface IPublication {
   id: string;
   content: string;
-  date: Date; 
+  date: Date;
   user: {
     id: string;
     name: string;
@@ -100,4 +103,3 @@ export interface IPublication {
     userName: string;
   }[];
 }
-

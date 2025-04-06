@@ -15,7 +15,7 @@ export const getBookings = async (token: string) => {
     });
     console.log("Respuesta de la APIbookiimg:", response.data);
     return response.data;
-  } catch (error: unknown) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
       throw new Error(error.response.data.message || "Error desconocido");
