@@ -11,7 +11,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 
 import { IUser } from "../tipos";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useSession } from "next-auth/react";
 
 // Que queremos guardar en el contexto
 interface AuthContextType {
@@ -31,12 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const {
-    loginWithRedirect,
-    logout,
-    user: auth0User,
-    isAuthenticated,
-  } = useAuth0();
+  const { data: session, status } = useSession();
 
   const saveUserData = (data: { user: IUser; token: string }) => {
     setUser(data.user);
@@ -61,57 +56,64 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       console.log("Datos en localStorage:", { storedUser, storedToken });
 
-      if (!storedUser || !storedToken) {
-        setIsAuth(false);
+      if (!storedToken || storedToken.split(".").length !== 3) {
+        console.warn("Token inválido o mal formado");
+        resetUserData();
         setLoading(false);
         return;
       }
 
-      try {
-        const parsedUser: IUser = JSON.parse(storedUser);
+      const decodedToken: any = jwtDecode(storedToken);
+      console.log("Token decodificado:", decodedToken);
 
-        if (!storedToken || storedToken.split(".").length !== 3) {
-          console.warn("Token inválido o mal formado");
-          resetUserData();
-          setLoading(false);
-          return;
-        }
-
-        const decodedToken: any = jwtDecode(storedToken);
-        console.log("Token decodificado:", decodedToken);
-
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp && decodedToken.exp < currentTime) {
-          console.warn("El token ha expirado");
-          resetUserData();
-          setLoading(false);
-          return;
-        }
-
-        setUser(parsedUser);
-        setToken(storedToken);
-        setIsAuth(true);
-      } catch (error) {
-        console.error("Error al parsear los datos del usuario:", error);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (decodedToken.exp && decodedToken.exp < currentTime) {
+        console.warn("El token ha expirado");
         resetUserData();
+        setLoading(false);
+        return;
       }
 
+      let parsedUser: IUser;
+
+      if (!storedUser) {
+        parsedUser = {
+          id: decodedToken.id,
+          email: decodedToken.email,
+          name: decodedToken.name || "",
+          profileImage: decodedToken.profileImage || "",
+        };
+        localStorage.setItem("user", JSON.stringify(parsedUser));
+      } else {
+        parsedUser = JSON.parse(storedUser);
+      }
+
+      setUser(parsedUser);
+      console.log(parsedUser, "EL USER ");
+      setToken(storedToken);
+      setIsAuth(true);
       setLoading(false);
     }
   }, []);
-  useEffect(() => {
-    if (isAuthenticated && auth0User) {
-      const auth0UserData: IUser = {
-        id: auth0User.sub || "",
-        name: auth0User.name || "",
-        email: auth0User.email || "",
-        profileImage: auth0User.picture || "",
-      };
-      setUser(auth0UserData);
-      setIsAuth(true);
-    }
-  }, [isAuthenticated, auth0User]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (status === "authenticated" && session?.accessToken && session?.user) {
+      const userData: IUser = {
+        id: session.user.id || "",
+        email: session.user.email || "",
+        name: session.user.name || "",
+        profileImage: session.user.profileImage || "",
+      };
+
+      saveUserData({ user: userData, token: session.accessToken });
+      setLoading(false);
+    } else if (status === "unauthenticated") {
+      resetUserData();
+      setLoading(false);
+    }
+  }, [session, status]);
   if (loading) {
     return <div>Cargando...</div>;
   }

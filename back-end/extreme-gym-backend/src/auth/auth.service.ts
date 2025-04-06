@@ -25,37 +25,37 @@ export class AuthService {
     const { email, password, confirmPassword, ...userWithoutConfirmation } =
       user;
 
-      const existingUser = await this.usersRepository.findOne({
-        where: { email },
-      });
+    const existingUser = await this.usersRepository.findOne({
+      where: { email },
+    });
 
-      if (existingUser) {
-        if (!existingUser.isActive) {
-          // Si el usuario existe pero está inactivo, reactivarlo
-          existingUser.isActive = true;
-          Object.assign(existingUser, userWithoutConfirmation); // Actualizar otros datos proporcionados
-          if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            existingUser.password = hashedPassword; // Actualizar la contraseña si se proporciona
-          }
-          const reactivatedUser = await this.usersRepository.save(existingUser);
-
-          await this.notificationsService.sendWelcomeEmail(
-            reactivatedUser.email,
-            reactivatedUser.name,
-          );
-
-          const {
-            password: _,
-            isAdmin,
-            ...userWithoutPassword
-          } = reactivatedUser;
-          return userWithoutPassword;
-        } else {
-          // Si el usuario ya está activo, lanzar un error
-          throw new BadRequestException('user already registered');
+    if (existingUser) {
+      if (!existingUser.isActive) {
+        // Si el usuario existe pero está inactivo, reactivarlo
+        existingUser.isActive = true;
+        Object.assign(existingUser, userWithoutConfirmation); // Actualizar otros datos proporcionados
+        if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          existingUser.password = hashedPassword; // Actualizar la contraseña si se proporciona
         }
+        const reactivatedUser = await this.usersRepository.save(existingUser);
+
+        await this.notificationsService.sendWelcomeEmail(
+          reactivatedUser.email,
+          reactivatedUser.name,
+        );
+
+        const {
+          password: _,
+          isAdmin,
+          ...userWithoutPassword
+        } = reactivatedUser;
+        return userWithoutPassword;
+      } else {
+        // Si el usuario ya está activo, lanzar un error
+        throw new BadRequestException('user already registered');
       }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersRepository.save({
@@ -121,7 +121,9 @@ export class AuthService {
       provider: user.provider,
     };
 
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, {
+      expiresIn: '7d', // Puedes poner '1h', '24h', '30d', etc. según prefieras
+    });
   }
 
   async validateOAuthLogin(
@@ -136,6 +138,8 @@ export class AuthService {
 
     // 2. Si el usuario existe
     if (user) {
+      console.log('🧑 Usuario existente encontrado:', user);
+
       // Verificar si ya tiene esta cuenta vinculada
       const accountExists = user.accounts.some(
         (acc) =>
@@ -159,6 +163,8 @@ export class AuthService {
 
       // Actualizar datos del usuario si es necesario
       if (!user.provider || user.provider !== provider) {
+        console.log('🔄 Actualizando proveedor y/o imagen del perfil...');
+
         user.provider = provider;
         if (profile.picture) user.profileImage = profile.picture;
         await this.usersRepository.save(user);
@@ -166,19 +172,22 @@ export class AuthService {
 
       // Generar JWT
       const accessToken = this.generateJwt(user);
+      console.log('✅ Login exitoso. Token generado:', accessToken);
+
       return { user, accessToken };
     }
+    console.log('👶 Usuario no encontrado, creando uno nuevo...');
 
     // 3. Si el usuario no existe, crearlo
     const newUser = this.usersRepository.create({
       email: profile.email,
       name: profile.name || profile.email.split('@')[0],
-      profileImage: profile.picture,
       provider,
       isActive: true,
     });
 
     const savedUser = await this.usersRepository.save(newUser);
+    console.log('✅ Usuario nuevo creado:', savedUser);
 
     // Crear cuenta asociada
     const newAccount = this.accountRepository.create({
@@ -195,6 +204,8 @@ export class AuthService {
 
     // Generar JWT
     const accessToken = this.generateJwt(savedUser);
+    console.log('🔐 Token generado para nuevo usuario:', accessToken);
+
     return { user: savedUser, accessToken };
   }
 }

@@ -22,8 +22,10 @@ interface ExtendedSession extends Session {
   accessToken: string;
   user: ExtendedUser;
 }
+
 console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -32,45 +34,63 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({
-      token,
-      account,
-      profile,
-    }: {
-      token: JWT;
-      account: any;
-      profile?: any;
-    }): Promise<ExtendedJWT> {
+    async jwt({ token, account, profile }: any): Promise<ExtendedJWT> {
       const extendedToken: ExtendedJWT = {
         ...token,
-        accessToken: "",
+        accessToken: token.accessToken || "",
         user: {
-          id: "",
-          name: null,
-          email: null,
+          id: token.user?.id || "",
+          name: token.user?.name || null,
+          email: token.user?.email || null,
+          role: token.user?.role,
+          provider: token.user?.provider,
+          profileImage: token.user?.profileImage,
         },
       };
 
-      if (account?.provider === "google") {
+      // 🔐 Solo en el primer login con Google
+      if (account?.provider === "google" && profile) {
         try {
+          console.log("🌐 Enviando perfil al backend:", {
+            email: profile?.email,
+            name: profile?.name,
+          });
+
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth/callback`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+              },
               body: JSON.stringify({
                 profile: {
-                  email: profile?.email,
-                  name: profile?.name,
-                  sub: profile?.sub,
-                  picture: profile?.picture,
+                  email: profile.email,
+                  name: profile.name,
+                  sub: profile.sub,
+                  accessToken: account?.access_token,
+                  expires_in: account?.expires_at,
+                  token_type: account?.token_type,
+                  scope: account?.scope,
                 },
                 provider: account.provider,
               }),
             }
           );
 
-          const { user, accessToken } = await response.json();
+          if (!response.ok) {
+            throw new Error(`Error al llamar al backend: ${response.status}`);
+          }
+
+          const backendData = await response.json();
+          console.log("✅ Respuesta del backend:", backendData);
+
+          const user = backendData?.user;
+          const accessToken = backendData?.accessToken;
+
+          if (!user) {
+            throw new Error("❌ El backend no devolvió un usuario");
+          }
 
           extendedToken.accessToken = accessToken;
           extendedToken.user = {
@@ -82,11 +102,13 @@ export const authOptions: NextAuthOptions = {
             profileImage: user.profileImage,
           };
         } catch (error) {
-          console.error("Error al conectar con el backend:", error);
+          console.error("❌ Error al conectar con el backend:", error);
         }
       }
+
       return extendedToken;
     },
+
     async session({
       session,
       token,
