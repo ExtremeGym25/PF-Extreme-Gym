@@ -41,7 +41,7 @@ const Cart = () => {
   return (
     <div className="px-4 py-10 bg-fondo">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110">
+        <h2 className="py-2 text-3xl font-bold text-center transition-transform duration-300 hover:scale-110">
           Escoge tu plan de suscripción
         </h2>
 
