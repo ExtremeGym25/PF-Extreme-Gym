@@ -35,6 +35,7 @@ export class PaymentsController {
     status: 403,
     description: 'Forbidden. Requiere rol de Administrador.',
   })
+
   async assignPremiumMonthly(
     @Param('userId') userId: string,
     @Request() req: any,
@@ -66,6 +67,7 @@ export class PaymentsController {
     status: 400,
     description: 'Error al asignar el plan Premium anual.',
   })
+  
   async assignPremiumYearly(
     @Param('userId') userId: string,
     @Request() req: any,
