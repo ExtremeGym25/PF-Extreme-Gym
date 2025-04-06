@@ -6,10 +6,13 @@ import {
   HttpException,
   HttpStatus,
   ParseUUIDPipe,
+  Request,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { User } from 'src/users/entities/user.entity';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorators';
+import { Role } from 'src/users/entities/roles.enum';
 
 @ApiTags('Payments')
 @Controller('payments')
@@ -28,11 +31,21 @@ export class PaymentsController {
     status: 400,
     description: 'Error al asignar el plan Premium mensual.',
   })
-  async assignPremiumMonthly(@Param('userId') userId: string): Promise<User> {
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Requiere rol de Administrador.',
+  })
+  @Roles(Role.Admin)
+  async assignPremiumMonthly(
+    @Param('userId') userId: string,
+    @Request() req: any,
+  ): Promise<User> {
     try {
       // Asigna el plan Premium mensual al usuario
-      const updatedUser =
-        await this.paymentsService.assignPremiumMonthlyPlan(userId);
+      const updatedUser = await this.paymentsService.assignPremiumMonthlyPlan(
+        userId,
+        req.user,
+      );
       return updatedUser;
     } catch (error) {
       throw new HttpException(
@@ -54,11 +67,21 @@ export class PaymentsController {
     status: 400,
     description: 'Error al asignar el plan Premium anual.',
   })
-  async assignPremiumYearly(@Param('userId') userId: string): Promise<User> {
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Requiere rol de Administrador.',
+  })
+  @Roles(Role.Admin)
+  async assignPremiumYearly(
+    @Param('userId') userId: string,
+    @Request() req: any,
+  ): Promise<User> {
     try {
       // Asigna el plan Premium anual al usuario
-      const updatedUser =
-        await this.paymentsService.assignPremiumYearlyPlan(userId);
+      const updatedUser = await this.paymentsService.assignPremiumYearlyPlan(
+        userId,
+        req.user,
+      );
       return updatedUser;
     } catch (error) {
       throw new HttpException(
@@ -76,9 +99,20 @@ export class PaymentsController {
     description: 'Suscripción mensual activada correctamente.',
   })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  async subscribeMonthly(@Param('userId', ParseUUIDPipe) userId: string) {
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Requiere rol de Administrador.',
+  })
+  @Roles(Role.Admin)
+  async subscribeMonthly(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Request() req: any,
+  ) {
     try {
-      const user = await this.paymentsService.assignPremiumMonthlyPlan(userId);
+      const user = await this.paymentsService.assignPremiumMonthlyPlan(
+        userId,
+        req.user,
+      );
       return {
         status: 'success',
         statusCode: HttpStatus.OK,
@@ -112,9 +146,20 @@ export class PaymentsController {
     description: 'Suscripción anual activada correctamente.',
   })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  async subscribeYearly(@Param('userId', ParseUUIDPipe) userId: string) {
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Requiere rol de Administrador.',
+  })
+  @Roles(Role.Admin)
+  async subscribeYearly(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Request() req: any,
+  ) {
     try {
-      const user = await this.paymentsService.assignPremiumYearlyPlan(userId);
+      const user = await this.paymentsService.assignPremiumYearlyPlan(
+        userId,
+        req.user,
+      );
       return {
         message: 'Suscripción anual activada',
         user: {
@@ -124,12 +169,12 @@ export class PaymentsController {
           plan: user.plan ? user.plan.name : 'Sin plan',
           expirationDate: user.subscriptionExpirationDate,
         },
-      };      
+      };
     } catch (error) {
       throw new HttpException(
         `Error activando la suscripción anual: ${error.message}`,
         HttpStatus.BAD_REQUEST,
-      ); 
+      );
     }
   }
 }

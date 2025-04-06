@@ -1,12 +1,21 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { StripeService } from './stripe.service';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
+@ApiTags('Stripe')
 @Controller('stripe')
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post('webhook')
+  @ApiOperation({
+    summary:
+      'Endpoint para recibir eventos webhook de Stripe. **Importante: Requiere validación de firma.**',
+  })
+  @ApiResponse({ status: 200, description: 'Evento recibido y procesado.' })
+  @ApiResponse({ status: 400, description: 'Error en la firma del webhook.' })
   async handleWebhook(@Req() req: Request, @Res() res: Response) {
     const sig = req.headers['stripe-signature'] as string;
 
@@ -25,12 +34,24 @@ export class StripeController {
   }
 
   @Post('subscribe')
-  async subscribe(@Body() body: { customerId: string; planId: string }, @Res() res: Response) {
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Crear una suscripción de Stripe para un cliente' })
+  @ApiResponse({ status: 200, description: 'Suscripción creada exitosamente.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 500, description: 'Error al crear la suscripción.' })
+  async subscribe(
+    @Body() body: { customerId: string; planId: string },
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     try {
-      const { planId , customerId} = body; 
-      
-const subscription = await this.stripeService.createSubscription( customerId ,planId);
-      
+      const { planId, customerId } = body;
+
+      const subscription = await this.stripeService.createSubscription(
+        customerId,
+        planId,
+      );
 
       // Puedes agregar la lógica para actualizar tu base de datos con la suscripción y el plan
 
