@@ -166,8 +166,6 @@ private async handleCustomerCreated(event: Stripe.Event) {
         this.logger.log(`🗑️ Suscripción gratuita ${freeSubscription.id} cancelada.`);
       }
 
-      
-
 
       // 🔥 Actualizar usuario a premium en la base de datos
       user.subscriptionType = 'premium';
