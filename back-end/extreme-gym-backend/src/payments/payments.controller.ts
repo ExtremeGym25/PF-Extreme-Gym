@@ -66,6 +66,7 @@ export class PaymentsController {
     status: 400,
     description: 'Error al asignar el plan Premium anual.',
   })
+  
   async assignPremiumYearly(
     @Param('userId') userId: string,
     @Request() req: any,
