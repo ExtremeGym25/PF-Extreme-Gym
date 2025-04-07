@@ -2,14 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { PaymentsModule } from './payments/payments.module';
 import { PlansModule } from './plans/plans.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { TrainingRouteModule } from './training-route/training-route.module';
 import { EventModule } from './event/event.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-import { ChatBotModule } from './chat-bot/chat-bot.module';
 import { ChatModule } from './chat/chat.module';
 import { CommunityModule } from './community/community.module';
 import { AuthModule } from './auth/auth.module';
@@ -29,14 +26,11 @@ import { GeolocationService } from './geolocation/geolocation.service';
     AuthModule,
     CommunityModule,
     ChatModule,
-    ChatBotModule,
     FileUploadModule,
     EventModule,
-    TrainingRouteModule,
     NotificationsModule,
     BookingsModule,
     PlansModule,
-    PaymentsModule,
     adminModule,
 
     ScheduleModule.forRoot(),
