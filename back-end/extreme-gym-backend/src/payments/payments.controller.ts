@@ -7,15 +7,19 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { User } from 'src/users/entities/user.entity';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorators';
 import { Role } from 'src/users/entities/roles.enum';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @ApiTags('Payments')
 @Controller('payments')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
@@ -30,10 +34,6 @@ export class PaymentsController {
   @ApiResponse({
     status: 400,
     description: 'Error al asignar el plan Premium mensual.',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden. Requiere rol de Administrador.',
   })
   async assignPremiumMonthly(
     @Param('userId') userId: string,
@@ -93,11 +93,6 @@ export class PaymentsController {
     description: 'Suscripción mensual activada correctamente.',
   })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden. Requiere rol de Administrador.',
-  })
-  @Roles(Role.Admin)
   async subscribeMonthly(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Request() req: any,
@@ -140,11 +135,6 @@ export class PaymentsController {
     description: 'Suscripción anual activada correctamente.',
   })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  @ApiResponse({
-    status: 403,
-    description: 'Forbidden. Requiere rol de Administrador.',
-  })
-  @Roles(Role.Admin)
   async subscribeYearly(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Request() req: any,
