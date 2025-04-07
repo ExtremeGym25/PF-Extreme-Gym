@@ -16,7 +16,6 @@ import {
 } from 'typeorm';
 import { Publication } from 'src/community/entities/publication.entity';
 import { Comment } from 'src/community/entities/comment.entity';
-import { Subscription } from 'src/payments/entities/payment.entity';
 import { Event } from '../../event/entities/event.entity'; // Asegúrate de la ruta correcta
 
 @Entity({
@@ -71,9 +70,6 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   provider?: string; // 'local', 'google', 'facebook'
 
-  @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'planid' })
-  plan: Subscription;
 
   @Column({ nullable: true })
   @IsDateString()

@@ -5,10 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt/dist';
 import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Subscription } from 'src/payments/entities/payment.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { UsersService } from '../users/users.service';
 import { Account } from './entities/account.entity';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Injectable()
 export class AuthService {
@@ -19,11 +19,18 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly notificationsService: NotificationsService,
     private readonly usersService: UsersService,
+    private readonly stripeService: StripeService,
   ) {}
 
   async createUser(user: CreateUserDto) {
     const { email, password, confirmPassword, ...userWithoutConfirmation } =
       user;
+
+      // ✅ Crear cliente en Stripe
+      const customer = await this.stripeService.createCustomer(email);
+      // ✅ Crear suscripción gratuita para el usuario
+      const freePlanId = 'price_1R9Imk2LBi4exdRbWcRfF1Go';
+const subscription = await this.stripeService.createSubscription(customer.id, freePlanId);
 
       const existingUser = await this.usersRepository.findOne({
         where: { email },
@@ -59,13 +66,15 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersRepository.save({
+
       ...userWithoutConfirmation,
       password: hashedPassword,
       email: email,
       isAdmin: false,
-      premium: false,
-      profileImage:
-        'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
+      stripeCustomerId: customer.id,
+        stripeSubscriptionId: subscription.id, // Guardamos el ID de la suscripción de Stripe
+        profileImage: 'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
+        subscriptionType: 'free',
       isActive: true,
     });
 

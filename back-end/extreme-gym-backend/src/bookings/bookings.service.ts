@@ -38,7 +38,6 @@ export class BookingsService {
 
         const now = new Date();
         const hasActiveSubscription =
-          user.plan &&
           user.subscriptionType === 'premium' && // Verificar el tipo de suscripción directamente
           user.subscriptionExpirationDate &&
           new Date(user.subscriptionExpirationDate) > now;
