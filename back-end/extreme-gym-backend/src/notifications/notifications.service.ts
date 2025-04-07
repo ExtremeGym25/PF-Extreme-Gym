@@ -118,7 +118,7 @@ export class NotificationsService {
         `📅 Fecha expiración: ${expirationDate.toLocaleDateString('es-ES')}`,
       );
       console.log(`🔄 Estado: ${status}`);
-      console.log(`📋 Plan: ${user.plan?.name || 'Sin plan'}`);
+      console.log(`📋 Plan: ${user.subscriptionType || 'Sin plan'}`);
 
       try {
         await this.mailerService.sendMail({
@@ -130,7 +130,7 @@ export class NotificationsService {
           template: 'plan-expiracion',
           context: {
             name: user.name,
-            plan: user.plan?.name || 'Premium',
+            plan: user.subscriptionType,
             expirationDate: expirationDate.toLocaleDateString('es-ES'),
             currentYear: new Date().getFullYear(),
             isExpired: daysRemaining <= 0,
