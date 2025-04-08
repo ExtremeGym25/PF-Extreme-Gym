@@ -41,7 +41,7 @@ const CancelarBookings: React.FC<CancelarBookingsProps> = ({ id }) => {
   return (
     <button
       onClick={handleDelete}
-      className="p-2 ml-2 text-white bg-red-500 rounded"
+      className="p-2 ml-1 text-white bg-red-500 rounded"
       disabled={loading}
     >
       {loading ? "Cancelando..." : "Cancelar"}

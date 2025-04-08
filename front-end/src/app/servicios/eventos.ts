@@ -74,11 +74,16 @@ export const updateEventRequest = async (
     console.log(response.data, "respuesta servicio");
     return response.data;
   } catch (error: any) {
-    console.error("Error en updatePlanService:", error);
-
-    throw new Error(
-      error.response?.data?.message || "Error al actualizar el plan."
-    );
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const deleteEventoService = async (
@@ -101,12 +106,12 @@ export const deleteEventoService = async (
     });
 
     console.log("Respuesta del servidor:", response.data);
-    return response.status === 200; // Retorna `true` si la eliminación fue exitosa
+    return response.status === 200;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
     }
-    return false; // Retorna `false` en caso de error
+    return false;
   }
 };
 export const imagenEventService = async (
@@ -142,7 +147,7 @@ export const imagenEventService = async (
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error(" Error en Cloudinary:", errorMessage); // Solo el mensaje
+    console.error(" Error en Cloudinary:", errorMessage);
     throw new Error(errorMessage);
   }
 };

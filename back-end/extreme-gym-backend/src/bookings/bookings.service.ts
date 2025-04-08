@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,9 +11,11 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Event } from 'src/event/entities/event.entity';
 import { User } from '../users/entities/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class BookingsService {
+  private readonly logger = new Logger(BookingsService.name);
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
@@ -20,16 +23,30 @@ export class BookingsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // Crear una reserva
   async createBooking(createBookingDto: CreateBookingDto): Promise<Booking> {
     const user = await this.userRepository.findOne({
       where: { id: createBookingDto.userId },
+      relations: ['plan']
     });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
+
+        const now = new Date();
+        const hasActiveSubscription =
+          user.subscriptionType === 'premium' && // Verificar el tipo de suscripción directamente
+          user.subscriptionExpirationDate &&
+          new Date(user.subscriptionExpirationDate) > now;
+
+        if (!hasActiveSubscription) {
+          throw new BadRequestException(
+            'El usuario debe tener una suscripción Premium activa para crear una reserva.',
+          );
+        }
 
     const event = await this.eventRepository.findOne({
       where: { id: createBookingDto.eventId },
@@ -72,10 +89,36 @@ export class BookingsService {
       numberOfPeople: createBookingDto.numberOfPeople,
       bookingsDate: new Date(),
     });
-    console.log(booking);
+    const savedBooking = await this.bookingRepository.save(booking);
 
-    return await this.bookingRepository.save(booking);
+    // Envío de notificación (manejado por separado para no afectar la creación)
+    this.sendBookingConfirmation(savedBooking).catch((error) => {
+      this.logger.error('Error enviando notificación:', error);
+    });
+
+    return savedBooking;
   }
+
+  //  metodo privado para enviar la notiifcacion de reserva 
+  private async sendBookingConfirmation(booking: Booking): Promise<void> {
+    try {
+      await this.notificationsService.sendBookingConfirmation({
+        userEmail: booking.user.email,
+        userName: booking.user.name,
+        eventName: booking.event.name,
+        eventDate: booking.event.date,
+        eventTime: booking.event.time,
+        eventLocation: booking.event.location,
+        numberOfPeople: booking.numberOfPeople,
+      });
+      this.logger.log(`Notificación enviada a ${booking.user.email}`);
+    } catch (error) {
+      this.logger.error(`Error enviando notificación: ${error.message}`);
+      throw error;
+    }
+  }
+
+  //
 
   async findAllBookings(): Promise<Booking[]> {
     return await this.bookingRepository.find({ relations: ['user', 'event'] });
@@ -124,6 +167,8 @@ export class BookingsService {
 
     return await this.bookingRepository.save(booking);
   }
+
+  //
 
   async findBookingsByUserId(userId: string): Promise<Booking[]> {
     const bookings = await this.bookingRepository.find({

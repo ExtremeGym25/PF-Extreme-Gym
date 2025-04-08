@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { ExtremeSportCategory, IEvent } from "../tipos";
 import FiltroEventos from "./filtroEventos";
 import Reservar from "./reservar";
+import MapaEventos from "../components/map/MapEventos";
 
 const GetEventos = () => {
   const [eventos, setEventos] = useState<IEvent[]>([]);
@@ -74,25 +75,20 @@ const GetEventos = () => {
                 className="flex flex-col p-4 border rounded-lg shadow-lg bg-blanco border-verde md:flex-row md:items-center md:gap-6"
               >
                 <div className="w-[300px] h-[200px] flex-shrink-0">
-                  {evento.imageUrl ? (
-                    <img
-                      className="object-cover w-full h-full rounded-md"
-                      src={evento.imageUrl}
-                      alt="Imagen del evento"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-gray-700 rounded-md">
-                      <span className="text-gray-400">
-                        No hay imagen disponible
-                      </span>
-                    </div>
-                  )}
+                  <img
+                    className="object-cover w-full h-full rounded-md"
+                    src={
+                      evento.imageUrl ||
+                      "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_2_tjw1rv.png"
+                    }
+                    alt="Imagen del evento"
+                  />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold capitalize text-foreground">
                     {evento.name}
                   </h2>
-                  <p className="text-foreground">
+                  <p className="tesemiboldxt-foreground">
                     {new Date(evento.date).toLocaleDateString()} - {evento.time}
                   </p>
                   <p className="mt-2 text-justify capitalize text-foreground line-clamp-3">
@@ -101,9 +97,15 @@ const GetEventos = () => {
                   <p className="mt-2 capitalize text-foreground">
                     {evento.location}
                   </p>
-                  <p className="font-semibold text-verde">
+                  <p className="mt-2 capitalize text-foreground">
                     Capacidad: {evento.capacity}
                   </p>
+                  <div className="mt-6">
+                    <MapaEventos
+                      latitude={+evento.latitude}
+                      longitude={+evento.longitude}
+                    />
+                  </div>
                 </div>
 
                 <Reservar eventoId={evento.id} />

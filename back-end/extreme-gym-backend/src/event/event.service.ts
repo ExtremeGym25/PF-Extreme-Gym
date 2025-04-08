@@ -43,7 +43,6 @@ export class EventService {
     private readonly geolocationService: GeolocationService,
   ) {}
 
-  // Crear un evento sin la URL de la imagen
   async createEvent(createEventDto: CreateEventDto): Promise<Event> {
     if (
       !Object.values(ExtremeSportCategory).includes(createEventDto.category)
@@ -54,6 +53,16 @@ export class EventService {
     const user = await this.userService.findOne(createEventDto.userId);
     if (!user) {
       throw new BadRequestException('Usuario no encontrado');
+    }
+
+    const eventDate = new Date(createEventDto.date);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Establecer la hora a 00:00:00 para comparar solo la fecha
+
+    if (eventDate < currentDate) {
+      throw new BadRequestException(
+        'La fecha del evento no puede ser anterior a la fecha actual.',
+      );
     }
 
     let latitude = createEventDto.latitude;
@@ -220,7 +229,7 @@ export class EventService {
         }
       }
     }
-    
+
     try {
       this.eventRepository.merge(event, {
         ...updateEventDto,

@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <title>Recordatorio de Evento - Extreme Gym</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background-color: #e63946;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px 5px 0 0;
+      }
+      .content {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-top: none;
+      }
+      .event-details {
+        background-color: white;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #eee;
+      }
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+        margin-top: 20px;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #e63946;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='header'>
+      <h1>¡Tu evento en Extreme Gym es mañana!</h1>
+    </div>
+
+    <div class='content'>
+      <p>Hola <strong>{{name}}</strong>,</p>
+      <p>Este es un recordatorio de tu participación en nuestro evento:</p>
+
+      <div class='event-details'>
+        <h2 style='margin-top: 0; color: #e63946;'>{{eventName}}</h2>
+        <p><strong>📅 Fecha:</strong> {{eventDate}}</p>
+        <p><strong>⏰ Hora:</strong> {{eventTime}}</p>
+        <p><strong>📍 Lugar:</strong> {{eventLocation}}</p>
+        <p><strong>👥 Personas registradas:</strong> {{numberOfPeople}}</p>
+      </div>
+
+      <p>Recomendaciones:</p>
+      <ul>
+        <li>Llega 15 minutos antes para registro</li>
+        <li>Usa ropa deportiva adecuada</li>
+        <li>Trae una toalla y botella de agua</li>
+      </ul>
+
+      <a href='https://maps.google.com?q={{eventLocation}}' class='button'>Ver
+        en mapa</a>
+    </div>
+
+    <div class='footer'>
+      <p>Extreme Gym - Transformando vidas a través del deporte</p>
+      <p>¿Preguntas? Contacta a nuestro equipo: info@extremegym.com</p>
+      <p>© 2025 Extreme Gym. Todos los derechos reservados.</p>
+    </div>
+  </body>
+</html>

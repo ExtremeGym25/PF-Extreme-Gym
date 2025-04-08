@@ -8,11 +8,12 @@ import { NotificationsController } from './notifications.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import * as path from 'path';
+import { Booking } from '../bookings/entities/booking.entity';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Booking]),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
