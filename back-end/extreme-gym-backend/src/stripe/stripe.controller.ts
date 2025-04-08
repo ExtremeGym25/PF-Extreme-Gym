@@ -15,28 +15,31 @@ export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post('webhook')
-  @ApiOperation({
-    summary:
-      'Endpoint para recibir eventos webhook de Stripe. **Importante: Requiere validación de firma.**',
-  })
-  @ApiResponse({ status: 200, description: 'Evento recibido y procesado.' })
-  @ApiResponse({ status: 400, description: 'Error en la firma del webhook.' })
-  async handleWebhook(@Req() req: Request, @Res() res: Response) {
-    const sig = req.headers['stripe-signature'] as string;
+@ApiOperation({
+  summary:
+    'Endpoint para recibir eventos webhook de Stripe. **Importante: Requiere validación de firma.**',
+})
+@ApiResponse({ status: 200, description: 'Evento recibido y procesado.' })
+@ApiResponse({ status: 400, description: 'Error en la firma del webhook.' })
+async handleWebhook(@Req() req: Request, @Res() res: Response) {
+  const sig = req.headers['stripe-signature'] as string;
 
-    let event;
-    try {
-      event = this.stripeService.constructEvent(req.body, sig);
-    } catch (err) {
-      console.error('❌ Webhook signature verification failed.', err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+  let event;
+  try {
+    event = this.stripeService.constructEvent(req.body, sig);
 
-    // Delegamos el evento a StripeService
-    await this.stripeService.handleEvent(event);
-
-    res.json({ received: true });
+    // 💡 Aquí logueamos el tipo de evento recibido
+    this.stripeService['logger'].log(`📨 Webhook recibido: ${event.type}`);
+  } catch (err) {
+    console.error('❌ Webhook signature verification failed.', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
+  // ⛳ Delegamos el evento al servicio
+  await this.stripeService.handleEvent(event);
+
+  res.json({ received: true });
+}
 
   @Post('subscribe')
   @UseGuards(AuthGuard)
