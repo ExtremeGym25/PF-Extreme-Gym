@@ -11,7 +11,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { IUser } from "../tipos";
 import { useSession, signOut } from "next-auth/react";
-
+import type { ExtendedUser } from "@/app/lib/authOptions";
 interface AuthContextType {
   user: IUser | null;
   isAuth: boolean;
@@ -86,15 +86,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Si inicia sesión con Google
   useEffect(() => {
-    if (status === "authenticated" && session?.accessToken && session?.user) {
-      const userData: IUser = {
-        id: session.user.id || "",
-        email: session.user.email || "",
-        name: session.user.name || "",
-        profileImage: session.user.profileImage || "",
-      };
+    const storedToken = localStorage.getItem("token");
 
-      saveUserData({ user: userData, token: session.accessToken });
+    if (status === "authenticated" && session?.accessToken && session?.user) {
+      // Si ya tenemos token guardado, no lo sobrescribimos
+      if (!storedToken || storedToken !== session.accessToken) {
+        const extendedUser = session.user as ExtendedUser;
+
+        const userData: IUser = {
+          id: session.user.id ?? "",
+          email: session.user.email ?? "",
+          name: session.user.name ?? "",
+          profileImage: session.user.profileImage ?? "",
+          role: session.user.role ?? "",
+          phone: extendedUser.phone ?? 0,
+          country: extendedUser.country ?? "",
+          address: extendedUser.address ?? "",
+          city: extendedUser.city ?? "",
+          subscriptionType: extendedUser.subscriptionType,
+          stripeCustomerId: extendedUser.stripeCustomerId ?? "",
+          stripeSubscriptionId: extendedUser.stripeSubscriptionId ?? "",
+          subscriptionExpirationDate: extendedUser.subscriptionExpirationDate,
+          isAdmin: extendedUser.isAdmin ?? false,
+          isActive: extendedUser.isActive ?? true,
+        };
+        console.log(userData, "autenticacioon por terceros");
+        console.log(session.accessToken, "autenticacion porterceros");
+        saveUserData({ user: userData, token: session.accessToken });
+      }
     } else if (status === "unauthenticated") {
       // Solo hacemos reset si no hay token local
       const storedToken = localStorage.getItem("token");

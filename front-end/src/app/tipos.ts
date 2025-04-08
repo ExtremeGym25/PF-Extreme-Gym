@@ -14,6 +14,8 @@ export interface IUser {
   city?: string;
   profileImage?: string;
   stripeCustomerId?: string;
+  stripeSubscriptionId: string;
+  role: string;
 }
 export interface IUserLogin {
   email: string;
@@ -80,8 +82,8 @@ export interface IReservas {
   user: IUser;
 }
 export interface IPublication {
-  newPublication: { name: string; };
-  [x: string]: { name: string; };
+  newPublication: { name: string };
+  [x: string]: { name: string };
   id: string;
   content: string;
   date: Date;
@@ -116,7 +118,5 @@ export interface IComment {
   userId: string;
   user?: {
     name: string;
-  }
+  };
 }
-
-

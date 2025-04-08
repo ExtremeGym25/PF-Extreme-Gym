@@ -53,16 +53,12 @@ export const updateUser = async (
     console.log("Sending Data:", JSON.stringify(formData, null, 2));
     console.log("UserID:", userId);
 
-    const response = await axios.patch(
-      `http://localhost:3000/users/${userId}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axiosApiBack.patch(`/users/${userId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
     console.log(response, "respuesta ");
     return response.data;
   } catch (error: any) {
@@ -88,21 +84,14 @@ export const uploadProfileImageService = async (
   formData.append("userId", id);
 
   try {
-    const response = await fetch("http://localhost:3000/users/profile", {
-      method: "PATCH",
-      body: formData,
+    const response = await axiosApiBack.patch("/users/profile", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Error ${response.status}: ${errorData.message}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       console.error(
@@ -118,15 +107,12 @@ export const uploadProfileImageService = async (
 };
 export const deleteUserService = async (userId: string, token: string) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/users/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axiosApiBack.delete(`/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return response.data;
   } catch (error: any) {

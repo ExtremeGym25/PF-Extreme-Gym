@@ -60,16 +60,12 @@ export const updateEventRequest = async (
   id: string
 ) => {
   try {
-    const response = await axios.put(
-      `http://localhost:3000/events/${id}`,
-      editedEvent,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosApiBack.put(`/events/${id}`, editedEvent, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     console.log(response.data, "respuesta servicio");
     return response.data;
@@ -98,7 +94,7 @@ export const deleteEventoService = async (
   console.log("Llamando al servicio de eliminación con ID:", id);
 
   try {
-    const response = await axios.delete(`http://localhost:3000/events/${id}`, {
+    const response = await axiosApiBack.delete(`/events/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
