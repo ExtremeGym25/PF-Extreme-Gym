@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { imageService } from "@/app/servicios/imagenes";
+import { useImageContext } from "@/app/contextos/contextoImag";
 
 const validationSchema = Yup.object().shape({
   imageUrl: Yup.mixed()
@@ -25,6 +26,7 @@ const validationSchema = Yup.object().shape({
 const ImagenesPublicidad = () => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const { setImages } = useImageContext();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -85,7 +87,11 @@ const ImagenesPublicidad = () => {
     }
 
     try {
-      await imageService(formData, token);
+      const response = await imageService(formData, token);
+      const imageUrl = response.url;
+
+      // Guarda la nueva imagen en el contexto
+      setImages((prev) => [...prev, imageUrl]);
       console.log("Imagen subida con éxito");
 
       toast.success("Imagen subida correctamente");

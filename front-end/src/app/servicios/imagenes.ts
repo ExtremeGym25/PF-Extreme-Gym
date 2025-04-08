@@ -17,7 +17,7 @@ export const imageService = async (
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("Imagen subida con éxito:", imagenPlan.data.imageUrl);
+    console.log("Imagen subida con éxito:", imagenPlan.data);
     return imagenPlan.data;
   } catch (error) {
     let errorMessage = "Error desconocido";

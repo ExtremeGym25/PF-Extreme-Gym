@@ -9,6 +9,7 @@ import Footer from "./components/navbarFooter/footer";
 import VisibleWrapper from "./wrapper/visibleWrapper";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "./providers";
+import { ImageProvider } from "@/app/contextos/contextoImag";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
@@ -18,34 +19,36 @@ export default function ClientWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <SessionProvider>
-      <Providers>
-        <AuthProvider>
-          <Elements stripe={stripePromise}>
-            <VisibleWrapper>
-              <Navbar />
-            </VisibleWrapper>
-            <div>{children}</div>
-            <VisibleWrapper>
-              <Footer />
-            </VisibleWrapper>
-            <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick={false}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition={Bounce}
-              toastClassName="custom-toast"
-            />
-          </Elements>
-        </AuthProvider>
-      </Providers>
-    </SessionProvider>
+    <ImageProvider>
+      <SessionProvider>
+        <Providers>
+          <AuthProvider>
+            <Elements stripe={stripePromise}>
+              <VisibleWrapper>
+                <Navbar />
+              </VisibleWrapper>
+              <div>{children}</div>
+              <VisibleWrapper>
+                <Footer />
+              </VisibleWrapper>
+              <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+                toastClassName="custom-toast"
+              />
+            </Elements>
+          </AuthProvider>
+        </Providers>
+      </SessionProvider>
+    </ImageProvider>
   );
 }
