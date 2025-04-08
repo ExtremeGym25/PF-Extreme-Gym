@@ -126,7 +126,7 @@ export class AuthService {
 
   private generateJwt(user: User): string {
     const payload = {
-      sub: user.id,
+      id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,

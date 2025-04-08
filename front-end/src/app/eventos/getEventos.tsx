@@ -108,7 +108,7 @@ const GetEventos = () => {
                   </div>
                 </div>
 
-                <Reservar eventoId={evento.id} />
+                <Reservar eventId={evento.id} />
               </div>
             ))
         )}

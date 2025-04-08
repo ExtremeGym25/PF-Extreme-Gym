@@ -5,7 +5,7 @@ const axiosApiBack = axios.create({
 });
 
 export const loginWithGoogle = async (profile: any) => {
-  const response = await axios.post.axiosApiBack("/api/oauth-login", {
+  const response = await axiosApiBack.post("/api/oauth-login", {
     profile,
     provider: "google",
   });

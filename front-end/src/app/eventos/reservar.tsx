@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getBookings } from "../servicios/reservas";
 import { IReservas } from "../tipos";
 
-const Reservar = ({ eventoId }: { eventoId?: string }) => {
+const Reservar = ({ eventId }: { eventId?: string }) => {
   const { user } = useAuth();
   const [error, setError] = useState("");
   const [numberOfPeople, setNumberOfPeople] = useState(1);
@@ -31,14 +31,14 @@ const Reservar = ({ eventoId }: { eventoId?: string }) => {
         toast.error("Debes reservar al menos para una persona");
         return;
       }
-      if (!eventoId) {
+      if (!eventId) {
         toast.error("No se encontró el evento");
         return;
       }
 
       const data = await reservaEventosService(
         token,
-        eventoId,
+        eventId,
         userId,
         numberOfPeople
       );
