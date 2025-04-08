@@ -219,5 +219,6 @@ export class AuthService {
     console.log('🔐 Token generado para nuevo usuario:', accessToken);
 
     return { user: savedUser, accessToken };
+    console.log('👤 Usuario no encontrado, creando uno nuevo...');
   }
 }
