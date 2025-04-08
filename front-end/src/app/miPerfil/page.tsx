@@ -9,9 +9,20 @@ import MiPerfilUsuario from "../views/MiPerfilUsuario";
 import UpdatePerfilUsuario from "../views/UpdateUsuario";
 import ImagenPerfil from "../views/ImagenPerfil";
 import DeleteUsuario from "../views/DeleteUsuario";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const MiPerfil = () => {
   const loading = usePrivate();
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+
+  useEffect(() => {
+    if (success === "true") {
+      toast.success("¡Suscripción exitosa!");
+    }
+  }, [success]);
 
   if (loading) {
     return (
