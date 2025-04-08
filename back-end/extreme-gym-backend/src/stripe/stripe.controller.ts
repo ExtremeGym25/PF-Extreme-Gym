@@ -54,8 +54,8 @@ export class StripeController {
       const { planId, customerId } = body;
 
       const subscription = await this.stripeService.createSubscription(
-        customerId,
         planId,
+        customerId,
       );
 
       // Puedes agregar la lógica para actualizar tu base de datos con la suscripción y el plan
@@ -86,11 +86,11 @@ export class StripeController {
   ) {
     try {
       const session = await this.stripeService.createCheckoutSession(
-        body.priceId,
         body.customerId,
+        body.priceId,
       );
 
-      res.status(200).json({ url: session.url });
+      res.status(200).json({ checkoutUrl: session.url });
     } catch (err) {
       console.error('Error creating Checkout session:', err);
       res.status(500).json({ error: err.message });

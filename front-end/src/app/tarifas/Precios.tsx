@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "@/app/contextos/contextoAuth";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { StripeService } from "../servicios/pagosservice";
+import { useEffect, useState } from "react";
 import axios from "axios";
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -13,6 +12,8 @@ const axiosApiBack = axios.create({
 
 const Precios = () => {
   const { user } = useAuth();
+  const [error, setError] = useState("");
+
   const searchParams = useSearchParams();
   const canceled = searchParams.get("canceled");
 
@@ -24,15 +25,32 @@ const Precios = () => {
 
   const redirectToCheckout = async (type: "monthly" | "yearly") => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No hay token disponible");
+        return;
+      }
       if (!user?.id) {
         toast.error("Usuario no identificado");
         return;
       }
+      const priceId =
+        type === "monthly"
+          ? "price_1R9IJi2LBi4exdRbAqcijuNx"
+          : "price_1R9IJi2LBi4exdRbgq4lADW5";
 
-      const response = await axiosApiBack.post("/stripe/checkout", {
-        planType: type,
-        customerId: user.stripeCustomerId,
-      });
+      const response = await axiosApiBack.post(
+        "/stripe/create-checkout-session",
+        {
+          customerId: user.stripeCustomerId,
+          priceId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const { checkoutUrl } = response.data;
 
@@ -115,7 +133,7 @@ const Precios = () => {
                   <span>Soporte prioritario</span>
                 </li>
               </ul>
-              <ButtonPrimary onClick={() => redirectToCheckout("monthly")}>
+              <ButtonPrimary onClick={() => redirectToCheckout("yearly")}>
                 Comprar plan anual
               </ButtonPrimary>
             </div>
