@@ -1,16 +1,19 @@
-import { Interface } from "readline";
-
 export interface IUser {
-  id?: string;
+  isAdmin?: boolean;
+  isActive?: boolean;
+  subscriptionExpirationDate?: Date | null | undefined;
+  subscriptionType?: string;
+  id?: string | null;
   name?: string;
   email?: string;
   address?: string;
-  phone?: number;
+  phone?: number | number;
   password?: string;
   confirmPassword?: string;
   country?: string;
   city?: string;
   profileImage?: string;
+  stripeCustomerId?: string;
 }
 export interface IUserLogin {
   email: string;
@@ -81,7 +84,7 @@ export interface IPublication {
   [x: string]: { name: string; };
   id: string;
   content: string;
-  date: Date; 
+  date: Date;
   user: {
     id: string;
     name: string;

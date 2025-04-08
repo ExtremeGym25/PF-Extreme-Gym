@@ -19,7 +19,7 @@ export const createEvent = async (eventData: any, token: string) => {
     });
     console.log(response.data);
     return response.data;
-  } catch (error: unknown) {
+  } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
       throw new Error(error.response.data.message || "Error desconocido");

@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="flex items-center gap-8">
           <Link href={routes.home}>
             <img
-              src="/logo.png"
+              src="https://res.cloudinary.com/dixcrmeue/image/upload/v1743015555/logox_iy2aee.png"
               alt="logo"
               className="w-auto h-12 transition-transform duration-300 animate-pulse hover:scale-110"
             />
@@ -69,7 +69,10 @@ const Navbar = () => {
             <Link href={routes.eventos} className="transition hover:text-verde">
               Eventos
             </Link>
-            <Link href={routes.Comunidad} className="transition hover:text-verde">
+            <Link
+              href={routes.Comunidad}
+              className="transition hover:text-verde"
+            >
               Comunidad
             </Link>
             <div className="flex items-center justify-end mt-4 lg:mt-0">

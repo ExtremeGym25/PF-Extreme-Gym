@@ -10,7 +10,6 @@ import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contextos/contextoAuth";
 import usePublic from "../hooks/usePublic";
-import { signIn } from "next-auth/react";
 
 export interface IForm {
   name: string;
@@ -239,12 +238,7 @@ const Registro = () => {
               component="div"
               className="text-sm text-red-500"
             />
-            <button
-              onClick={() => signIn("google")}
-              className="px-6 py-3 text-white bg-blue-500 rounded-lg"
-            >
-              Iniciar sesión con Google
-            </button>
+
             <ButtonPrimary type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Registrando..." : "Registrarse"}
             </ButtonPrimary>

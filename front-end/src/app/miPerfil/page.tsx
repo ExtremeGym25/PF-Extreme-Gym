@@ -27,7 +27,7 @@ const MiPerfil = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-8 bg-background font-poppins">
-      <h2 className="text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
+      <h2 className="pb-4 text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
         Mi Perfil
       </h2>
       <div className="grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-2">

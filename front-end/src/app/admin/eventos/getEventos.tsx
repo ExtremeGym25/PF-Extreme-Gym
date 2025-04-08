@@ -238,7 +238,7 @@ const ListasEventos = () => {
                   <div className="flex gap-4">
                     <button
                       onClick={handleUpdate}
-                      className="w-full p-2 text-white bg-green-600 rounded-lg"
+                      className="w-full p-2 text-white rounded-lg bg-verde"
                     >
                       Guardar
                     </button>

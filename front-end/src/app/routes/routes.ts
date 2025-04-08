@@ -20,4 +20,6 @@ export const routes = {
   adminP: "/admin/publicidad",
   adminCE: "/admin/casosDeExito",
   misEventos: "/eventos/misReservas",
+  comunidad: "/comunidad",
+  chat: "/comunidad#mobile-widget",
 };

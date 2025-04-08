@@ -26,55 +26,58 @@ export class AuthService {
     const { email, password, confirmPassword, ...userWithoutConfirmation } =
       user;
 
-      // ✅ Crear cliente en Stripe
-      const customer = await this.stripeService.createCustomer(email);
-      // ✅ Crear suscripción gratuita para el usuario
-      const freePlanId = 'price_1R9Imk2LBi4exdRbWcRfF1Go';
-const subscription = await this.stripeService.createSubscription(customer.id, freePlanId);
+    // ✅ Crear cliente en Stripe
+    const customer = await this.stripeService.createCustomer(email);
+    // ✅ Crear suscripción gratuita para el usuario
+    const freePlanId = 'price_1R9Imk2LBi4exdRbWcRfF1Go';
+    const subscription = await this.stripeService.createSubscription(
+      customer.id,
+      freePlanId,
+    );
 
-      const existingUser = await this.usersRepository.findOne({
-        where: { email },
-      });
+    const existingUser = await this.usersRepository.findOne({
+      where: { email },
+    });
 
-      if (existingUser) {
-        if (!existingUser.isActive) {
-          // Si el usuario existe pero está inactivo, reactivarlo
-          existingUser.isActive = true;
-          Object.assign(existingUser, userWithoutConfirmation); // Actualizar otros datos proporcionados
-          if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            existingUser.password = hashedPassword; // Actualizar la contraseña si se proporciona
-          }
-          const reactivatedUser = await this.usersRepository.save(existingUser);
-
-          await this.notificationsService.sendWelcomeEmail(
-            reactivatedUser.email,
-            reactivatedUser.name,
-          );
-
-          const {
-            password: _,
-            isAdmin,
-            ...userWithoutPassword
-          } = reactivatedUser;
-          return userWithoutPassword;
-        } else {
-          // Si el usuario ya está activo, lanzar un error
-          throw new BadRequestException('user already registered');
+    if (existingUser) {
+      if (!existingUser.isActive) {
+        // Si el usuario existe pero está inactivo, reactivarlo
+        existingUser.isActive = true;
+        Object.assign(existingUser, userWithoutConfirmation); // Actualizar otros datos proporcionados
+        if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          existingUser.password = hashedPassword; // Actualizar la contraseña si se proporciona
         }
+        const reactivatedUser = await this.usersRepository.save(existingUser);
+
+        await this.notificationsService.sendWelcomeEmail(
+          reactivatedUser.email,
+          reactivatedUser.name,
+        );
+
+        const {
+          password: _,
+          isAdmin,
+          ...userWithoutPassword
+        } = reactivatedUser;
+        return userWithoutPassword;
+      } else {
+        // Si el usuario ya está activo, lanzar un error
+        throw new BadRequestException('user already registered');
       }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.usersRepository.save({
-
       ...userWithoutConfirmation,
       password: hashedPassword,
       email: email,
       isAdmin: false,
       stripeCustomerId: customer.id,
-        stripeSubscriptionId: subscription.id, // Guardamos el ID de la suscripción de Stripe
-        profileImage: 'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
-        subscriptionType: 'free',
+      stripeSubscriptionId: subscription.id, // Guardamos el ID de la suscripción de Stripe
+      profileImage:
+        'https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_1_ivgi8t.png',
+      subscriptionType: 'free',
       isActive: true,
     });
 
@@ -130,7 +133,9 @@ const subscription = await this.stripeService.createSubscription(customer.id, fr
       provider: user.provider,
     };
 
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, {
+      expiresIn: '7d', // Puedes poner '1h', '24h', '30d', etc. según prefieras
+    });
   }
 
   async validateOAuthLogin(
@@ -145,6 +150,8 @@ const subscription = await this.stripeService.createSubscription(customer.id, fr
 
     // 2. Si el usuario existe
     if (user) {
+      console.log('🧑 Usuario existente encontrado:', user);
+
       // Verificar si ya tiene esta cuenta vinculada
       const accountExists = user.accounts.some(
         (acc) =>
@@ -168,6 +175,8 @@ const subscription = await this.stripeService.createSubscription(customer.id, fr
 
       // Actualizar datos del usuario si es necesario
       if (!user.provider || user.provider !== provider) {
+        console.log('🔄 Actualizando proveedor y/o imagen del perfil...');
+
         user.provider = provider;
         if (profile.picture) user.profileImage = profile.picture;
         await this.usersRepository.save(user);
@@ -175,19 +184,22 @@ const subscription = await this.stripeService.createSubscription(customer.id, fr
 
       // Generar JWT
       const accessToken = this.generateJwt(user);
+      console.log('✅ Login exitoso. Token generado:', accessToken);
+
       return { user, accessToken };
     }
+    console.log('👶 Usuario no encontrado, creando uno nuevo...');
 
     // 3. Si el usuario no existe, crearlo
     const newUser = this.usersRepository.create({
       email: profile.email,
       name: profile.name || profile.email.split('@')[0],
-      profileImage: profile.picture,
       provider,
       isActive: true,
     });
 
     const savedUser = await this.usersRepository.save(newUser);
+    console.log('✅ Usuario nuevo creado:', savedUser);
 
     // Crear cuenta asociada
     const newAccount = this.accountRepository.create({
@@ -204,6 +216,8 @@ const subscription = await this.stripeService.createSubscription(customer.id, fr
 
     // Generar JWT
     const accessToken = this.generateJwt(savedUser);
+    console.log('🔐 Token generado para nuevo usuario:', accessToken);
+
     return { user: savedUser, accessToken };
   }
 }

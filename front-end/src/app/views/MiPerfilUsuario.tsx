@@ -31,6 +31,23 @@ const MiPerfilUsuario = () => {
             className="object-cover w-40 h-40 m-1 border-2 rounded-full hover:scale-110 border-verde"
           />
         </div>
+
+        <p className="text-center text-l">
+          Tipo de Usuario: {!!user?.isActive ? "Activo" : "Desactivado"}
+        </p>
+        {user?.subscriptionExpirationDate && (
+          <p className="text-center text-l">
+            Vence:
+            {new Date(user.subscriptionExpirationDate).toLocaleDateString(
+              "es-ES",
+              {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }
+            )}
+          </p>
+        )}
         <p className="text-center capitalize text-l">
           País: {user?.country || "No especificado"}
         </p>
@@ -45,6 +62,9 @@ const MiPerfilUsuario = () => {
         </p>
         <p className="text-center text-l">
           Email: {user?.email || "No especificado"}
+        </p>
+        <p className="text-center text-l">
+          Id Usuario: {user?.id || "No especificado"}
         </p>
       </div>
     </div>

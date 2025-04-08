@@ -6,12 +6,14 @@ import {
   Req,
   Res,
   HttpStatus,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from '../users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { Response } from 'express'; 
+import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -51,25 +53,24 @@ export class AuthController {
   // endpoitn de next auth
 
   @Post('oauth/callback')
-  async handleOAuthCallback(
-    @Body() body: { profile: any; provider: string },
-    @Res() res: Response,
-  ) {
-    try {
-      const { user, accessToken } = await this.authService.validateOAuthLogin(
-        body.profile,
-        body.provider,
-      );
+  async handleOAuthCallback(@Body() body: any) {
+    const { profile, provider } = body;
 
-      return res.status(HttpStatus.OK).json({
-        user,
-        accessToken,
-      });
-    } catch (error) {
-      return res.status(HttpStatus.UNAUTHORIZED).json({
-        message: 'OAuth authentication failed',
-        error: error.message,
-      });
+    if (!profile || !provider) {
+      throw new BadRequestException('Faltan datos de perfil o proveedor.');
+    }
+
+    try {
+      const result = await this.authService.validateOAuthLogin(
+        profile,
+        provider,
+      );
+      return result; // { user, accessToken }
+    } catch (err) {
+      console.error('❌ Error en OAuth callback:', err);
+      throw new UnauthorizedException(
+        'Error al autenticar con proveedor externo.',
+      );
     }
   }
 }

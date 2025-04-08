@@ -6,10 +6,10 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { routes } from "@/app/routes/routes";
 
 const images = [
-  "/landing1.webp",
-  "/landing2.webp",
-  "/landing3.webp",
-  "/landing4.webp",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743975863/xTREME_xzwmr7.png",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743873104/portrait-female-athlete-competing-olympic-games_y8bdpa.jpg",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743873373/men-playing-rugby-field_cnxflm.jpg",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743873374/man-steps-tyres-hanging-air_lknp7w.jpg",
 ];
 
 const CarouselHome = () => {
