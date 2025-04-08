@@ -18,7 +18,6 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 
 @ApiTags('Comments')
 @Controller('comments')
-@UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class CommentsController {
   constructor(
@@ -27,6 +26,7 @@ export class CommentsController {
   ) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Crear un nuevo comentario' })
   @ApiBody({ type: CreateCommentDto })
   @ApiResponse({ status: 201, description: 'Comentario creado exitosamente.' })
@@ -54,6 +54,7 @@ export class CommentsController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Actualizar un comentario por ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @ApiBody({ type: UpdateCommentDto })
@@ -70,6 +71,7 @@ export class CommentsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Eliminar un comentario por ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @ApiResponse({

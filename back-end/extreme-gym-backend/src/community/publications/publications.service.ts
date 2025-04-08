@@ -52,11 +52,62 @@ export class PublicationsService {
   async updatePublication(
     id: string,
     updatePublicationDto: UpdatePublicationDto,
-  ): Promise<Publication> {
+  ): Promise<any> {
+    console.log("dtos recibidos", updatePublicationDto);
+  
     const publication = await this.getPublicationById(id);
-    this.publicationsRepository.merge(publication, updatePublicationDto);
-    return this.publicationsRepository.save(publication);
+  
+    let needsUpdate = false;
+  
+    if (
+      updatePublicationDto.content !== undefined &&
+      updatePublicationDto.content !== publication.content
+    ) {
+      publication.content = updatePublicationDto.content;
+      needsUpdate = true;
+    }
+  
+    if (
+      updatePublicationDto.planId !== undefined &&
+      updatePublicationDto.planId !== publication.planId
+    ) {
+      publication.planId = updatePublicationDto.planId;
+      needsUpdate = true;
+    }
+  
+    if (
+      updatePublicationDto.eventId !== undefined &&
+      updatePublicationDto.eventId !== publication.eventId
+    ) {
+      publication.eventId = updatePublicationDto.eventId;
+      needsUpdate = true;
+    }
+  
+    if (needsUpdate) {
+      const update = await this.publicationsRepository.save(publication, {
+        reload: true,
+      });
+  
+      return {
+        id: update.id,
+        content: update.content,
+        date: update.date,
+        userId: update.userId,
+        planId: update.planId,
+        eventId: update.eventId,
+      };
+    }
+  
+    return {
+      id: publication.id,
+      content: publication.content,
+      date: publication.date,
+      userId: publication.userId,
+      planId: publication.planId,
+      eventId: publication.eventId,
+    };
   }
+  
 
   async deletePublication(id: string): Promise<void> {
     const publication = await this.getPublicationById(id);

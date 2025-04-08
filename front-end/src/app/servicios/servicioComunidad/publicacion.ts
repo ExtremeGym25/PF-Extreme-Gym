@@ -50,3 +50,23 @@ export const createPublication = async (content: string, userId: string, token: 
         }
       }
 }
+export const deletePublication = async (id: string, token: string) => {
+  const response = await axiosApiBack.delete(`/publications/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+export const updatePublication = async (id: string, content: string, token: string) => {
+  const response = await axiosApiBack.put(
+    `/publications/${id}`,
+    { content },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data
+};
