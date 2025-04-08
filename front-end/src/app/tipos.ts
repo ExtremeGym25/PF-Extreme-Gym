@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export interface IUser {
   isAdmin?: boolean;
   isActive?: boolean;
@@ -15,6 +13,7 @@ export interface IUser {
   country?: string;
   city?: string;
   profileImage?: string;
+  stripeCustomerId?: string;
 }
 export interface IUserLogin {
   email: string;

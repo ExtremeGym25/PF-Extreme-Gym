@@ -1,7 +1,8 @@
+"use client";
 import React from "react";
 import Tarifas from "./Tarifas";
 import Beneficios from "./beneficios";
-import Precios from "./Precios";
+// import Precios from "./Precios";
 
 const tarifasView = () => {
   return (
@@ -9,7 +10,7 @@ const tarifasView = () => {
       {" "}
       <Tarifas></Tarifas>
       <Beneficios></Beneficios>
-      <Precios />
+      {/* <Precios /> */}
     </div>
   );
 };

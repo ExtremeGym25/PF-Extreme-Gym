@@ -9,8 +9,12 @@ import Footer from "./components/navbarFooter/footer";
 import { AuthProvider } from "./contextos/contextoAuth";
 import VisibleWrapper from "./wrapper/visibleWrapper";
 import Script from "next/script";
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { Providers } from "./providers";
+import ClientWrapper from "./ClientWraper";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -42,31 +46,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${poppins.variable} antialiased`}>
         {" "}
-        <Providers>
-          <AuthProvider>
-            <VisibleWrapper>
-              <Navbar />
-            </VisibleWrapper>
-            <div>{children}</div>
-            <VisibleWrapper>
-              <Footer />
-            </VisibleWrapper>
-            <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick={false}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition={Bounce}
-              toastClassName="custom-toast"
-            />
-          </AuthProvider>
-        </Providers>
+        <ClientWrapper>{children}</ClientWrapper>
         <script
           src="//code.tidio.co/d5nlufbj8mjvzlknyy2qjjfsgfyn9thb.js"
           async
