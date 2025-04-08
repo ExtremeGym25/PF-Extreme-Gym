@@ -45,7 +45,7 @@ const CreacionRutinas = () => {
   return (
     <div className="flex items-center justify-center p-2">
       <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
-        <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
+        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
           Crear Rutina
         </h2>
         <Formik

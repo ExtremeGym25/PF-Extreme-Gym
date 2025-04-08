@@ -50,9 +50,7 @@ export class FileUploadController {
   }
 
   @Post('file')
-   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles(Role.Admin)
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Subir un archivo' })
   @ApiBody({ type: UploadFileDto })
@@ -94,22 +92,24 @@ export class FileUploadController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Obtener la URL de un archivo subido' })
-  @ApiParam({ name: 'id', required: true, description: 'ID del archivo' })
   @ApiResponse({
     status: 200,
-    description: 'URL del archivo obtenida exitosamente.',
+    description: 'URL del archivo encontrada.',
+    schema: { type: 'object', properties: { url: { type: 'string' } } },
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Error al obtener la URL del archivo.',
-  })
-  async getImageUrl(@Param('id') id: string) {
+  @ApiResponse({ status: 400, description: 'URL no encontrada.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async getImageUrl(@Param('id') id: string): Promise<{ url: string }> {
     try {
       const result = await this.fileUploadService.getFileUploadUrl(id);
       return result;
     } catch (error) {
-      this.handleError(error, 'obtener la URL de la imagen');
+      throw new BadRequestException(error, 'obtener la URL de la imagen');
     }
   }
 
