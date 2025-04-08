@@ -93,8 +93,6 @@ export class FileUploadController {
 
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Obtener la URL de un archivo subido' })
   @ApiResponse({
     status: 200,
@@ -102,8 +100,6 @@ export class FileUploadController {
     schema: { type: 'object', properties: { url: { type: 'string' } } },
   })
   @ApiResponse({ status: 400, description: 'URL no encontrada.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
   async getImageUrl(@Param('id') id: string): Promise<{ url: string }> {
     try {
       const result = await this.fileUploadService.getFileUploadUrl(id);
