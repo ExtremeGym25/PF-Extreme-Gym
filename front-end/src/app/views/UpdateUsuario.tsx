@@ -48,6 +48,7 @@ const UpdatePerfilUsuario = () => {
 
     if (!user || !user.id) {
       toast.error("Usuario no definido");
+
       return;
     }
     if (formData.password && !validatePassword(formData.password)) {
@@ -55,6 +56,7 @@ const UpdatePerfilUsuario = () => {
     }
 
     const token = localStorage.getItem("token") || "";
+    console.log("token actualizar", token);
     if (!token) {
       toast.error("No hay token disponible");
       return;
@@ -68,6 +70,8 @@ const UpdatePerfilUsuario = () => {
     if (!dataToSend.password) {
       delete dataToSend.password;
     }
+    console.log(dataToSend, "datatosend");
+    console.log(user.id, "uSERid");
 
     try {
       const updatedUser = await updateUser(user.id, dataToSend, token);

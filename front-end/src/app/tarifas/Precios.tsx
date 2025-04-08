@@ -1,160 +1,129 @@
-// "use client";
+"use client";
 
-// import React, { useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { toast } from "react-toastify";
-// import { useAuth } from "../contextos/contextoAuth";
-// import { loadStripe } from "@stripe/stripe-js";
-// import {
-//   Elements,
-//   CardElement,
-//   useStripe,
-//   useElements,
-// } from "@stripe/react-stripe-js";
-// import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "@/app/contextos/contextoAuth";
+import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { StripeService } from "../servicios/pagosservice";
+import axios from "axios";
+const axiosApiBack = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+});
 
-// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+const Precios = () => {
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const canceled = searchParams.get("canceled");
 
-// const CheckoutForm = ({ planId }: { planId: string }) => {
-//   const stripe = useStripe();
-//   const elements = useElements();
-//   const router = useRouter();
-//   const { user } = useAuth();
-//   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (canceled === "true") {
+      toast.info("Suscripción cancelada.");
+    }
+  }, [canceled]);
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!stripe || !elements) return;
+  const redirectToCheckout = async (type: "monthly" | "yearly") => {
+    try {
+      if (!user?.id) {
+        toast.error("Usuario no identificado");
+        return;
+      }
 
-//     const cardElement = elements.getElement(CardElement);
-//     if (!cardElement) return;
+      const response = await axiosApiBack.post("/stripe/checkout", {
+        planType: type,
+        customerId: user.stripeCustomerId,
+      });
 
-//     const token = localStorage.getItem("token");
-//     if (!token) {
-//       toast.error("No has iniciado sesión");
-//       return;
-//     }
+      const { checkoutUrl } = response.data;
 
-//     const customerId = user?.stripeCustomerId;
-//     if (!customerId) {
-//       toast.error("No se encontró tu ID de cliente en Stripe");
-//       return;
-//     }
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        toast.error("No se pudo generar la URL de pago.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Error al generar la suscripción.");
+    }
+  };
 
-//     setLoading(true);
-//     try {
-//       const { paymentMethod, error } = await stripe.createPaymentMethod({
-//         type: "card",
-//         card: cardElement,
-//       });
+  return (
+    <div className="px-4 py-10 bg-fondo">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="py-2 text-3xl font-bold text-center transition-transform duration-300 hover:scale-110">
+          Escoge tu plan de suscripción
+        </h2>
 
-//       if (error || !paymentMethod) {
-//         toast.error(error?.message || "Error creando método de pago");
-//         return;
-//       }
+        <div className="grid gap-8 md:grid-cols-2">
+          {/* Plan mensual */}
+          <div className="overflow-hidden transition-transform duration-300 border-2 shadow-lg border-verde bg-fondo rounded-3xl hover:scale-105">
+            <div className="p-6 text-white bg-gradient-to-r from-verde to-green-600">
+              <h3 className="text-2xl font-semibold">Plan Mensual</h3>
+              <p className="mt-1 text-sm">Acceso completo por 30 días</p>
+            </div>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-3xl font-extrabold text-verde">
+                  $9.99
+                </span>
+                <span className="text-sm text-gray-500">por mes</span>
+              </div>
+              <ul className="mb-6 space-y-1 text-sm text-gray-600">
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Acceso a todas las funciones</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Cancelación en cualquier momento</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Soporte prioritario</span>
+                </li>
+              </ul>
+              <ButtonPrimary onClick={() => redirectToCheckout("monthly")}>
+                Comprar plan mensual
+              </ButtonPrimary>
+            </div>
+          </div>
 
-//       const res = await axios.post(
-//         "http://localhost:300/stripe/subscribe",
-//         {
-//           customerId,
-//           planId,
-//           paymentMethodId: paymentMethod.id, // 👈 Aquí se lo mandas al backend
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
+          {/* Plan anual */}
+          <div className="overflow-hidden transition-transform duration-300 border-2 shadow-lg bg-fondo border-verde rounded-3xl hover:scale-105">
+            <div className="p-6 text-white bg-gradient-to-r from-green-600 to-verde">
+              <h3 className="text-2xl font-semibold">Plan Anual</h3>
+              <p className="mt-1 text-sm">12 meses de acceso + 1 gratis</p>
+            </div>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-3xl font-extrabold text-verde">
+                  $99.99
+                </span>
+                <span className="text-sm text-gray-500">por año</span>
+              </div>
+              <ul className="mb-6 space-y-1 text-sm text-gray-600">
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Acceso a todas las funciones</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Cancelación en cualquier momento</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-verde">✔️</span>
+                  <span>Soporte prioritario</span>
+                </li>
+              </ul>
+              <ButtonPrimary onClick={() => redirectToCheckout("monthly")}>
+                Comprar plan anual
+              </ButtonPrimary>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-//       toast.success("¡Suscripción exitosa!");
-//       router.push("/perfil");
-//     } catch (err: any) {
-//       toast.error(err?.response?.data?.error || "Error al suscribirte");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-//       <CardElement />
-//       <button
-//         type="submit"
-//         disabled={loading}
-//         className="px-4 py-2 text-white rounded bg-verde hover:bg-green-600"
-//       >
-//         {loading ? "Procesando..." : "Confirmar pago"}
-//       </button>
-//     </form>
-//   );
-// };
-
-// const Precios = () => {
-//   const [planSeleccionado, setPlanSeleccionado] = useState<string | null>(null);
-
-//   return (
-//     <div className="px-4 py-4">
-//       <h2 className="text-3xl font-bold text-center">Nuestros Precios</h2>
-//       <div className="grid gap-6 md:grid-cols-2">
-//         {/* Plan mensual */}
-//         <div className="p-6 border shadow rounded-xl bg-fondo border-verde">
-//           <h3 className="text-2xl font-bold text-center text-verde">
-//             Tarifa Mensual
-//           </h3>
-//           <p className="mt-2 text-sm text-justify">
-//             Accede a todas las categorías y deportes extremos.
-//           </p>
-//           <div className="mt-6 text-center">
-//             <span className="text-3xl font-extrabold text-verde">$100</span>
-//             <p className="text-sm text-gray-500">por mes</p>
-//           </div>
-//           <button
-//             onClick={() =>
-//               setPlanSeleccionado("price_1R9IJi2LBi4exdRbAqcijuNx")
-//             }
-//             className="w-full px-4 py-2 mt-4 text-white rounded bg-verde hover:bg-green-600"
-//           >
-//             Seleccionar
-//           </button>
-//         </div>
-
-//         {/* Plan anual */}
-//         <div className="p-6 border shadow rounded-xl bg-fondo border-verde">
-//           <h3 className="text-2xl font-bold text-center text-verde">
-//             Tarifa Anual
-//           </h3>
-//           <p className="mt-2 text-sm text-justify">
-//             Incluye acceso total por 12 meses y eventos especiales.
-//           </p>
-//           <div className="mt-6 text-center">
-//             <span className="text-3xl font-extrabold text-verde">$1.100</span>
-//             <p className="text-sm text-gray-500">por año</p>
-//           </div>
-//           <button
-//             onClick={() =>
-//               setPlanSeleccionado("price_1R9IJi2LBi4exdRbgq4lADW5")
-//             }
-//             className="w-full px-4 py-2 mt-4 text-white rounded bg-verde hover:bg-green-600"
-//           >
-//             Seleccionar
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Módulo de pago */}
-//       {planSeleccionado && (
-//         <div className="mt-6">
-//           <h3 className="text-xl font-semibold text-center">
-//             Completa el pago para tu plan
-//           </h3>
-//           <Elements stripe={stripePromise}>
-//             <CheckoutForm planId={planSeleccionado} />
-//           </Elements>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Precios;
+export default Precios;

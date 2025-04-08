@@ -3,15 +3,18 @@ import axios from "axios";
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
+type CheckoutResponse = {
+  checkoutUrl: string;
+};
 export const StripeService = async (
+  planType: "monthly" | "yearly",
   customerId: string,
-  planId: string,
   token: string
-) => {
+): Promise<CheckoutResponse> => {
   try {
     const response = await axiosApiBack.post(
-      "/stripe/subscribe",
-      { customerId, planId },
+      "/stripe/checkout",
+      { planType, customerId },
       {
         headers: {
           "Content-Type": "application/json",
@@ -20,7 +23,7 @@ export const StripeService = async (
       }
     );
 
-    return response.data;
+    return response.data.checkoutUrl;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);

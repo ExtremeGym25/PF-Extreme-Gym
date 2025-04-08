@@ -1,7 +1,12 @@
 import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { StripeService } from './stripe.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @ApiTags('Stripe')
@@ -58,6 +63,36 @@ export class StripeController {
       res.status(200).json(subscription);
     } catch (err) {
       console.error('Error creating subscription:', err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+  @Post('create-checkout-session')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Crea una sesión de Stripe Checkout para suscribirse',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Checkout URL creada exitosamente.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error al crear la sesión de checkout.',
+  })
+  async createCheckoutSession(
+    @Body() body: { priceId: string; customerId: string },
+    @Res() res: Response,
+  ) {
+    try {
+      const session = await this.stripeService.createCheckoutSession(
+        body.priceId,
+        body.customerId,
+      );
+
+      res.status(200).json({ url: session.url });
+    } catch (err) {
+      console.error('Error creating Checkout session:', err);
       res.status(500).json({ error: err.message });
     }
   }
