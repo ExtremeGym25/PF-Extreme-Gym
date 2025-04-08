@@ -80,6 +80,8 @@ export interface IReservas {
   user: IUser;
 }
 export interface IPublication {
+  newPublication: { name: string; };
+  [x: string]: { name: string; };
   id: string;
   content: string;
   date: Date;
@@ -103,3 +105,18 @@ export interface IPublication {
     userName: string;
   }[];
 }
+export interface IListaComentarios {
+  publicationId: string;
+  comments?: IComment[];
+}
+export interface IComment {
+  id: string;
+  content: string;
+  date: string;
+  userId: string;
+  user?: {
+    name: string;
+  }
+}
+
+

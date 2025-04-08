@@ -23,8 +23,18 @@ export class CommentsService {
     return this.commentsRepository.save(comment);
   }
 
-  async getCommentsByPublicationId(publicationId: string): Promise<Comment[]> {
-    return this.commentsRepository.find({ where: { publicationId } });
+  async getCommentsByPublicationId(publicationId: string): Promise<any[]> {
+    const comentarios = await this.commentsRepository.find({ 
+      where: { publication: { id: publicationId } },
+    relations: ['user'], });
+
+    return comentarios.map((coment) => ({
+      id: coment.id,
+      content: coment.content,
+      date: coment.date,
+      publicationId: coment.publicationId,
+      user: coment.user.name,
+    }))
   }
 
   async updateComment(
