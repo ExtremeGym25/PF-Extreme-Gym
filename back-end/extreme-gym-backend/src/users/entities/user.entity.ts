@@ -13,6 +13,7 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
 } from 'typeorm';
 import { Publication } from 'src/community/entities/publication.entity';
 import { Comment } from 'src/community/entities/comment.entity';
@@ -24,6 +25,9 @@ import { Event } from '../../event/entities/event.entity'; // Asegúrate de la r
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp with time zone' })
+  createdAt: Date;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   name: string;
@@ -70,7 +74,6 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   provider?: string; // 'local', 'google', 'facebook'
 
-
   @Column({ nullable: true })
   @IsDateString()
   subscriptionExpirationDate: string;
@@ -113,7 +116,7 @@ export class User {
   @OneToMany(() => Account, (account) => account.user)
   accounts: Account[];
 
-  @ManyToMany(() => Event, (event) => event.attendees) // <---- Asegúrate de que la propiedad sea 'attendees'
+  @ManyToMany(() => Event, (event) => event.attendees)
   @JoinTable({
     name: 'user_events',
     joinColumn: { name: 'userId', referencedColumnName: 'id' },
