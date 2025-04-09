@@ -1,21 +1,21 @@
-"use client";
-import React from "react";
-import { motion } from "framer-motion";
-import EventosCasosExito from "../components/viewcomponents/eventosCasosExito";
-import ButtonPrimary from "../components/buttons/buttonPrimary";
-import GridCasosExito from "../components/viewcomponents/gridCasosExito";
-import { useAuth } from "../contextos/contextoAuth";
-import Link from "next/link";
-import CarouselHome from "../components/viewcomponents/carruselHome";
+'use client';
+import React from 'react';
+import { motion } from 'framer-motion';
+import EventosCasosExito from '../components/viewcomponents/eventosCasosExito';
+import ButtonPrimary from '../components/buttons/buttonPrimary';
+import GridCasosExito from '../components/viewcomponents/gridCasosExito';
+import { useAuth } from '../contextos/contextoAuth';
+import Link from 'next/link';
+import CarouselHome from '../components/viewcomponents/carruselHome';
 
 const CasosExito = () => {
   const { user } = useAuth();
-  const isFree = user?.subscriptionType === "free";
-  const isPremium = user?.subscriptionType === "premium";
+  const isFree = user?.subscriptionType === 'free';
+  const isPremium = user?.subscriptionType === 'premium';
 
   if (isPremium) {
     return (
-      <div className="py-2 pb-2 space-y-10 font-poppins bg-fondo">
+      <div className='py-2 pb-2 space-y-10 font-poppins bg-fondo'>
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -24,8 +24,8 @@ const CasosExito = () => {
           <CarouselHome />
         </motion.div>
         <div>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold transition-transform duration-300 hover:scale-110">
+          <div className='text-center'>
+            <h2 className='text-2xl font-bold transition-transform duration-300 hover:scale-110'>
               Opiniones de Nuestros Estudiantes
             </h2>
             <GridCasosExito />
@@ -37,13 +37,13 @@ const CasosExito = () => {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 1 }}
         >
-          <div className="flex flex-col items-center justify-center mx-auto ">
-            <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
+          <div className='flex flex-col items-center justify-center mx-auto '>
+            <h2 className='text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 '>
               ¡Eres parte de nuestra familia!
             </h2>
 
             <div>
-              <Link href="/planesRutinas">
+              <Link href='/planesRutinas'>
                 <ButtonPrimary> Participa</ButtonPrimary>
               </Link>
             </div>
@@ -56,11 +56,11 @@ const CasosExito = () => {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 1 }}
         >
-          <div className="text-center">
-            <h2 className="text-2xl font-bold transition-transform duration-300 hover:scale-110">
+          <div className='text-center'>
+            <h2 className='text-2xl font-bold transition-transform duration-300 hover:scale-110'>
               🔥 Nuestros Eventos 🔥
             </h2>
-            <p className="text-gray-600 transition-transform duration-300 hover:scale-110">
+            <p className='text-gray-600 transition-transform duration-300 hover:scale-110'>
               ¡Tu puedes participar en uno de ellos!
             </p>
           </div>
@@ -73,12 +73,12 @@ const CasosExito = () => {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 1 }}
         >
-          <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-2">
-            <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
+          <div className='flex flex-col items-center justify-center pb-4 mx-auto space-x-2'>
+            <h2 className='text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 '>
               ¿Quieres Participar?
             </h2>
             <div>
-              <Link href="/eventos">
+              <Link href='/eventos'>
                 <ButtonPrimary> Eventos </ButtonPrimary>
               </Link>
             </div>
@@ -88,7 +88,7 @@ const CasosExito = () => {
     );
   }
   return (
-    <div className="py-2 pb-2 space-y-10 font-poppins bg-fondo">
+    <div className='py-2 pb-2 space-y-10 font-poppins bg-fondo'>
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -97,8 +97,8 @@ const CasosExito = () => {
         <CarouselHome />
       </motion.div>
       <div>
-        <div className="text-center">
-          <h2 className="text-2xl font-bold transition-transform duration-300 hover:scale-110">
+        <div className='text-center'>
+          <h2 className='text-2xl font-bold transition-transform duration-300 hover:scale-110'>
             Opiniones de Nuestros Estudiantes
           </h2>
           <GridCasosExito />
@@ -110,16 +110,16 @@ const CasosExito = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="flex flex-col items-center justify-center mx-auto ">
-          <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
+        <div className='flex flex-col items-center justify-center mx-auto '>
+          <h2 className='text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 '>
             ¿Estas Listo?
           </h2>
-          <p className="text-gray-600 transition-transform duration-300 hover:scale-110">
+          <p className='text-gray-600 transition-transform duration-300 hover:scale-110'>
             ¡Forma parte de nuestra familia!
           </p>
           <div>
-            <Link href="/tarifas">
-              <ButtonPrimary> Inscribete</ButtonPrimary>
+            <Link href='/auth/registro'>
+              <ButtonPrimary> Inscribete </ButtonPrimary>
             </Link>
           </div>
         </div>
@@ -131,11 +131,11 @@ const CasosExito = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="text-center">
-          <h2 className="text-2xl font-bold transition-transform duration-300 hover:scale-110">
+        <div className='text-center'>
+          <h2 className='text-2xl font-bold transition-transform duration-300 hover:scale-110'>
             🔥 Nuestros Eventos 🔥
           </h2>
-          <p className="text-gray-600 transition-transform duration-300 hover:scale-110">
+          <p className='text-gray-600 transition-transform duration-300 hover:scale-110'>
             ¡Tu puedes participar en uno de ellos!
           </p>
         </div>
@@ -148,12 +148,12 @@ const CasosExito = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1 }}
       >
-        <div className="flex flex-col items-center justify-center pb-4 mx-auto space-x-2">
-          <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 ">
+        <div className='flex flex-col items-center justify-center pb-4 mx-auto space-x-2'>
+          <h2 className='text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 '>
             ¿Quieres Participar?
           </h2>
           <div>
-            <Link href="/auth/registro">
+            <Link href='/eventos'>
               <ButtonPrimary> Eventos</ButtonPrimary>
             </Link>
           </div>
