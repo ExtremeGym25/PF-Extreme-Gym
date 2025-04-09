@@ -90,7 +90,6 @@ const ImagenesPublicidad = () => {
       const response = await imageService(formData, token);
       const imageUrl = response.url;
 
-      // Guarda la nueva imagen en el contexto
       setImages((prev) => [...prev, imageUrl]);
       console.log("Imagen subida con éxito");
 
@@ -106,11 +105,11 @@ const ImagenesPublicidad = () => {
   };
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
-        <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
+      <div className="w-full max-w-lg p-6 shadow-md bg-fondo rounded-xl">
+        <h2 className="mb-4 text-2xl font-bold text-center text-foreground">
           Sube tus imágenes
         </h2>
-        <h2 className="mb-4 font-bold text-center text-l text-blanco">
+        <h2 className="mb-4 font-bold text-center text-l text-foreground">
           Ancho: 1920px Altura: 1080px
         </h2>
         <Formik
@@ -133,7 +132,7 @@ const ImagenesPublicidad = () => {
                     <input
                       type="file"
                       accept="image/*"
-                      className="w-full p-2 text-black rounded bg-blanco"
+                      className="w-full p-2 text-black bg-white rounded"
                       onChange={(e) => handleFileChange(e, setFieldValue)}
                     />
                     <ErrorMessage
@@ -147,7 +146,7 @@ const ImagenesPublicidad = () => {
 
               <button
                 type="submit"
-                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900"
+                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Subiendo..." : "Subir Imagen"}

@@ -107,8 +107,8 @@ const GetUsers = () => {
   };
 
   return (
-    <div className="max-w-4xl p-6 mx-auto text-white">
-      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+    <div className="max-w-4xl p-6 mx-auto text-foreground">
+      <h2 className="my-6 text-3xl font-bold text-center text-foreground md:text-4xl">
         Usuarios Registrados
       </h2>
 
@@ -142,7 +142,7 @@ const GetUsers = () => {
       </div>
 
       {searchedUser && (
-        <div className="w-full p-4 mb-6 text-white border rounded-lg shadow-md bg-azul2 border-verde">
+        <div className="w-full p-4 mb-6 border rounded-lg shadow-md text-foreground bg-fondo border-verde">
           <p>
             <strong>Nombre:</strong> {searchedUser.name}
           </p>
@@ -181,7 +181,7 @@ const GetUsers = () => {
         {usersList.map((user) => (
           <div
             key={user.id}
-            className="flex items-center justify-between w-full p-4 text-white rounded-lg shadow-md bg-azul2"
+            className="flex items-center justify-between w-full p-4 rounded-lg shadow-md text-foreground bg-fondo"
           >
             <div className="flex flex-col">
               {editingId === user.id ? (
@@ -192,7 +192,7 @@ const GetUsers = () => {
                     onChange={(e) =>
                       setEditedUser({ ...editedUser!, name: e.target.value })
                     }
-                    className="p-2 mb-2 text-white rounded text-foreground"
+                    className="p-2 mb-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="text"
@@ -200,11 +200,11 @@ const GetUsers = () => {
                     onChange={(e) =>
                       setEditedUser({ ...editedUser!, email: e.target.value })
                     }
-                    className="p-2 mb-2 text-white rounded text-foreground"
+                    className="p-2 mb-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="text"
-                    className="p-2 mb-2 text-white rounded text-foreground"
+                    className="p-2 mb-2 bg-white rounded text-foreground"
                     value={
                       editedUser?.phone != null
                         ? editedUser.phone.toString()
@@ -220,7 +220,7 @@ const GetUsers = () => {
 
                   <input
                     type="date"
-                    className="p-2 mb-2 text-white rounded text-foreground"
+                    className="p-2 mb-2 bg-white rounded text-foreground"
                     value={
                       editedUser?.subscriptionExpirationDate
                         ? new Date(editedUser.subscriptionExpirationDate)

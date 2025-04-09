@@ -57,12 +57,12 @@ export default function Dashboard() {
   }));
 
   return (
-    <div className="flex min-h-screen py-2 bg-azul1">
+    <div className="flex min-h-screen py-2 bg-fondo">
       <Sidebar />
       <div className="flex-1">
         <Header />
         <main className="p-6">
-          <h2 className="text-xl font-semibold text-[#F2F2F2] mb-4">
+          <h2 className="mb-4 text-xl font-semibold text-foreground">
             Resumen del Gimnasio
           </h2>
           <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
@@ -70,7 +70,7 @@ export default function Dashboard() {
               title="Total Usuarios "
               value={stats.totalUsuarios}
               icon={<Users />}
-              color="bg-[#58D68D]"
+              color="bg-verde"
             />
             <StatsCard
               title="Usuarios Free"
@@ -88,7 +88,7 @@ export default function Dashboard() {
               title="Ingresos Estimados"
               value={`$${stats.ingresosMensualesPremiumEstimado}`}
               icon={<DollarSign />}
-              color="bg-[#58D68D]"
+              color="bg-verde"
             />
             <StatsCard
               title="Publicaciones Mensuales"

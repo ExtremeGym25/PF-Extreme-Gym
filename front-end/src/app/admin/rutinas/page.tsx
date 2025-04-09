@@ -7,7 +7,7 @@ import Sidebar from "../components/Sidebar";
 import ListaRutinas from "./listaRutinas";
 const rutinasView = () => {
   return (
-    <div className="flex min-h-screen bg-[#0D1F2D]">
+    <div className="flex min-h-screen bg-fondo">
       <Sidebar />
       <div className="flex-1 p-4">
         <Header />

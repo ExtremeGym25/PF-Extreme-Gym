@@ -6,10 +6,12 @@ import UserAuth from "./authUser";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { useAuth } from "@/app/contextos/contextoAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { user } = useAuth();
+  const isPremium = user?.subscriptionType === "premium";
   return (
     <div className="sticky z-40 top-4 bg-fondo bg-opacity-80 backdrop-blur-md">
       <nav
@@ -51,12 +53,14 @@ const Navbar = () => {
             >
               Nosotros
             </Link>
-            <Link
-              href={routes.planesRutinas}
-              className="text-center transition hover:text-verde"
-            >
-              Planes y Rutinas
-            </Link>
+            {isPremium && (
+              <Link
+                href={routes.planesRutinas}
+                className="text-center transition hover:text-verde"
+              >
+                Planes y Rutinas
+              </Link>
+            )}
             <Link
               href={routes.casosExito}
               className="text-center transition hover:text-verde"
@@ -66,9 +70,14 @@ const Navbar = () => {
             <Link href={routes.tarifas} className="transition hover:text-verde">
               Tarifas
             </Link>
-            <Link href={routes.eventos} className="transition hover:text-verde">
-              Eventos
-            </Link>
+            {isPremium && (
+              <Link
+                href={routes.eventos}
+                className="transition hover:text-verde"
+              >
+                Eventos
+              </Link>
+            )}
             <Link
               href={routes.Comunidad}
               className="transition hover:text-verde"

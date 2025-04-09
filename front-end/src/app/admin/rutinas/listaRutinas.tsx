@@ -77,8 +77,8 @@ const ListaRutinas = () => {
 
   console.log("Renderizando con rutinas:", rutinas);
   return (
-    <div className="max-w-4xl p-4 mx-auto text-white">
-      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+    <div className="max-w-4xl p-4 mx-auto text-foreground">
+      <h2 className="my-6 text-2xl font-bold text-center text-foreground md:text-4xl">
         Lista de Rutinas
       </h2>
 
@@ -86,7 +86,7 @@ const ListaRutinas = () => {
         <select
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
-          className="w-full p-2 border rounded bg-azul1 md:w-auto"
+          className="w-full p-2 border rounded bg-fondo md:w-auto"
         >
           <option value="">Todas las categorías</option>
           <option value="salud">Salud</option>
@@ -116,10 +116,7 @@ const ListaRutinas = () => {
       ) : (
         <ul className="space-y-4">
           {rutinas.map((rutina) => (
-            <li
-              key={rutina.id}
-              className="p-4 bg-gray-800 rounded-lg shadow-md"
-            >
+            <li key={rutina.id} className="p-4 rounded-lg shadow-md bg-fondo">
               {editingId === rutina.id ? (
                 <>
                   <input
@@ -130,7 +127,7 @@ const ListaRutinas = () => {
                         prev ? { ...prev, nombre: e.target.value } : null
                       )
                     }
-                    className="w-full p-2 mb-2 border rounded"
+                    className="w-full p-2 mb-2 bg-white border rounded"
                   />
                   <textarea
                     value={nuevaRutina?.descripcion || ""}
@@ -139,7 +136,7 @@ const ListaRutinas = () => {
                         prev ? { ...prev, descripcion: e.target.value } : null
                       )
                     }
-                    className="w-full p-2 mb-2 border rounded"
+                    className="w-full p-2 mb-2 bg-white border rounded"
                   />
                   <button
                     onClick={() => {
@@ -153,7 +150,7 @@ const ListaRutinas = () => {
                       nuevaRutina?.descripcion ===
                         rutinas.find((r) => r.id === editingId)?.descripcion
                     }
-                    className="w-full px-3 py-1 text-white bg-green-500 rounded md:w-auto hover:bg-green-700"
+                    className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
                   >
                     Guardar
                   </button>
@@ -187,7 +184,7 @@ const ListaRutinas = () => {
                         setEditingId(rutina.id ?? "");
                         setNuevaRutina({ ...rutina });
                       }}
-                      className="px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:scale-110 ring-2 ring-lime-900 ring-opacity-100 md:text-base"
+                      className="px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-verde text-foreground hover:scale-110 ring-opacity-100 md:text-base"
                     >
                       Editar
                     </button>
