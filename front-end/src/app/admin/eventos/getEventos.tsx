@@ -106,7 +106,7 @@ const ListasEventos = () => {
   };
 
   return (
-    <div className="max-w-6xl p-6 mx-auto text-white">
+    <div className="max-w-6xl p-6 mx-auto text-foreground">
       <h2 className="my-6 text-2xl font-bold text-center md:text-4xl">
         Listado de Eventos
       </h2>
@@ -115,7 +115,7 @@ const ListasEventos = () => {
         <select
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
-          className="w-full p-3 text-white bg-gray-800 border border-gray-600 rounded md:w-auto"
+          className="w-full p-3 border border-gray-600 rounded text-foreground bg-fondo md:w-auto"
         >
           <option value="">Seleccione una categoría</option>
           <option value="Deportes Aéreos">Deportes Aéreos</option>
@@ -136,7 +136,7 @@ const ListasEventos = () => {
           {eventosFiltrados.map((evento) => (
             <li
               key={evento.id}
-              className="p-6 transition-transform bg-gray-900 shadow-lg rounded-xl hover:scale-105"
+              className="p-6 transition-transform shadow-lg bg-fondo rounded-xl hover:scale-105"
             >
               {editingId === evento.id ? (
                 <div className="space-y-4">
@@ -146,7 +146,7 @@ const ListasEventos = () => {
                     onChange={(e) =>
                       setEditedEvent({ ...editedEvent!, name: e.target.value })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <textarea
                     value={editedEvent?.description || ""}
@@ -156,7 +156,7 @@ const ListasEventos = () => {
                         description: e.target.value,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="number"
@@ -169,7 +169,7 @@ const ListasEventos = () => {
                           : 0,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="text"
@@ -180,7 +180,7 @@ const ListasEventos = () => {
                         location: e.target.value,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="number"
@@ -193,7 +193,7 @@ const ListasEventos = () => {
                           : 0,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                     step="any"
                   />
                   <input
@@ -207,7 +207,7 @@ const ListasEventos = () => {
                           : 0,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                     step="any"
                   />
                   <input
@@ -225,7 +225,7 @@ const ListasEventos = () => {
                           : evento.date,
                       })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <input
                     type="time"
@@ -233,7 +233,7 @@ const ListasEventos = () => {
                     onChange={(e) =>
                       setEditedEvent({ ...editedEvent!, time: e.target.value })
                     }
-                    className="w-full p-2 rounded text-foreground"
+                    className="w-full p-2 bg-white rounded text-foreground"
                   />
                   <div className="flex gap-4">
                     <button
@@ -265,21 +265,23 @@ const ListasEventos = () => {
                     </div>
                     <div className="w-full space-y-3 md:w-1/2">
                       <h3 className="text-xl font-semibold">{evento.name}</h3>
-                      <p className="text-gray-300">{evento.description}</p>
-                      <p className="text-gray-400">
+                      <p className="text-foreground">{evento.description}</p>
+                      <p className="text-foreground">
                         Capacidad: {evento.capacity}
                       </p>
-                      <p className="text-gray-400">Lugar: {evento.location}</p>
-                      <p className="text-gray-400">
+                      <p className="text-foreground">
+                        Lugar: {evento.location}
+                      </p>
+                      <p className="text-foreground">
                         Latitud: {evento.latitude}
                       </p>
-                      <p className="text-gray-400">
+                      <p className="text-foreground">
                         Longitud: {evento.longitude}
                       </p>
-                      <p className="text-gray-400">
+                      <p className="text-foreground">
                         Fecha: {new Date(evento.date).toLocaleDateString()}
                       </p>
-                      <p className="text-gray-400">Hora: {evento.time}</p>
+                      <p className="text-foreground">Hora: {evento.time}</p>
                     </div>
                   </div>
                   <div className="mt-6">

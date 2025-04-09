@@ -5,8 +5,8 @@ import ImagenesPublicidad from "./imagenes";
 
 const Publicidad = () => {
   return (
-    <div className="flex min-h-screen bg-azul1 ">
-      <div className="w-1/4 bg-azul1">
+    <div className="flex min-h-screen bg-fondo ">
+      <div className="w-1/4 bg-fondo">
         <Sidebar />
       </div>
 

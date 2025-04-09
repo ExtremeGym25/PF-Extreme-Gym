@@ -9,11 +9,11 @@ import Link from "next/link";
 import CarouselHome from "../components/viewcomponents/carruselHome";
 
 const CasosExito = () => {
-  const { isAuth } = useAuth();
-  if (isAuth === null) {
-    return <div>Loading...</div>;
-  }
-  if (isAuth) {
+  const { user } = useAuth();
+  const isFree = user?.subscriptionType === "free";
+  const isPremium = user?.subscriptionType === "premium";
+
+  if (isPremium) {
     return (
       <div className="py-2 pb-2 space-y-10 font-poppins bg-fondo">
         <motion.div
@@ -118,8 +118,8 @@ const CasosExito = () => {
             ¡Forma parte de nuestra familia!
           </p>
           <div>
-            <Link href="/auth/registro">
-              <ButtonPrimary> Registrate</ButtonPrimary>
+            <Link href="/tarifas">
+              <ButtonPrimary> Inscribete</ButtonPrimary>
             </Link>
           </div>
         </div>

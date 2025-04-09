@@ -1,5 +1,12 @@
 "use client";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface ChartProps {
   data: { mes: string; membresias: number }[];
@@ -7,16 +14,16 @@ interface ChartProps {
 
 export default function Chart({ data }: ChartProps) {
   return (
-    <div className="bg-[#091620] p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold text-[#F2F2F2] mb-4">
+    <div className="p-6 rounded-lg shadow-md bg-fondo">
+      <h3 className="mb-4 text-lg font-semibold text-foreground">
         Membresías adquiridas
       </h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
-          <XAxis dataKey="mes" stroke="#F2F2F2" />
-          <YAxis stroke="#F2F2F2" />
+          <XAxis dataKey="mes" stroke="#black" />
+          <YAxis stroke="#black" />
           <Tooltip />
-          <Bar dataKey="membresias" fill="#58D68D" />
+          <Bar dataKey="membresias" fill="#80c342" />
         </BarChart>
       </ResponsiveContainer>
     </div>

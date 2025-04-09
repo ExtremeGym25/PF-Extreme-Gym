@@ -109,7 +109,7 @@ const GetReservasAdmin = () => {
   };
   return (
     <div className="max-w-4xl p-6 mx-auto">
-      <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+      <h2 className="my-6 text-2xl font-bold text-center text-foreground md:text-4xl">
         Reservas
       </h2>
 
@@ -144,7 +144,7 @@ const GetReservasAdmin = () => {
       </div>
 
       {searchedBooking && (
-        <div className="w-full p-4 mb-6 text-white border rounded-lg shadow-md bg-azul2 border-verde">
+        <div className="w-full p-4 mb-6 border rounded-lg shadow-md text-foreground bg-fondo border-verde">
           <p>
             <strong>Nombre Usuario:</strong> {searchedBooking.user.name}
           </p>
@@ -177,7 +177,7 @@ const GetReservasAdmin = () => {
         {bookings.map((booking) => (
           <div
             key={booking.id}
-            className="flex items-center justify-between w-full p-4 text-white rounded-lg shadow-md bg-azul2"
+            className="flex items-center justify-between w-full p-4 rounded-lg shadow-md text-foreground bg-fondo"
           >
             <div className="flex flex-col">
               <h3 className="text-lg font-bold capitalize">
