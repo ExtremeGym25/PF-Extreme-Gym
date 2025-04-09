@@ -24,16 +24,17 @@ const Precios = () => {
   }, [canceled]);
 
   const redirectToCheckout = async (type: "monthly" | "yearly") => {
+    if (!user) {
+      toast.error("Inicia sesión para hacer la compra");
+      return;
+    }
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         setError("No hay token disponible");
         return;
       }
-      if (!user?.id) {
-        toast.error("Usuario no identificado");
-        return;
-      }
+
       const priceId =
         type === "monthly"
           ? "price_1R9IJi2LBi4exdRbAqcijuNx"
