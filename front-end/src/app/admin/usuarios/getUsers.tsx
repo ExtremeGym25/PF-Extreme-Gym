@@ -21,6 +21,7 @@ const GetUsers = () => {
 
     try {
       const token = localStorage.getItem("token") || "";
+      console.log(token, "TOKEN EN GET USER");
       if (!token) {
         toast.error("No has iniciado sesión");
         setError("No has iniciado sesión");
@@ -29,6 +30,7 @@ const GetUsers = () => {
       }
 
       const users = await getUsers(token);
+      console.log(users, "respuesta");
       setUsersList(users);
     } catch (error: any) {
       console.error("Error al obtener los usuarios:", error);
