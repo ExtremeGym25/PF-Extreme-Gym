@@ -9,9 +9,20 @@ import MiPerfilUsuario from "../views/MiPerfilUsuario";
 import UpdatePerfilUsuario from "../views/UpdateUsuario";
 import ImagenPerfil from "../views/ImagenPerfil";
 import DeleteUsuario from "../views/DeleteUsuario";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const MiPerfil = () => {
   const loading = usePrivate();
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+
+  useEffect(() => {
+    if (success === "true") {
+      toast.success("¡Suscripción exitosa!");
+    }
+  }, [success]);
 
   if (loading) {
     return (
@@ -27,7 +38,7 @@ const MiPerfil = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-8 bg-background font-poppins">
-      <h2 className="text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
+      <h2 className="pb-4 text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
         Mi Perfil
       </h2>
       <div className="grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-2">
@@ -54,12 +65,6 @@ const MiPerfil = () => {
         <div className="flex flex-col items-center justify-center w-full max-w-xl min-h-screen p-8 space-y-4 shadow-lg bg-fondo rounded-2xl">
           <MiPerfilUsuario />
         </div>
-      </div>
-
-      <div className="py-6">
-        <h2 className="text-3xl font-bold text-center transition-transform duration-300 text-foreground hover:scale-105">
-          Eventos
-        </h2>
       </div>
     </div>
   );

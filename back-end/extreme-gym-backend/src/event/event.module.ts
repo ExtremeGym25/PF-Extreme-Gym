@@ -7,11 +7,27 @@ import { UsersModule } from 'src/users/users.module';
 import { User } from 'src/users/entities/user.entity';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUploadModule } from 'src/file-upload/file-upload.module';
+import { Notification } from '../notifications/entities/notification.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { GeolocationService } from 'src/geolocation/geolocation.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, User, Booking]), UsersModule, FileUploadModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Event,
+      User,
+      Booking,
+      User,
+      MailerModule,
+      Notification,
+    ]),
+    UsersModule,
+    FileUploadModule,
+    NotificationsModule,
+  ],
   controllers: [EventController],
-  providers: [EventService],
+  providers: [EventService, NotificationsModule, GeolocationService],
   exports: [EventService],
 })
 export class EventModule {}

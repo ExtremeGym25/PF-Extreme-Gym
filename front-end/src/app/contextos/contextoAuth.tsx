@@ -9,27 +9,26 @@ import {
   useEffect,
 } from "react";
 import { jwtDecode } from "jwt-decode";
-
 import { IUser } from "../tipos";
-
-// Que queremos guardar en el contexto
+import { useSession, signOut } from "next-auth/react";
+import type { ExtendedUser } from "@/app/lib/authOptions";
 interface AuthContextType {
   user: IUser | null;
-  isAuth: boolean | null;
+  isAuth: boolean;
   token?: string | null;
-  // actions
   saveUserData: (data: { user: IUser; token: string }) => void;
   resetUserData: () => void;
-  setUser: React.Dispatch<React.SetStateAction<IUser | null>>; // <-- Agregado aquí
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthContextType["user"]>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isAuth, setIsAuth] = useState<AuthContextType["isAuth"]>(null);
+  const [isAuth, setIsAuth] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const { data: session, status } = useSession();
 
   const saveUserData = (data: { user: IUser; token: string }) => {
     setUser(data.user);
@@ -44,64 +43,100 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuth(false);
     setToken(null);
     localStorage.removeItem("user");
-    console.log("Se eliminó el token");
+    localStorage.removeItem("token");
+
+    // Cierra sesión si es NextAuth
+    signOut({ redirect: false });
   };
 
+  // Verificar token local
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-      console.log("Datos en localStorage:", { storedUser, storedToken });
-
-      if (!storedUser || !storedToken) {
-        setIsAuth(false);
-        setLoading(false);
-        return;
-      }
-
+    if (storedToken && storedToken.split(".").length === 3) {
       try {
-        const parsedUser: IUser = JSON.parse(storedUser);
-
-        if (!storedToken || storedToken.split(".").length !== 3) {
-          console.warn("Token inválido o mal formado");
-          resetUserData();
-          setLoading(false);
-          return;
-        }
-
         const decodedToken: any = jwtDecode(storedToken);
-        console.log("Token decodificado:", decodedToken);
-
         const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp && decodedToken.exp < currentTime) {
-          console.warn("El token ha expirado");
-          resetUserData();
-          setLoading(false);
-          return;
-        }
 
-        setUser(parsedUser);
-        setToken(storedToken);
-        setIsAuth(true);
+        if (decodedToken.exp && decodedToken.exp > currentTime) {
+          const parsedUser: IUser = storedUser
+            ? JSON.parse(storedUser)
+            : {
+                id: decodedToken.id,
+                email: decodedToken.email,
+                name: decodedToken.name || "",
+                profileImage: decodedToken.profileImage || "",
+              };
+
+          setUser(parsedUser);
+          setToken(storedToken);
+          setIsAuth(true);
+        } else {
+          resetUserData();
+        }
       } catch (error) {
-        console.error("Error al parsear los datos del usuario:", error);
+        console.warn("Error al decodificar token:", error);
         resetUserData();
       }
-
-      setLoading(false);
     }
+
+    setLoading(false);
   }, []);
+
+  // Si inicia sesión con Google
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+
+    if (status === "authenticated" && session?.accessToken && session?.user) {
+      // Si ya tenemos token guardado, no lo sobrescribimos
+      if (!storedToken || storedToken !== session.accessToken) {
+        const extendedUser = session.user as ExtendedUser;
+
+        const userData: IUser = {
+          id: session.user.id ?? "",
+          email: session.user.email ?? "",
+          name: session.user.name ?? "",
+          profileImage: session.user.profileImage ?? "",
+          role: session.user.role ?? "",
+          phone: extendedUser.phone ?? 0,
+          country: extendedUser.country ?? "",
+          address: extendedUser.address ?? "",
+          city: extendedUser.city ?? "",
+          subscriptionType: extendedUser.subscriptionType,
+          stripeCustomerId: extendedUser.stripeCustomerId ?? "",
+          stripeSubscriptionId: extendedUser.stripeSubscriptionId ?? "",
+          subscriptionExpirationDate: extendedUser.subscriptionExpirationDate,
+          isAdmin: extendedUser.isAdmin ?? false,
+          isActive: extendedUser.isActive ?? true,
+        };
+        console.log(userData, "autenticacioon por terceros");
+        console.log(session.accessToken, "autenticacion porterceros");
+        saveUserData({ user: userData, token: session.accessToken });
+      }
+    } else if (status === "unauthenticated") {
+      // Solo hacemos reset si no hay token local
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        resetUserData();
+      }
+    }
+  }, [session, status]);
 
   if (loading) {
     return <div>Cargando...</div>;
   }
 
-  console.log("Contexto de autenticación:", { user, isAuth, token });
-
   return (
     <AuthContext.Provider
-      value={{ user, isAuth, saveUserData, resetUserData, token, setUser }}
+      value={{
+        user,
+        isAuth,
+        saveUserData,
+        resetUserData,
+        token,
+        setUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

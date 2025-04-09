@@ -24,9 +24,6 @@ export const loginService = async (userData: Partial<IUserLogin>) => {
         error.response?.data.message || error.message
       );
       throw new Error(error.response?.data?.message || "Error desconocido");
-    } else {
-      console.error("Error desconocido:", error);
-      throw new Error("Ocurrió un error inesperado");
     }
   }
 };
@@ -35,9 +32,9 @@ export const registerService = async (userData: Partial<IUser>) => {
   try {
     await axiosApiBack.post("/auth/signup", userData);
     return "Registro exitoso";
-  } catch (error) {
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      const errorData = error.response?.data as ErrorResponse; // Aseguramos el tipo
+      const errorData = error.response?.data as ErrorResponse;
       console.log("Error al registrarse", errorData?.message || error.message);
       throw new Error(errorData?.message || "Error_Register");
     } else {
@@ -56,16 +53,13 @@ export const updateUser = async (
     console.log("Sending Data:", JSON.stringify(formData, null, 2));
     console.log("UserID:", userId);
 
-    const response = await axios.patch(
-      `http://localhost:3000/users/${userId}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axiosApiBack.patch(`/users/${userId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response, "respuesta ");
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -82,24 +76,22 @@ export const updateUser = async (
 };
 export const uploadProfileImageService = async (
   file: File,
-  id: string
+  id: string,
+  token: string
 ): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("id", id);
+  formData.append("userId", id);
 
   try {
-    const response = await fetch("http://localhost:3000/users/profile", {
-      method: "PATCH",
-      body: formData,
+    const response = await axiosApiBack.patch("/users/profile", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
     });
 
-    if (!response.ok) {
-      throw new Error("Error al subir la imagen");
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       console.error(
@@ -113,11 +105,15 @@ export const uploadProfileImageService = async (
     }
   }
 };
-export const deleteUserService = async (userId: string) => {
+export const deleteUserService = async (userId: string, token: string) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/users/${userId}`
-    );
+    const response = await axiosApiBack.delete(`/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {

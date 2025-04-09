@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 interface Props {
   id: string;
-  onPlanDeleted: (id: string) => void; // Se pasa el ID eliminado
+  onPlanDeleted: (id: string) => void;
 }
 
 const DeleteRutinas = ({ id, onPlanDeleted }: Props) => {
@@ -26,22 +26,23 @@ const DeleteRutinas = ({ id, onPlanDeleted }: Props) => {
       return;
     }
 
-    if (!window.confirm("¿Estás seguro de eliminar este plan?")) return;
+    if (!window.confirm("¿Estás seguro de eliminar esta Rutina?")) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
       await deletePlanService(id, token);
-      toast.success("Plan eliminado correctamente");
+      toast.success("Rutina eliminado correctamente");
 
       if (mountedRef.current) {
         setTimeout(() => {
           onPlanDeleted(id);
         }, 1000);
       }
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Error desconocido";
+    } catch (error: any) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Error desconocido";
       setError(
         errorMsg.includes("jwt")
           ? "Sesión expirada. Vuelve a iniciar sesión."

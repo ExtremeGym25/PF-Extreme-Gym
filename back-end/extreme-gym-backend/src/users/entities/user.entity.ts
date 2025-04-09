@@ -1,9 +1,9 @@
 import { IsDateString } from 'class-validator';
 import { Booking } from 'src/bookings/entities/booking.entity';
 import { FileUpload } from 'src/file-upload/entities/file-upload.entity';
-import { Subscription } from 'src/payments/entities/payment.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
 import { UserPlan } from 'src/plans/entities/user-plan.entity';
+import { Account } from '../../auth/entities/account.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,15 +11,23 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
+  CreateDateColumn,
 } from 'typeorm';
+import { Publication } from 'src/community/entities/publication.entity';
+import { Comment } from 'src/community/entities/comment.entity';
+import { Event } from '../../event/entities/event.entity'; // Asegúrate de la ruta correcta
 
 @Entity({
   name: 'USER',
 })
 export class User {
-  // [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp with time zone' })
+  createdAt: Date;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   name: string;
@@ -27,7 +35,7 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 80, nullable: false })
+  @Column({ type: 'varchar', length: 80, nullable: true })
   password: string;
 
   @Column({ type: 'bigint', nullable: true })
@@ -50,9 +58,21 @@ export class User {
   })
   profileImage?: string;
 
-  @ManyToOne(() => Subscription)
-  @JoinColumn({ name: 'planid' })
-  plan: Subscription;
+  @Column({
+    type: 'enum',
+    enum: ['free', 'premium'],
+    default: 'free',
+  })
+  subscriptionType: 'free' | 'premium';
+
+  @Column({ nullable: true })
+  stripeCustomerId: string;
+
+  @Column({ nullable: true })
+  stripeSubscriptionId: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  provider?: string; // 'local', 'google', 'facebook'
 
   @Column({ nullable: true })
   @IsDateString()
@@ -69,7 +89,6 @@ export class User {
     default: true,
   })
   isActive: boolean;
-  // user: any;
 
   @Column({ nullable: true })
   role: string;
@@ -88,5 +107,23 @@ export class User {
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
-  
+  @OneToMany(() => Publication, (publication) => publication.user)
+  publications: Publication[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
+
+  @OneToMany(() => Account, (account) => account.user)
+  accounts: Account[];
+
+  @ManyToMany(() => Event, (event) => event.attendees)
+  @JoinTable({
+    name: 'user_events',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'eventId', referencedColumnName: 'id' },
+  })
+  attendedEvents: Event[];
+
+  @OneToMany(() => Event, (event) => event.user)
+  createdEvents: Event[];
 }

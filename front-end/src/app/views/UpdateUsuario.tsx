@@ -48,6 +48,7 @@ const UpdatePerfilUsuario = () => {
 
     if (!user || !user.id) {
       toast.error("Usuario no definido");
+
       return;
     }
     if (formData.password && !validatePassword(formData.password)) {
@@ -55,11 +56,12 @@ const UpdatePerfilUsuario = () => {
     }
 
     const token = localStorage.getItem("token") || "";
+    console.log("token actualizar", token);
     if (!token) {
       toast.error("No hay token disponible");
       return;
     }
-
+    console.log(token, "tokenenuodateperfil");
     const dataToSend: Partial<IUser> = {
       ...formData,
       phone: formData.phone ? Number(formData.phone) : undefined,
@@ -68,15 +70,17 @@ const UpdatePerfilUsuario = () => {
     if (!dataToSend.password) {
       delete dataToSend.password;
     }
-
+    console.log(dataToSend, "datatosend");
+    console.log(user.id, "uSERid");
+    console.log(token, "token update usuario");
     try {
       const updatedUser = await updateUser(user.id, dataToSend, token);
-      saveUserData({ user: updatedUser, token });
+      saveUserData({ user: updatedUser.user, token });
       toast.success("¡Datos actualizados correctamente!");
-      router.push(routes.login);
-    } catch (error) {
+      router.push(routes.miPerfil);
+    } catch (error: any) {
       console.error("Error al actualizar datos:", error);
-      toast.error("Hubo un error al actualizar los datos.");
+      toast.error(error.message);
     }
   };
 

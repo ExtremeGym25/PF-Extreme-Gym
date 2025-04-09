@@ -1,62 +1,55 @@
+<!DOCTYPE html>
 <html lang='es'>
-  <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Tu suscripción ha expirado</title>
+<head>
+    <meta charset='UTF-8'>
+    <title>{{#if isExpired}}Suscripción vencida{{else}}Suscripción por vencer{{/if}} - Extreme Gym</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        color: #333;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .header {
-        color: #e74c3c;
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-      .button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #e74c3c;
-        color: white !important;
-        text-decoration: none;
-        border-radius: 5px;
-        margin-top: 20px;
-      }
-      .footer {
-        margin-top: 30px;
-        font-size: 12px;
-        color: #777;
-      }
+        /* Estilos base (iguales para ambos casos) */
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .plan-info { background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 5px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 10px; }
+        
+        /* Estilos condicionales */
+        {{#if isExpired}}
+        .header { color: #d9534f; } /* Rojo para expirado */
+        .urgency-badge { background-color: #d9534f; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.9em; }
+        {{else}}
+        .header { color: #f0ad4e; } /* Amarillo/naranja para por vencer */
+        .urgency-badge { background-color: #f0ad4e; color: white; padding: 3px 8px; border-radius: 3px; font-size: 0.9em; }
+        {{/if}}
     </style>
-  </head>
-  <body>
-    <div class='container'>
-      <div class='header'>¡Tu suscripción ha expirado!</div>
-
-      <p>Hola <strong>{{name}}</strong>,</p>
-
-      <p>Tu acceso a
-        <strong>Extreme Gym</strong>
-        ha finalizado el
-        <strong>{{expirationDate}}</strong>.</p>
-
-      <p>Para renovar tu suscripción y seguir disfrutando de todos los
-        beneficios:</p>
-
-      <a href='https://tudominio.com/renovar' class='button'>RENOVAR SUSCRIPCIÓN</a>
-
-      <p>Si ya renovaste, por favor ignora este mensaje.</p>
-
-      <div class='footer'>
-        <p>Equipo Extreme Gym</p>
-        <p>© {{currentYear}} Extreme Gym. Todos los derechos reservados.</p>
-      </div>
+</head>
+<body>
+    <div class='header'>
+        {{#if isExpired}}⚠️ Tu suscripción ha expirado{{else}}⚠️ Tu suscripción está por vencer{{/if}}
     </div>
-  </body>
+    
+    <p>Hola <strong>{{name}}</strong>,</p>
+    
+    <div class='plan-info'>
+        <p><strong>Plan:</strong> {{plan}}</p>
+        <p>
+            <strong>Estado:</strong> 
+            <span class='urgency-badge'>
+                {{#if isExpired}}Expirado{{else}}Activo ({{daysRemaining}} días restantes){{/if}}
+            </span>
+        </p>
+        <p><strong>Fecha {{#if isExpired}}de expiración{{else}}de vencimiento{{/if}}:</strong> {{expirationDate}}</p>
+    </div>
+    
+    <p>
+        {{#if isExpired}}
+        Tu acceso a Extreme Gym ha finalizado. Renueva ahora para recuperar todos los beneficios.
+        {{else}}
+        Tu suscripción está próxima a vencer. Renueva para evitar interrupciones.
+        {{/if}}
+    </p>
+    
+    <a href='https://tugym.com/renovar' class='button'>RENOVAR SUSCRIPCIÓN</a>
+    
+    <div class='footer'>
+        <p>© {{currentYear}} Extreme Gym. Todos los derechos reservados.</p>
+    </div>
+</body>
 </html>

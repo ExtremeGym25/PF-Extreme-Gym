@@ -35,9 +35,9 @@ const CreacionRutinas = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken && token !== storedToken) {
+    if (storedToken) {
       setToken(storedToken);
-    } else if (!storedToken) {
+    } else {
       toast.error("No hay token disponible");
     }
   }, []);
@@ -45,7 +45,7 @@ const CreacionRutinas = () => {
   return (
     <div className="flex items-center justify-center p-2">
       <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
-        <h2 className="mb-4 text-2xl font-bold text-center text-blanco">
+        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
           Crear Rutina
         </h2>
         <Formik
@@ -86,10 +86,10 @@ const CreacionRutinas = () => {
                     throw new Error("No se recibió URL de imagen válida");
                   }
 
-                  console.log("✅ URL Cloudinary:", uploadResponse.imageUrl);
+                  console.log(" URL Cloudinary:", uploadResponse.imageUrl);
                   imageUrlRef.current = uploadResponse.imageUrl;
                 } catch (error: any) {
-                  console.error("❌ Error subiendo imagen:", error.message);
+                  console.error(" Error subiendo imagen:", error.message);
                   toast.error(error.message);
                   return;
                 }
@@ -98,17 +98,17 @@ const CreacionRutinas = () => {
               toast.success("Rutina creada exitosamente");
               resetForm();
               if (fileInputRef.current) fileInputRef.current.value = "";
+              window.location.reload();
             } catch (error: any) {
               const errorMessage =
                 error.response?.data?.message || error.message;
-              console.error("❌ Error:", errorMessage);
+              console.error(" Error:", errorMessage);
               toast.error(errorMessage);
             }
           }}
         >
           {({ isSubmitting, setFieldValue }) => (
             <Form className="flex flex-col gap-4">
-              {/* Campos del formulario */}
               <Field
                 type="text"
                 name="nombre"

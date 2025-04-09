@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import CarouselCasosExito from "../components/viewcomponents/carouselcasosExito";
 import EventosCasosExito from "../components/viewcomponents/eventosCasosExito";
 import ButtonPrimary from "../components/buttons/buttonPrimary";
 import GridCasosExito from "../components/viewcomponents/gridCasosExito";
 import { useAuth } from "../contextos/contextoAuth";
 import Link from "next/link";
+import CarouselHome from "../components/viewcomponents/carruselHome";
 
 const CasosExito = () => {
   const { isAuth } = useAuth();
@@ -21,7 +21,7 @@ const CasosExito = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
         >
-          <CarouselCasosExito />
+          <CarouselHome />
         </motion.div>
         <div>
           <div className="text-center">
@@ -94,7 +94,7 @@ const CasosExito = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
       >
-        <CarouselCasosExito />
+        <CarouselHome />
       </motion.div>
       <div>
         <div className="text-center">

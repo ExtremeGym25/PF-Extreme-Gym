@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
+import { signOut } from "next-auth/react";
+
 import Link from "next/link";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { routes } from "@/app/routes/routes";
@@ -76,21 +78,38 @@ const UserAuth = () => {
                   <hr className="w-full my-2 border-t-1 border-verde" />
                   {[
                     { label: "Mi Perfil", route: routes.miPerfil },
-                    { label: "Rutinas", route: routes.miPerfil },
-                    { label: "Rutinas Favoritas", route: routes.favoritos },
-                    { label: "Notificaciones", route: routes.miPerfil },
-                    { label: "Otra Cosa", route: routes.miPerfil },
-                    { label: "Ayuda y Soporte", route: routes.miPerfil },
+                    { label: "Rutinas", route: routes.planesRutinas },
+                    { label: "Mis Rutinas Favoritas", route: routes.favoritos },
+                    {
+                      label: "Mis Eventos Reservados",
+                      route: routes.misEventos,
+                    },
+                    { label: "Comunidad", route: routes.comunidad },
+                    { label: "Ayuda y Soporte ", route: routes.chat },
                   ].map(({ label, route }) => (
                     <Link key={label} href={route} className="hover:text-verde">
                       {label}
                     </Link>
                   ))}
                 </div>
+                {user?.isAdmin && (
+                  <div>
+                    <Link href="/admin">
+                      <button className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base">
+                        Dashboard Administrador
+                      </button>
+                    </Link>
+                  </div>
+                )}
 
                 <hr className="my-2 border-verde" />
                 <span
-                  onClick={resetUserData}
+                  onClick={() => {
+                    resetUserData();
+                    signOut({
+                      callbackUrl: "/",
+                    });
+                  }}
                   className="flex items-center gap-2 transition cursor-pointer hover:text-verde"
                 >
                   <IoIosLogOut />

@@ -26,14 +26,6 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="/admin/eventos"
-              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
-            >
-              Eventos
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/admin/rutinas"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
@@ -42,12 +34,21 @@ export default function Sidebar() {
           </li>
           <li>
             <Link
-              href="/admin/entrenadores"
+              href="/admin/eventos"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
-              Entrenadores
+              Eventos
             </Link>
           </li>
+          <li>
+            <Link
+              href="/admin/reservas"
+              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
+            >
+              Reservas Eventos
+            </Link>
+          </li>
+
           <li>
             <Link
               href="/admin/publicidad"
@@ -56,20 +57,13 @@ export default function Sidebar() {
               Publicidad
             </Link>
           </li>
+
           <li>
             <Link
-              href="/admin/casosDeExito"
+              href="/"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
-              Casos de Exito
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin/vistaPrevia"
-              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
-            >
-              Vista Previa
+              Home
             </Link>
           </li>
         </ul>

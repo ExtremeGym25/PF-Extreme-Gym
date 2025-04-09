@@ -2,14 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { PaymentsModule } from './payments/payments.module';
 import { PlansModule } from './plans/plans.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { TrainingRouteModule } from './training-route/training-route.module';
 import { EventModule } from './event/event.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-import { ChatBotModule } from './chat-bot/chat-bot.module';
 import { ChatModule } from './chat/chat.module';
 import { CommunityModule } from './community/community.module';
 import { AuthModule } from './auth/auth.module';
@@ -18,9 +15,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
-import { adminModule } from './admin/admin.module';
+import { AdminModule } from './admin/admin.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ExpirationTask } from './plans/expiration.task';
+import { GeolocationService } from './geolocation/geolocation.service';
 
 @Module({
   imports: [
@@ -28,15 +26,12 @@ import { ExpirationTask } from './plans/expiration.task';
     AuthModule,
     CommunityModule,
     ChatModule,
-    ChatBotModule,
     FileUploadModule,
     EventModule,
-    TrainingRouteModule,
     NotificationsModule,
     BookingsModule,
     PlansModule,
-    PaymentsModule,
-    adminModule,
+    AdminModule,
 
     ScheduleModule.forRoot(),
 
@@ -61,7 +56,7 @@ import { ExpirationTask } from './plans/expiration.task';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway, ExpirationTask],
+  providers: [AppService, ChatGateway, ExpirationTask, GeolocationService],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}

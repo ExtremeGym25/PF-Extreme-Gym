@@ -1,28 +1,32 @@
 "use client";
-import React, { useEffect, useState, ChangeEvent } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { imageService } from "@/app/servicios/imagenes";
+import { useImageContext } from "@/app/contextos/contextoImag";
 
 const validationSchema = Yup.object().shape({
   imageUrl: Yup.mixed()
     .required("La imagen es obligatoria")
-    .test("fileSize", "El archivo debe ser menor a 5MB", (value) =>
-      value ? (value as File).size <= 5 * 1024 * 1024 : false
+    .test(
+      "fileSize",
+      "El archivo debe ser menor a 5MB",
+      (value) => value && (value as File).size <= 5 * 1024 * 1024
     )
-    .test("fileFormat", "Solo se permiten imágenes (JPEG, PNG, GIF)", (value) =>
-      value
-        ? ["image/jpeg", "image/gif", "image/png"].includes(
-            (value as File).type
-          )
-        : false
+    .test(
+      "fileFormat",
+      "Solo se permiten imágenes (JPEG, PNG, GIF)",
+      (value) =>
+        value &&
+        ["image/jpeg", "image/gif", "image/png"].includes((value as File).type)
     ),
 });
 
 const ImagenesPublicidad = () => {
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const { setImages } = useImageContext();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -44,23 +48,24 @@ const ImagenesPublicidad = () => {
   }, []);
 
   const handleFileChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
   ) => {
     const file = event.target.files?.[0];
+
     if (!file) {
       toast.error("No se seleccionó ningún archivo.");
       return;
     }
+
     console.log("Archivo seleccionado:", file);
     setFieldValue("imageUrl", file);
   };
 
-  const handleSubmit = async (values: {
-    imageUrl: File | null;
-    category: string;
-    userId: string | null;
-  }) => {
+  const handleSubmit = async (
+    values: { imageUrl: File | null; category: string; userId: string | null },
+    { resetForm }: { resetForm: () => void }
+  ) => {
     if (!values.imageUrl) {
       toast.error("No se seleccionó un archivo.");
       return;
@@ -72,22 +77,33 @@ const ImagenesPublicidad = () => {
 
     const formData = new FormData();
     formData.append("file", values.imageUrl);
+    formData.append("upload_preset", "tu_upload_preset");
     formData.append("category", "image");
     formData.append("userId", values.userId);
 
+    console.log(" FormData antes de enviar:");
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
     try {
-      console.log("🔍 Datos enviados a la API:");
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-      }
       const response = await imageService(formData, token);
-      console.log("Imagen subida con éxito:", response.imageUrl);
-      toast.success("Imagen subida con éxito");
+      const imageUrl = response.url;
+
+      // Guarda la nueva imagen en el contexto
+      setImages((prev) => [...prev, imageUrl]);
+      console.log("Imagen subida con éxito");
+
+      toast.success("Imagen subida correctamente");
+      resetForm();
+      const fileInput = document.querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     } catch (error: any) {
       toast.error(error.message || "Error subiendo la imagen.");
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
@@ -104,14 +120,15 @@ const ImagenesPublicidad = () => {
             userId: userId || "",
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => handleSubmit(values)}
+          onSubmit={(values, { resetForm }) =>
+            handleSubmit(values, { resetForm })
+          }
           enableReinitialize
         >
-          {({ isSubmitting, setFieldValue, errors }) => (
+          {({ isSubmitting, setFieldValue }) => (
             <Form className="flex flex-col gap-4">
-              <Field
-                name="imageUrl"
-                render={() => (
+              <Field name="imageUrl">
+                {() => (
                   <div>
                     <input
                       type="file"
@@ -126,7 +143,8 @@ const ImagenesPublicidad = () => {
                     />
                   </div>
                 )}
-              />
+              </Field>
+
               <button
                 type="submit"
                 className="w-full px-4 py-2 mt-4 text-sm transition rounded-md bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900"

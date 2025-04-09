@@ -90,7 +90,7 @@ export const updatePlanService = async (
       throw new Error("El objeto de datos (dto) está vacío.");
     }
 
-    const response = await axios.put(`http://localhost:3000/plans/${id}`, dto, {
+    const response = await axiosApiBack.put(`/plans/${id}`, dto, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -100,17 +100,22 @@ export const updatePlanService = async (
     console.log(response.data, "respuesta servicio");
     return response.data;
   } catch (error: any) {
-    console.error("Error en updatePlanService:", error);
-
-    throw new Error(
-      error.response?.data?.message || "Error al actualizar el plan."
-    );
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const deletePlanService = async (id: string, token: string) => {
   try {
     console.log("Token de autenticación:", token);
-    const response = await axios.delete(`http://localhost:3000/plans/${id}`, {
+    const response = await axiosApiBack.delete(`/plans/${id}`, {
       headers: {
         Authorization: `Bearer ${token.trim()}`,
         "Content-Type": "application/json",
@@ -118,8 +123,16 @@ export const deletePlanService = async (id: string, token: string) => {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error completo:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar");
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Error de Axios:",
+        error.response?.data.message || error.message
+      );
+      throw new Error(error.response?.data?.message || "Error desconocido");
+    } else {
+      console.error("Error desconocido:", error);
+      throw new Error("Ocurrió un error inesperado");
+    }
   }
 };
 export const imagePlanService = async (
@@ -128,7 +141,7 @@ export const imagePlanService = async (
   token: string
 ) => {
   if (!file) {
-    console.error("❌ Error: No se recibió un archivo para subir.");
+    console.error(" Error: No se recibió un archivo para subir.");
     throw new Error("No se recibió un archivo válido.");
   }
 
@@ -146,7 +159,7 @@ export const imagePlanService = async (
         },
       }
     );
-    console.log("✅ Imagen subida con éxito:", imagenPlan.data.imageUrl);
+    console.log(" Imagen subida con éxito:", imagenPlan.data.imageUrl);
     return imagenPlan.data;
   } catch (error) {
     let errorMessage = "Error desconocido";
@@ -155,7 +168,7 @@ export const imagePlanService = async (
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    console.error("❌ Error en Cloudinary:", errorMessage); // Solo el mensaje
+    console.error(" Error en Cloudinary:", errorMessage);
     throw new Error(errorMessage);
   }
 };

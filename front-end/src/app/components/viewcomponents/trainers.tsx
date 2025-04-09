@@ -13,6 +13,9 @@ const TrainersCarousel = () => {
 
   return (
     <div className="md:pl-16 font-poppins">
+      <h2 className="text-3xl font-bold text-center transition-transform duration-300 hover:scale-110">
+        Nuestros Entrenadores{" "}
+      </h2>
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -47,9 +50,7 @@ const TrainersCarousel = () => {
                     height={500}
                     className="rounded-md "
                   />
-                  <p className="mt-2 font-semibold text-center text-white">
-                    {trainer.name}
-                  </p>
+                  <p className="mt-2 text-center text-white">{trainer.name}</p>
                 </div>
 
                 <div

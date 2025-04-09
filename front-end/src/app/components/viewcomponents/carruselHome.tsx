@@ -1,35 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { GoChevronLeft, GoChevronRight } from "react-icons/go";
-import { routes } from "@/app/routes/routes";
+import { useImageContext } from "@/app/contextos/contextoImag"; // <---
 
-const images = [
-  "/landing1.webp",
-  "/landing2.webp",
-  "/landing3.webp",
-  "/landing4.webp",
+const defaultImages = [
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743975863/xTREME_xzwmr7.png",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743873104/portrait-female-athlete-competing-olympic-games_y8bdpa.jpg",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1744145916/xTREME_1_yl1lh6.png",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743873374/man-steps-tyres-hanging-air_lknp7w.jpg",
+  "https://res.cloudinary.com/dixcrmeue/image/upload/v1744145904/Sube_de_nivel_kc0cnt.png",
 ];
-
 const CarouselHome = () => {
-  // const [images, setImages] = useState([]);
-  // const [currentIndex, setCurrentIndex] = useState(0);
+  const { images: contextImages } = useImageContext();
+  const images = contextImages.length > 0 ? contextImages : defaultImages;
 
-  // useEffect(() => {
-  //   // Obtener imágenes desde la API
-  //   const fetchImages = async () => {
-  //     try {
-  //       const res = await fetch("/api/carousel-images");
-  //       const data = await res.json();
-  //       setImages(data.map(item => item.image_url)); // Extraer URLs de la respuesta
-  //     } catch (error) {
-  //       console.error("Error cargando imágenes:", error);
-  //     }
-  //   };
-
-  //   fetchImages();
-  // }, []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
@@ -45,7 +31,7 @@ const CarouselHome = () => {
   useEffect(() => {
     const interval = setInterval(nextSlide, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
     <div className="pb-2 space-y-10 font-poppins bg-fondo">
@@ -56,7 +42,7 @@ const CarouselHome = () => {
       >
         <div className="relative w-full mx-auto max-w-10xl">
           <div className="overflow-hidden rounded-lg">
-            <Link href={routes.tarifas}>
+            <Link href="/tarifas">
               <img
                 src={images[currentIndex]}
                 alt={`Slide ${currentIndex + 1}`}
