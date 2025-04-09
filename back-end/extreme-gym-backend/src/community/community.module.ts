@@ -13,12 +13,14 @@ import { PlansModule } from '../plans/plans.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Publication, Comment]),
-  UsersModule,
-  EventModule,
-  PlansModule,
-],
+  imports: [
+    TypeOrmModule.forFeature([Publication, Comment]),
+    UsersModule,
+    EventModule,
+    PlansModule,
+  ],
   providers: [PublicationsService, CommentsService, UsersService],
   controllers: [PublicationsController, CommentsController],
+  exports: [PublicationsService],
 })
 export class CommunityModule {}

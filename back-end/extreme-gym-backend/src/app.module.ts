@@ -15,7 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import typeormConfig from './config/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
-import { adminModule } from './admin/admin.module';
+import { AdminModule } from './admin/admin.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { ExpirationTask } from './plans/expiration.task';
 import { GeolocationService } from './geolocation/geolocation.service';
@@ -31,7 +31,7 @@ import { GeolocationService } from './geolocation/geolocation.service';
     NotificationsModule,
     BookingsModule,
     PlansModule,
-    adminModule,
+    AdminModule,
 
     ScheduleModule.forRoot(),
 

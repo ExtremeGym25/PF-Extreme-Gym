@@ -83,6 +83,7 @@ export interface IReservas {
 }
 export interface IPublication {
   newPublication: { name: string };
+
   id: string;
   content: string;
   date: Date;
@@ -118,5 +119,8 @@ export interface IComment {
   content: string;
   date: string;
   userId: string;
+
   user: string;
+
+
 }

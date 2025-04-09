@@ -26,27 +26,50 @@ export class BookingsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
+  async getMonthlyUsersWithReservations(
+    start: Date,
+    end: Date,
+  ): Promise<any[]> {
+    const monthlyUsersWithReservations = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .select('COUNT(DISTINCT booking.userId)', 'count')
+      .addSelect("TO_CHAR(booking.bookingsDate, 'YYYY-MM')", 'month')
+      .where(
+        'booking.bookingsDate >= :start AND booking.bookingsDate <= :end',
+        { start, end },
+      )
+      .groupBy('month')
+      .orderBy('month', 'ASC')
+      .getRawMany();
+
+    return monthlyUsersWithReservations.map((item) => ({
+      month: item.month, // Devolvemos 'YYYY-MM'
+      reservations: parseInt(item.count, 10),
+      count: parseInt(item.count, 10),
+    }));
+  }
+
   // Crear una reserva
   async createBooking(createBookingDto: CreateBookingDto): Promise<Booking> {
     const user = await this.userRepository.findOne({
       where: { id: createBookingDto.userId },
-      relations: ['plan']
+      relations: ['plan'],
     });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-        const now = new Date();
-        const hasActiveSubscription =
-          user.subscriptionType === 'premium' && // Verificar el tipo de suscripción directamente
-          user.subscriptionExpirationDate &&
-          new Date(user.subscriptionExpirationDate) > now;
+    const now = new Date();
+    const hasActiveSubscription =
+      user.subscriptionType === 'premium' && // Verificar el tipo de suscripción directamente
+      user.subscriptionExpirationDate &&
+      new Date(user.subscriptionExpirationDate) > now;
 
-        if (!hasActiveSubscription) {
-          throw new BadRequestException(
-            'El usuario debe tener una suscripción Premium activa para crear una reserva.',
-          );
-        }
+    if (!hasActiveSubscription) {
+      throw new BadRequestException(
+        'El usuario debe tener una suscripción Premium activa para crear una reserva.',
+      );
+    }
 
     const event = await this.eventRepository.findOne({
       where: { id: createBookingDto.eventId },
@@ -99,7 +122,7 @@ export class BookingsService {
     return savedBooking;
   }
 
-  //  metodo privado para enviar la notiifcacion de reserva 
+  //  metodo privado para enviar la notiifcacion de reserva
   private async sendBookingConfirmation(booking: Booking): Promise<void> {
     try {
       await this.notificationsService.sendBookingConfirmation({
@@ -117,8 +140,6 @@ export class BookingsService {
       throw error;
     }
   }
-
-  //
 
   async findAllBookings(): Promise<Booking[]> {
     return await this.bookingRepository.find({ relations: ['user', 'event'] });
@@ -167,8 +188,6 @@ export class BookingsService {
 
     return await this.bookingRepository.save(booking);
   }
-
-  //
 
   async findBookingsByUserId(userId: string): Promise<Booking[]> {
     const bookings = await this.bookingRepository.find({

@@ -25,18 +25,18 @@ export class PublicationsService {
 
   async getPublications(): Promise<Publication[]> {
     return this.publicationsRepository
-    .createQueryBuilder('publication')
-    .leftJoinAndSelect('publication.user', 'user') 
-    .select([
-      'publication.id',
-      'publication.content',
-      'publication.date',
-      'publication.userId',
-      'user.id',
-      'user.name' 
-    ])
-    .orderBy('publication.date', 'DESC')
-    .getMany();
+      .createQueryBuilder('publication')
+      .leftJoinAndSelect('publication.user', 'user')
+      .select([
+        'publication.id',
+        'publication.content',
+        'publication.date',
+        'publication.userId',
+        'user.id',
+        'user.name',
+      ])
+      .orderBy('publication.date', 'DESC')
+      .getMany();
   }
 
   async getPublicationById(id: string): Promise<Publication> {
@@ -53,12 +53,12 @@ export class PublicationsService {
     id: string,
     updatePublicationDto: UpdatePublicationDto,
   ): Promise<any> {
-    console.log("dtos recibidos", updatePublicationDto);
-  
+    console.log('dtos recibidos', updatePublicationDto);
+
     const publication = await this.getPublicationById(id);
-  
+
     let needsUpdate = false;
-  
+
     if (
       updatePublicationDto.content !== undefined &&
       updatePublicationDto.content !== publication.content
@@ -66,7 +66,7 @@ export class PublicationsService {
       publication.content = updatePublicationDto.content;
       needsUpdate = true;
     }
-  
+
     if (
       updatePublicationDto.planId !== undefined &&
       updatePublicationDto.planId !== publication.planId
@@ -74,7 +74,7 @@ export class PublicationsService {
       publication.planId = updatePublicationDto.planId;
       needsUpdate = true;
     }
-  
+
     if (
       updatePublicationDto.eventId !== undefined &&
       updatePublicationDto.eventId !== publication.eventId
@@ -82,12 +82,12 @@ export class PublicationsService {
       publication.eventId = updatePublicationDto.eventId;
       needsUpdate = true;
     }
-  
+
     if (needsUpdate) {
       const update = await this.publicationsRepository.save(publication, {
         reload: true,
       });
-  
+
       return {
         id: update.id,
         content: update.content,
@@ -97,7 +97,7 @@ export class PublicationsService {
         eventId: update.eventId,
       };
     }
-  
+
     return {
       id: publication.id,
       content: publication.content,
@@ -107,10 +107,28 @@ export class PublicationsService {
       eventId: publication.eventId,
     };
   }
-  
 
   async deletePublication(id: string): Promise<void> {
     const publication = await this.getPublicationById(id);
     await this.publicationsRepository.remove(publication);
+  }
+
+  async getMonthlyPublicationCount(start: Date, end: Date): Promise<any[]> {
+    const monthlyPublications = await this.publicationsRepository
+      .createQueryBuilder('publication')
+      .select('COUNT(publication.id)', 'count')
+      .addSelect("TO_CHAR(publication.date, 'YYYY-MM')", 'month')
+      .where('publication.date >= :start AND publication.date <= :end', {
+        start,
+        end,
+      })
+      .groupBy('month')
+      .orderBy('month', 'ASC')
+      .getRawMany();
+
+    return monthlyPublications.map((item) => ({
+      month: item.month, // Devolvemos 'YYYY-MM'
+      count: parseInt(item.count, 10),
+    }));
   }
 }
