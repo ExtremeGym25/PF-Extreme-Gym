@@ -12,6 +12,7 @@ import { loginService } from "@/app/servicios/auth";
 import { useRouter } from "next/navigation";
 import usePublic from "@/app/hooks/usePublic";
 import { signIn } from "next-auth/react";
+import { FaGoogle } from "react-icons/fa";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -128,14 +129,17 @@ const Login = () => {
               Regístrate aquí
             </Link>
           </div>
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/miPerfil" })}
+              className="flex items-center justify-center w-full gap-2 px-6 py-2 font-semibold text-center transition bg-blue-500 rounded-md text-foreground font-poppins hover:bg-red-500 hover:scale-110"
+            >
+              <FaGoogle className="text-lg" />
+              Iniciar sesión con Google{" "}
+            </button>
+          </div>
         </div>
       </div>
-      <button
-        onClick={() => signIn("google")}
-        className="px-6 py-3 text-white bg-blue-500 rounded-lg"
-      >
-        Iniciar sesión con Google
-      </button>
     </div>
   );
 };
