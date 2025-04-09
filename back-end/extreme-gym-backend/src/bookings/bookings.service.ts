@@ -2,7 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -53,7 +53,7 @@ export class BookingsService {
   async createBooking(createBookingDto: CreateBookingDto): Promise<Booking> {
     const user = await this.userRepository.findOne({
       where: { id: createBookingDto.userId },
-      relations: ['plan'],
+      relations: ['plans'],
     });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
