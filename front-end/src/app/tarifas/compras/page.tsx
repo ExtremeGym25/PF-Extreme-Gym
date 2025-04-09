@@ -17,3 +17,6 @@
 // };
 
 // export default SubscriptionPage;
+export default function SubscriptionPage() {
+    return <div>página de suscripciones</div>;
+  }
