@@ -62,15 +62,12 @@ export const cancelarBookingsService = async (
   console.log("Llamando al servicio de eliminación con ID:", id);
 
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/bookings/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axiosApiBack.delete(`/bookings/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     console.log("Respuesta del servidor:", response.data);
     return response.status === 200;
@@ -88,8 +85,8 @@ export const updateBookingService = async (
   numberOfPeople: number
 ) => {
   try {
-    const response = await axios.put(
-      `http://localhost:3000/bookings/${id}`,
+    const response = await axiosApiBack.put(
+      `/bookings/${id}`,
       { numberOfPeople, userId },
       {
         headers: {

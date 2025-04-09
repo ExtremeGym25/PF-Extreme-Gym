@@ -90,7 +90,7 @@ export const updatePlanService = async (
       throw new Error("El objeto de datos (dto) está vacío.");
     }
 
-    const response = await axios.put(`http://localhost:3000/plans/${id}`, dto, {
+    const response = await axiosApiBack.put(`/plans/${id}`, dto, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ export const updatePlanService = async (
 export const deletePlanService = async (id: string, token: string) => {
   try {
     console.log("Token de autenticación:", token);
-    const response = await axios.delete(`http://localhost:3000/plans/${id}`, {
+    const response = await axiosApiBack.delete(`/plans/${id}`, {
       headers: {
         Authorization: `Bearer ${token.trim()}`,
         "Content-Type": "application/json",

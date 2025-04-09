@@ -51,28 +51,13 @@ export default function Sidebar() {
 
           <li>
             <Link
-              href="/admin/entrenadores"
-              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
-            >
-              Imagenes Entrenadores
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/admin/publicidad"
               className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
             >
               Publicidad
             </Link>
           </li>
-          <li>
-            <Link
-              href="/admin/casosDeExito"
-              className="block p-2 text-xs rounded sm:text-xs md:text-xs lg:text-xl hover:bg-verde hover:text-black hover:font-bold"
-            >
-              Casos de Exito
-            </Link>
-          </li>
+
           <li>
             <Link
               href="/"

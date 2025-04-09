@@ -10,7 +10,7 @@ export const reservaEventosService = async (
   userId: string,
   numberOfPeople: number
 ) => {
-  console.log("planId enviado:", eventId);
+  console.log("eventId enviado:", eventId);
   try {
     const response = await axiosApiBack.post(
       "/bookings",

@@ -61,7 +61,7 @@ const UpdatePerfilUsuario = () => {
       toast.error("No hay token disponible");
       return;
     }
-
+    console.log(token, "tokenenuodateperfil");
     const dataToSend: Partial<IUser> = {
       ...formData,
       phone: formData.phone ? Number(formData.phone) : undefined,
@@ -72,7 +72,7 @@ const UpdatePerfilUsuario = () => {
     }
     console.log(dataToSend, "datatosend");
     console.log(user.id, "uSERid");
-
+    console.log(token, "token update usuario");
     try {
       const updatedUser = await updateUser(user.id, dataToSend, token);
       saveUserData({ user: updatedUser.user, token });

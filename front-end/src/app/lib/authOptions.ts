@@ -3,11 +3,26 @@ import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
 
-interface ExtendedUser extends User {
+// Interfaces extendidas
+export interface ExtendedUser extends User {
   id: string;
   role?: string;
   provider?: string;
   profileImage?: string;
+  isAdmin?: boolean;
+  isActive?: boolean;
+  subscriptionExpirationDate?: Date | null;
+  subscriptionType?: string;
+  name?: string;
+  email?: string;
+  address?: string;
+  phone?: number;
+  password?: string;
+  confirmPassword?: string;
+  country?: string;
+  city?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
 }
 
 interface ExtendedJWT extends JWT {
@@ -28,21 +43,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, profile }: any): Promise<ExtendedJWT> {
-      const extendedToken: ExtendedJWT = {
+    async jwt({ token, account, profile }): Promise<ExtendedJWT> {
+      let extendedToken: ExtendedJWT = {
         ...token,
         accessToken: token.accessToken || "",
-        user: {
-          id: token.user?.id || "",
-          name: token.user?.name || null,
-          email: token.user?.email || null,
-          role: token.user?.role,
-          provider: token.user?.provider,
-          profileImage: token.user?.profileImage,
-        },
+        user: (token.user as ExtendedUser) || { id: "" },
       };
 
-      if (account?.provider === "google" && profile) {
+      if (account?.provider === "google" && profile && account.access_token) {
         try {
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth/callback`,
@@ -54,12 +62,9 @@ export const authOptions: NextAuthOptions = {
                   email: profile.email,
                   name: profile.name,
                   sub: profile.sub,
-                  accessToken: account?.access_token,
-                  expires_in: account?.expires_at,
-                  token_type: account?.token_type,
-                  scope: account?.scope,
                 },
                 provider: account.provider,
+                accessToken: account.access_token,
               }),
             }
           );
@@ -67,42 +72,38 @@ export const authOptions: NextAuthOptions = {
           if (!response.ok)
             throw new Error(`Error backend: ${response.status}`);
 
-          const backendData = await response.json();
-          const user = backendData?.user;
-          const accessToken = backendData?.accessToken;
+          const backendData: { user: ExtendedUser; accessToken: string } =
+            await response.json();
 
-          if (!user) throw new Error("El backend no devolvió un usuario");
+          const user = backendData.user;
+          console.log(
+            "AccessToken del backend en JWT callback:",
+            backendData.accessToken
+          );
+
+          const accessToken = backendData.accessToken;
+
+          if (!user || !accessToken)
+            throw new Error("Datos incompletos del backend");
 
           extendedToken.accessToken = accessToken;
-          extendedToken.user = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            provider: user.provider,
-            profileImage: user.profileImage,
-          };
+          extendedToken.user = user;
         } catch (error) {
           console.error("Error al conectar con el backend:", error);
         }
       }
-
+      console.log("AccessToken desde Google:", account?.access_token);
+      console.log("Token final enviado al cliente:", extendedToken);
       return extendedToken;
     },
 
-    async session({
-      session,
-      token,
-    }: {
-      session: Session;
-      token: ExtendedJWT;
-    }): Promise<ExtendedSession> {
+    async session({ session, token }): Promise<ExtendedSession> {
       return {
         ...session,
+
         accessToken: token.accessToken,
         user: {
-          ...session.user,
-          ...token.user,
+          ...(token.user as ExtendedUser),
         },
       };
     },

@@ -14,6 +14,8 @@ export interface IUser {
   city?: string;
   profileImage?: string;
   stripeCustomerId?: string;
+  stripeSubscriptionId: string;
+  role: string;
 }
 export interface IUserLogin {
   email: string;
@@ -80,24 +82,27 @@ export interface IReservas {
   user: IUser;
 }
 export interface IPublication {
-  newPublication: { name: string; };
-  [x: string]: { name: string; };
+  newPublication: { name: string };
+
   id: string;
   content: string;
   date: Date;
   user: {
     id: string;
     name: string;
-    email: string;
   };
-  plan?: {
-    id: string;
-    name: string;
-  } | null;
-  event?: {
-    id: string;
-    title: string;
-  } | null;
+  plan?:
+    | {
+        id: string;
+        name: string;
+      }[]
+    | null;
+  event?:
+    | {
+        id: string;
+        title: string;
+      }[]
+    | null;
   comments: {
     id: string;
     content: string;
@@ -114,9 +119,8 @@ export interface IComment {
   content: string;
   date: string;
   userId: string;
-  user?: {
-    name: string;
-  }
+
+  user: string;
+
+
 }
-
-

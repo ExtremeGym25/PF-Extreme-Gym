@@ -1,25 +1,41 @@
-import { Controller, Get } from '@nestjs/common';
-import { adminService } from './admin.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, UseGuards, HttpStatus } from '@nestjs/common';
+import { AdminService } from './admin.service';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from '../auth/guards/auth.guard'; // Importa tu AuthGuard
+import { RolesGuard } from '../auth/guards/roles.guard'; // Importa tu RolesGuard
+import { Roles } from '../decorators/roles.decorators'; // Importa tu Roles decorator
+import { Role } from '../users/entities/roles.enum'; // Importa tu UserRole enum
+import { AdminStatsResponseDto } from './admin.dto/admin-stats.dto';
 
 @ApiTags('Admin')
-@Controller('dashboard')
-export class adminController {
-  constructor(private readonly dashboardService: adminService) {}
+@Controller('admin')
+@UseGuards(AuthGuard, RolesGuard)
+@ApiBearerAuth()
+export class AdminController {
+  constructor(private readonly adminService: AdminService) {}
 
-  @Get('admin')
-  @ApiOperation({
-    summary: 'Obtener estadísticas del dashboard de administración',
+  @Get('stats')
+  @ApiOperation({ summary: 'Obtener estadísticas del panel de administración' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Estadísticas obtenidas exitosamente.',
+    type: AdminStatsResponseDto,
   })
   @ApiResponse({
-    status: 200,
-    description: 'Estadísticas del dashboard recuperadas exitosamente.',
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'No autorizado.',
   })
   @ApiResponse({
-    status: 500,
-    description: 'Error al recuperar estadísticas del dashboard.',
+    status: HttpStatus.FORBIDDEN,
+    description: 'Acceso prohibido.',
   })
-  getDashboardStats() {
-    return this.dashboardService.getStats();
+  @Roles(Role.Admin) // Requiere el rol de administrador para acceder a esta ruta
+  async getAdminStats(): Promise<AdminStatsResponseDto> {
+    return this.adminService.getStats();
   }
 }

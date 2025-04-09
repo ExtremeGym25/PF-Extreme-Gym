@@ -126,7 +126,7 @@ export class AuthService {
 
   private generateJwt(user: User): string {
     const payload = {
-      sub: user.id,
+      id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
@@ -190,15 +190,25 @@ export class AuthService {
     }
     console.log('👶 Usuario no encontrado, creando uno nuevo...');
 
+    const randomPassword = Math.random().toString(36).slice(-10); // algo tipo "x8vj2kd9qa"
+    const hashedPassword = await bcrypt.hash(randomPassword, 10); // Hashear la contraseña aleatoria
+
     // 3. Si el usuario no existe, crearlo
     const newUser = this.usersRepository.create({
       email: profile.email,
       name: profile.name || profile.email.split('@')[0],
+      password: hashedPassword, // <- ¡Ahora sí tiene una!
       provider,
       isActive: true,
     });
 
     const savedUser = await this.usersRepository.save(newUser);
+
+    await this.notificationsService.sendWelcomeEmail(
+      newUser.email,
+      newUser.name,
+    );
+
     console.log('✅ Usuario nuevo creado:', savedUser);
 
     // Crear cuenta asociada
