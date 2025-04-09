@@ -5,9 +5,9 @@ import { toast } from "react-toastify";
 
 const Eventos = () => {
   const [formData, setFormData] = useState({
-    name: "Prueba 1",
-    description: "Las pruebas desde el front :)",
-    location: "Colombia",
+    name: "",
+    description: "",
+    location: "",
     longitude: "",
     latitude: "",
     date: "",
@@ -118,12 +118,12 @@ const Eventos = () => {
   };
 
   return (
-    <div className="flex w-full p-4 bg-azul1">
+    <div className="flex w-full p-4 bg-fondo">
       <div className="w-full max-w-4xl mx-auto">
-        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+        <h2 className="my-6 text-2xl font-bold text-center text-foreground md:text-4xl">
           Crear Evento
         </h2>
-        <div className="p-6 shadow-md bg-azul2 rounded-xl">
+        <div className="p-6 shadow-md bg- rounded-xl">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               <input
@@ -132,7 +132,7 @@ const Eventos = () => {
                 placeholder="Nombre"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
                 required
               />
               <input
@@ -140,7 +140,7 @@ const Eventos = () => {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
                 required
               />
               <input
@@ -148,7 +148,7 @@ const Eventos = () => {
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
                 required
               />
             </div>
@@ -160,7 +160,7 @@ const Eventos = () => {
                 placeholder="Ubicación del Evento"
                 value={formData.location}
                 onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
+                className="p-2 text-black bg-white rounded"
                 required
               />{" "}
               <input
@@ -169,7 +169,7 @@ const Eventos = () => {
                 placeholder="Ingresa la latitud de la ubicacion"
                 value={formData.latitude}
                 onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
+                className="p-2 text-black bg-white rounded"
                 required
                 step="any"
               />
@@ -179,7 +179,7 @@ const Eventos = () => {
                 placeholder="Ingresa la longitud de la ubicacion"
                 value={formData.longitude}
                 onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
+                className="p-2 text-black bg-white rounded"
                 required
                 step="any"
               />
@@ -189,14 +189,14 @@ const Eventos = () => {
                 placeholder="Capacidad de Personas"
                 value={formData.capacity}
                 onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
+                className="p-2 text-black bg-white rounded"
                 required
               />
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="p-2 text-black rounded bg-blanco"
+                className="p-2 text-black bg-white rounded"
                 required
               >
                 <option value="">Seleccione una categoría</option>
@@ -218,7 +218,7 @@ const Eventos = () => {
               placeholder="Descripción"
               value={formData.description}
               onChange={handleChange}
-              className="p-2 text-black rounded bg-blanco"
+              className="p-2 text-black bg-white rounded"
               required
             />
             <input
@@ -231,7 +231,7 @@ const Eventos = () => {
 
             <button
               type="submit"
-              className="w-full p-2 mx-auto font-bold text-black rounded bg-verde md:w-80 hover:bg-green-600 hover:text-blanco"
+              className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
             >
               Crear Evento
             </button>

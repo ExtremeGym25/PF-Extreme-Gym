@@ -10,9 +10,14 @@ import { IEvent, IReservas } from "@/app/tipos";
 import { Link } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const MisReservas = () => {
-  const { isAuth } = useAuth();
+  const { isAuth, user } = useAuth();
+  const router = useRouter();
+
+  const isFree = user?.subscriptionType === "free";
+  const isPremium = user?.subscriptionType === "premium";
   const [bookings, setBookings] = useState<IReservas[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -87,100 +92,119 @@ const MisReservas = () => {
   };
   return (
     <div className="max-w-4xl p-6 pt-8 mx-auto font-poppins">
-      <h2 className="mb-6 text-3xl font-bold text-center text-foreground">
-        Mis Reservas
-      </h2>
+      {isPremium && (
+        <div>
+          <h2 className="mb-6 text-3xl font-bold text-center text-foreground">
+            Mis Reservas
+          </h2>
 
-      {bookings.length > 0 ? (
-        <div className="grid gap-6">
-          {bookings.map((booking) => (
-            <div
-              key={booking.id}
-              className="flex items-center justify-between p-4 border rounded-lg shadow-lg border-verde bg-fondo"
-            >
-              <img
-                src={
-                  booking.event.imageUrl ||
-                  "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_2_tjw1rv.png"
-                }
-                alt={booking.event.name}
-                className="object-cover w-24 h-24 rounded-lg"
-              />
-
-              <div className="flex-1 ml-4">
-                <h3 className="text-lg font-bold capitalize">
-                  {booking.event.name}
-                </h3>
-                <p className="text-foreground">
-                  <strong>Fecha:</strong>{" "}
-                  {new Date(booking.bookingsDate).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Descripción:</strong> {booking.event.description}
-                </p>
-                <p>
-                  <strong>Locación:</strong> {booking.event.location}
-                </p>
-                <p
-                  className={` ${
-                    booking.isCancelled ? "text-red-500" : "text-verde"
-                  }`}
+          {bookings.length > 0 ? (
+            <div className="grid gap-6">
+              {bookings.map((booking) => (
+                <div
+                  key={booking.id}
+                  className="flex items-center justify-between p-4 border rounded-lg shadow-lg border-verde bg-fondo"
                 >
-                  <strong>Estado:</strong>{" "}
-                  {booking.isCancelled ? "Cancelada" : "Activa"}
-                </p>
-                <div className="mt-1">
-                  <MapaEventos
-                    latitude={+booking.event.latitude}
-                    longitude={+booking.event.longitude}
+                  <img
+                    src={
+                      booking.event.imageUrl ||
+                      "https://res.cloudinary.com/dixcrmeue/image/upload/v1743014544/xTREME_GYM_2_tjw1rv.png"
+                    }
+                    alt={booking.event.name}
+                    className="object-cover w-24 h-24 rounded-lg"
                   />
-                </div>
-              </div>
 
-              <div className="flex flex-col items-center gap-4 sm:flex-row">
-                {editingId === booking.id ? (
-                  <>
-                    <input
-                      type="number"
-                      className="w-20 p-2 bg-white border rounded text-foreground"
-                      value={editedBooking?.numberOfPeople || ""}
-                      onChange={(e) =>
-                        setEditedBooking({
-                          ...editedBooking!,
-                          numberOfPeople: Number(e.target.value),
-                        })
-                      }
-                    />
-
-                    <button
-                      onClick={handleUpdate}
-                      className="px-2 py-2 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
-                    >
-                      Editar{" "}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm">
-                      <strong>Personas:</strong> {booking.numberOfPeople}
+                  <div className="flex-1 ml-4">
+                    <h3 className="text-lg font-bold capitalize">
+                      {booking.event.name}
+                    </h3>
+                    <p className="text-foreground">
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(booking.bookingsDate).toLocaleDateString()}
                     </p>
-                    <button
-                      onClick={() => handleEdit(booking)}
-                      className="py-2 text-sm transition rounded-md x-2 md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
+                    <p>
+                      <strong>Descripción:</strong> {booking.event.description}
+                    </p>
+                    <p>
+                      <strong>Locación:</strong> {booking.event.location}
+                    </p>
+                    <p
+                      className={` ${
+                        booking.isCancelled ? "text-red-500" : "text-verde"
+                      }`}
                     >
-                      Guardar
-                    </button>
-                  </>
-                )}
-                {!booking.isCancelled && <CancelarBookings id={booking.id} />}
-              </div>
+                      <strong>Estado:</strong>{" "}
+                      {booking.isCancelled ? "Cancelada" : "Activa"}
+                    </p>
+                    <div className="mt-1">
+                      <MapaEventos
+                        latitude={+booking.event.latitude}
+                        longitude={+booking.event.longitude}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-4 sm:flex-row">
+                    {editingId === booking.id ? (
+                      <>
+                        <input
+                          type="number"
+                          className="w-20 p-2 bg-white border rounded text-foreground"
+                          value={editedBooking?.numberOfPeople || ""}
+                          onChange={(e) =>
+                            setEditedBooking({
+                              ...editedBooking!,
+                              numberOfPeople: Number(e.target.value),
+                            })
+                          }
+                        />
+
+                        <button
+                          onClick={handleUpdate}
+                          className="px-2 py-2 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
+                        >
+                          Editar{" "}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm">
+                          <strong>Personas:</strong> {booking.numberOfPeople}
+                        </p>
+                        <button
+                          onClick={() => handleEdit(booking)}
+                          className="py-2 text-sm transition rounded-md x-2 md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
+                        >
+                          Guardar
+                        </button>
+                      </>
+                    )}
+                    {!booking.isCancelled && (
+                      <CancelarBookings id={booking.id} />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <p className="mt-6 text-center text-gray-400">
+              No tienes reservas aún.
+            </p>
+          )}
         </div>
-      ) : (
-        <p className="mt-6 text-center text-gray-400">
-          No tienes reservas aún.
-        </p>
+      )}{" "}
+      {isFree && (
+        <div className="flex flex-col items-center justify-center w-full min-h-screen">
+          <h2 className="mb-4 text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 md:text-2xl">
+            No tienes acceso mira nuestras tarifas
+          </h2>
+          <button
+            onClick={() => router.push("/tarifas")}
+            className="px-6 py-2 text-sm transition rounded-md text-foreground font-poppins bg-fondo hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100"
+          >
+            Ver Tarifas
+          </button>
+        </div>
       )}
     </div>
   );

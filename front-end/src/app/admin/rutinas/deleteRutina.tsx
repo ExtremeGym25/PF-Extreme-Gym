@@ -63,8 +63,8 @@ const DeleteRutinas = ({ id, onPlanDeleted }: Props) => {
         disabled={isLoading}
         className={`px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins text-white ring-2 ring-opacity-100 md:text-base ${
           isLoading
-            ? "bg-red-800 cursor-not-allowed ring-red-900"
-            : "bg-red-500 hover:bg-red-700 ring-red-900 hover:scale-110"
+            ? "bg-red-800 cursor-not-allowed"
+            : "bg-red-500 hover:bg-red-700 hover:scale-110"
         }`}
       >
         {isLoading ? "Eliminando..." : "Eliminar"}

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <aside className="h-screen p-5 text-white bg-azul2 sm:w-25 md:w-30 xl:w-40 lg-w-60">
+    <aside className="h-screen p-5 shadow-md text-foreground bg-fondo sm:w-25 md:w-30 xl:w-40 lg-w-60">
       <h2 className="mb-6 text-xs font-bold sm:text-xs md:text-xs lg:text-xl">
         Panel de Administrador
       </h2>

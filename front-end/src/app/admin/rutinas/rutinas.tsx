@@ -44,8 +44,8 @@ const CreacionRutinas = () => {
 
   return (
     <div className="flex items-center justify-center p-2">
-      <div className="w-full max-w-lg p-6 shadow-md bg-azul2 rounded-xl">
-        <h2 className="my-6 text-2xl font-bold text-center text-white md:text-4xl">
+      <div className="w-full max-w-lg p-6 shadow-md bg-fondo rounded-xl">
+        <h2 className="my-6 text-2xl font-bold text-center text-foreground md:text-4xl">
           Crear Rutina
         </h2>
         <Formik
@@ -113,7 +113,7 @@ const CreacionRutinas = () => {
                 type="text"
                 name="nombre"
                 placeholder="Nombre"
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
               />
               <ErrorMessage
                 name="nombre"
@@ -125,7 +125,7 @@ const CreacionRutinas = () => {
                 as="textarea"
                 name="descripcion"
                 placeholder="Descripción"
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
               />
               <ErrorMessage
                 name="descripcion"
@@ -136,7 +136,7 @@ const CreacionRutinas = () => {
               <Field
                 as="select"
                 name="categoria"
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
               >
                 <option value="">Selecciona una categoría</option>
                 {Object.values(PlanCategory).map((category) => (
@@ -155,7 +155,7 @@ const CreacionRutinas = () => {
                 type="file"
                 name="imageUrl"
                 ref={fileInputRef}
-                className="w-full p-2 text-black rounded bg-blanco"
+                className="w-full p-2 text-black bg-white rounded"
                 onChange={(event) =>
                   setFieldValue(
                     "imageUrl",
@@ -171,7 +171,7 @@ const CreacionRutinas = () => {
 
               <button
                 type="submit"
-                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md bg-verde text-foreground hover:bg-lime-200 hover:scale-110 ring-2 ring-lime-900"
+                className="w-full px-4 py-2 mt-4 text-sm transition rounded-md md:w-auto md:px-6 font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100 md:text-base"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Creando..." : "Crear Rutina"}

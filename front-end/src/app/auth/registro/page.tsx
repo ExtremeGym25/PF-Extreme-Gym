@@ -4,6 +4,7 @@ import Link from "next/link";
 import ButtonPrimary from "@/app/components/buttons/buttonPrimary";
 import Registro from "@/app/views/Registro";
 import { signIn } from "next-auth/react";
+import { FaGoogle } from "react-icons/fa";
 
 const registroView = () => {
   return (
@@ -32,17 +33,16 @@ const registroView = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center p-10 shadow-lg bg-background text-foreground ">
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/miPerfil" })}
+              className="flex items-center gap-2 px-6 py-2 font-semibold transition bg-blue-500 rounded-md text-foreground font-poppins hover:bg-red-500 hover:scale-110"
+            >
+              <FaGoogle /> Registrate con Google
+            </button>
+          </div>
           <Registro />
         </div>
-      </div>
-      <div>
-        {" "}
-        <button
-          onClick={() => signIn("google", { callbackUrl: "/miPerfil" })}
-          className="px-6 py-3 text-white bg-blue-500 rounded-lg"
-        >
-          Iniciar sesión con Google
-        </button>
       </div>
     </div>
   );

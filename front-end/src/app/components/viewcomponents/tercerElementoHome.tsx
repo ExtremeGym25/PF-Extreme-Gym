@@ -6,13 +6,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 const TercerElementoHome = () => {
-  const { isAuth } = useAuth();
+  const { user } = useAuth();
 
-  if (isAuth === null) {
-    return <div>Loading...</div>;
-  }
-
-  if (isAuth) {
+  const isFree = user?.subscriptionType === "free";
+  const isPremium = user?.subscriptionType === "premium";
+  if (isPremium) {
     return (
       <div className="px-4">
         <motion.div
@@ -52,8 +50,8 @@ const TercerElementoHome = () => {
           <p className="text-base text-gray-600 transition-transform duration-300 md:text-lg lg:text-xl hover:scale-110">
             ¡Forma parte de nuestra familia!
           </p>
-          <Link href="/auth/registro">
-            <ButtonPrimary>Regístrate</ButtonPrimary>
+          <Link href="/tarifas">
+            <ButtonPrimary>Mira nuestras tarifas</ButtonPrimary>
           </Link>
         </div>
       </motion.div>
