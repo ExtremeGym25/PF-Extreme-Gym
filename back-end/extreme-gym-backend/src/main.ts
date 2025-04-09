@@ -2,14 +2,20 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { auth } from 'express-openid-connect';
+import * as bodyParser from 'body-parser'; // 👈 Agregado
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ Habilitar CORS para permitir peticiones desde el frontend
+  // usar raw body solo para el webhook
+  app.use('/stripe/webhook', bodyParser.raw({ type: 'application/json' }));
+
+  // El resto de la app sí usa bodyParser normal
+  app.use(bodyParser.json());
+
+  //CORS
   app.enableCors({
-    origin: 'http://localhost:4000', // URL del frontend
+    origin: 'http://localhost:4000',
     credentials: true,
   });
 
