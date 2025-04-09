@@ -4,21 +4,45 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import StatsCard from "./components/StatsCard";
 import Chart from "./components/Chart";
-import { Users, DollarSign, BarChart as ChartIcon } from "lucide-react";
-import { getDashboardAdmin } from "../servicios/admin";
-
+import { Users, DollarSign, BarChart as ChartIcon, User } from "lucide-react";
+import { getDashboardAdmin, getStats } from "../servicios/admin";
+import { toast } from "react-toastify";
+interface UsuarioMensual {
+  month: string;
+  registered: number;
+  count: number;
+}
+interface Stats {
+  totalUsuarios: number;
+  usuariosFree: number;
+  usuariosPremium: number;
+  ingresosMensualesPremiumEstimado: number;
+  usuariosRegistradosMensual: UsuarioMensual[];
+  reservasMensuales: any[];
+  publicacionesMensuales: any[];
+}
 export default function Dashboard() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     totalUsuarios: 0,
-    ingresosMensuales: 0,
-    membresiasActivas: 0,
-    graficos: [],
+    usuariosFree: 0,
+    usuariosPremium: 0,
+    ingresosMensualesPremiumEstimado: 0,
+    usuariosRegistradosMensual: [],
+    reservasMensuales: [],
+    publicacionesMensuales: [],
   });
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await getDashboardAdmin();
+        const token = localStorage.getItem("token");
+        console.log;
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const data = await getStats(token);
+        console.log(data, "RESPUESTA");
         setStats(data);
       } catch (error) {
         console.error("Error cargando las estadísticas", error);
@@ -27,6 +51,10 @@ export default function Dashboard() {
 
     fetchStats();
   }, []);
+  const chartData = stats.usuariosRegistradosMensual.map((item) => ({
+    mes: item.month,
+    membresias: item.count,
+  }));
 
   return (
     <div className="flex min-h-screen py-2 bg-azul1">
@@ -39,26 +67,44 @@ export default function Dashboard() {
           </h2>
           <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
             <StatsCard
-              title="Usuarios Registrados"
+              title="Total Usuarios "
               value={stats.totalUsuarios}
               icon={<Users />}
               color="bg-[#58D68D]"
             />
             <StatsCard
-              title="Ingresos Mensuales"
-              value={`$${stats.ingresosMensuales}`}
-              icon={<DollarSign />}
-              color="bg-[#FF6F3C]"
+              title="Usuarios Free"
+              value={stats.usuariosFree}
+              icon={<Users />}
+              color="bg-[#A3D8F4]"
             />
             <StatsCard
-              title="Membresías Activas"
-              value={stats.membresiasActivas}
-              icon={<ChartIcon />}
-              color="bg-[#2C2C2C]"
+              title="Usuarios Premium"
+              value={stats.usuariosPremium}
+              icon={<Users />}
+              color="bg-[#FFD700]"
+            />
+            <StatsCard
+              title="Ingresos Estimados"
+              value={`$${stats.ingresosMensualesPremiumEstimado}`}
+              icon={<DollarSign />}
+              color="bg-[#58D68D]"
+            />
+            <StatsCard
+              title="Publicaciones Mensuales"
+              value={stats.publicacionesMensuales.length}
+              icon={<Users />}
+              color="bg-[#A3D8F4]"
+            />
+            <StatsCard
+              title="Reserva Mensual"
+              value={stats.reservasMensuales.length}
+              icon={<Users />}
+              color="bg-[#FFD700]"
             />
           </div>
           <div className="mt-6">
-            <Chart data={stats.graficos} />
+            <Chart data={chartData} />
           </div>
         </main>
       </div>
