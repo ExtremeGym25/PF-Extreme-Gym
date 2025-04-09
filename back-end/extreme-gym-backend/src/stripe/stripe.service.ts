@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class StripeService {
   private stripe: Stripe;
   private webhookSecret: string;
-  private readonly logger = new Logger(StripeService.name);
+  public readonly logger = new Logger(StripeService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -174,7 +174,16 @@ export class StripeService {
     if (isPremium) {
       // 🔹 Obtener la suscripción activa del usuario en Stripe
       const subscriptions = await this.listSubscriptions(customerId);
-      console.log(subscriptions);
+      const activeSubscription = subscriptions.find(sub => sub.status === 'active');
+
+
+      if (!activeSubscription) {
+        this.logger.warn('❌ No se encontró una suscripción activa.');
+        return;
+      }
+      const subscriptionItem = activeSubscription.items.data[0]; // Suponiendo que hay un solo ítem en la suscripción
+      const price = subscriptionItem.price; // Aquí obtenemos el precio, que está relacionado con el plan
+
       // 🔹 Buscar la suscripción gratuita
       const freeSubscription = subscriptions.find((sub) =>
         sub.items.data.some((item) => item.price.id === freePlanPriceId),
@@ -187,9 +196,21 @@ export class StripeService {
           `🗑️ Suscripción gratuita ${freeSubscription.id} cancelada.`,
         );
       }
+      
+
+       // Calcular la fecha de expiración
+       let expirationDate;
+       if (price.recurring && price.recurring.interval === 'month') {
+         expirationDate = new Date(activeSubscription.billing_cycle_anchor * 1000); // Convertir de segundos a milisegundos
+         expirationDate.setMonth(expirationDate.getMonth() + 1); // Sumar 1 mes
+       } else if (price.recurring && price.recurring.interval === 'year') {
+         expirationDate = new Date(activeSubscription.billing_cycle_anchor * 1000); // Convertir de segundos a milisegundos
+         expirationDate.setFullYear(expirationDate.getFullYear() + 1); // Sumar 1 año
+       }
 
       // 🔥 Actualizar usuario a premium en la base de datos
       user.subscriptionType = 'premium';
+      user.subscriptionExpirationDate = expirationDate; // Guardar la fecha de expiración
       await this.userRepository.save(user);
       this.logger.log(`✅ Usuario ${user.email} actualizado a premium.`);
     } else {
