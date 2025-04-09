@@ -44,13 +44,33 @@ export class AdminService {
 
     console.log('Raw Monthly Registered Users:', monthlyRegisteredUsers);
 
-    const formattedMonthlyUsers = monthlyRegisteredUsers.map((item) => ({
-      month: new Date(item.month + '-01').toLocaleDateString('es-VE', {
-        month: 'long',
-      }),
-      registered: parseInt(item.count, 10),
-      count: parseInt(item.count, 10),
-    }));
+    const monthNames = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ];
+
+    const formattedMonthlyUsers = monthlyRegisteredUsers.map((item) => {
+      const yearMonth = item.month.split('-');
+      const year = parseInt(yearMonth[0], 10);
+      const monthIndex = parseInt(yearMonth[1], 10) - 1;
+      const monthName = monthNames[monthIndex];
+
+      return {
+        month: monthName,
+        registered: parseInt(item.count, 10),
+        count: parseInt(item.count, 10),
+      };
+    });
 
     console.log('Formatted Monthly Users:', formattedMonthlyUsers);
 
@@ -78,13 +98,18 @@ export class AdminService {
     );
 
     const formattedMonthlyReservations = monthlyUsersWithReservationsRaw.map(
-      (item) => ({
-        month: new Date(item.month + '-01').toLocaleDateString('es-VE', {
-          month: 'long',
-        }),
-        reservations: parseInt(item.count, 10),
-        count: parseInt(item.count, 10),
-      }),
+      (item) => {
+        const yearMonth = item.month.split('-');
+        const year = parseInt(yearMonth[0], 10);
+        const monthIndex = parseInt(yearMonth[1], 10) - 1;
+        const monthName = monthNames[monthIndex];
+
+        return {
+          month: monthName,
+          reservations: parseInt(item.count, 10),
+          count: parseInt(item.count, 10),
+        };
+      },
     );
 
     console.log(
@@ -112,12 +137,17 @@ export class AdminService {
     console.log('Raw Monthly Publications Count:', monthlyPublicationsCountRaw);
 
     const formattedMonthlyPublications = monthlyPublicationsCountRaw.map(
-      (item) => ({
-        month: new Date(item.month + '-01').toLocaleDateString('es-VE', {
-          month: 'long',
-        }),
-        count: parseInt(item.count, 10),
-      }),
+      (item) => {
+        const yearMonth = item.month.split('-');
+        const year = parseInt(yearMonth[0], 10);
+        const monthIndex = parseInt(yearMonth[1], 10) - 1; // Adjust to 0-based index
+        const monthName = monthNames[monthIndex];
+
+        return {
+          month: monthName,
+          count: parseInt(item.count, 10),
+        };
+      },
     );
 
     console.log(
