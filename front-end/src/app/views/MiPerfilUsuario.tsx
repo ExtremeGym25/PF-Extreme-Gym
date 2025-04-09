@@ -63,9 +63,6 @@ const MiPerfilUsuario = () => {
         <p className="text-center text-l">
           Email: {user?.email || "No especificado"}
         </p>
-        <p className="text-center text-l">
-          Id Usuario: {user?.id || "No especificado"}
-        </p>
       </div>
     </div>
   );

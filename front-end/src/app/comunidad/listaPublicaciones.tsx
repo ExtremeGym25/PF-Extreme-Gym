@@ -15,8 +15,10 @@ import {
 } from "../servicios/servicioComunidad/comentarios";
 import { Send } from "lucide-react";
 import { toast } from "react-toastify";
+import { useAuth } from "../contextos/contextoAuth";
 
 const ListaPublicaciones = () => {
+  const { user } = useAuth();
   const [publicaciones, setPublicaciones] = useState<IPublication[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,10 @@ const ListaPublicaciones = () => {
   const [nuevoComentarioContenido, setNuevoComentarioContenido] = useState("");
 
   const fetchPublications = async () => {
+    if (!user) {
+      toast.error("Inicia sesión para ver las publicaciones");
+      return;
+    }
     try {
       const data = await getPublications();
       console.log("publicaciones recibidas Holaaaaaaa", data);
@@ -201,7 +207,7 @@ const ListaPublicaciones = () => {
       });
     } catch (error) {
       console.error("Error al eliminar el comentario:", error);
-      alert("Ocurrió un error al eliminar el comentario.");
+      toast.error("Ocurrió un error al eliminar el comentario.");
     }
   };
 
@@ -260,8 +266,6 @@ const ListaPublicaciones = () => {
       toast.error(error.message);
     }
   };
-
-  if (loading) return <p className="text-center">Cargando publicaciones...</p>;
 
   return (
     <div className="max-w-4xl p-2 mx-auto text-foreground">

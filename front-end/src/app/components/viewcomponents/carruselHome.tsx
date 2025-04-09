@@ -4,6 +4,7 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useImageContext } from "@/app/contextos/contextoImag"; // <---
+import Image from "next/image";
 
 const defaultImages = [
   "https://res.cloudinary.com/dixcrmeue/image/upload/v1743975863/xTREME_xzwmr7.png",
@@ -41,12 +42,13 @@ const CarouselHome = () => {
         transition={{ duration: 1 }}
       >
         <div className="relative w-full mx-auto max-w-10xl">
-          <div className="overflow-hidden rounded-lg">
+          <div className="relative w-full aspect-[16/9]">
             <Link href="/tarifas">
-              <img
+              <Image
                 src={images[currentIndex]}
                 alt={`Slide ${currentIndex + 1}`}
-                className="object-cover w-full h-screen transition-transform duration-500"
+                fill
+                className="object-cover"
               />
             </Link>
           </div>

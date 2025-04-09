@@ -119,7 +119,7 @@ const CasosExito = () => {
           </p>
           <div>
             <Link href="/tarifas">
-              <ButtonPrimary> Inscribete</ButtonPrimary>
+              <ButtonPrimary> Inscribete </ButtonPrimary>
             </Link>
           </div>
         </div>
@@ -153,8 +153,8 @@ const CasosExito = () => {
             ¿Quieres Participar?
           </h2>
           <div>
-            <Link href="/auth/registro">
-              <ButtonPrimary> Eventos</ButtonPrimary>
+            <Link href="/tarifas">
+              <ButtonPrimary>Ver Tarifas </ButtonPrimary>
             </Link>
           </div>
         </div>
