@@ -32,7 +32,7 @@ const MisPlanes = () => {
       setRutinas(data.map((item: { plan: any }) => item.plan));
       console.log(data.map((item: { plan: any }) => item.plan));
     } catch (error: any) {
-      console.error("Error al obtener mis planes:", error);
+      console.error("Error al obtener mis favoritos:", error);
       toast.error("No tienes rutinas favoritas");
       setError(error.message);
     } finally {
@@ -49,7 +49,7 @@ const MisPlanes = () => {
       {isPremium && (
         <div>
           <h2 className="mb-4 text-3xl font-bold text-center transition-transform duration-300 hover:scale-110 md:text-2xl">
-            Mis Planes
+            Mis Rutinas Favoritas
           </h2>
 
           {loading ? (

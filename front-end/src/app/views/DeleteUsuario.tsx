@@ -42,7 +42,7 @@ const DeleteUsuario = () => {
   return (
     <div className="flex flex-col space-y-4">
       <h2 className="text-lg font-bold text-center ">
-        No queremos que te vayas. Habla con nosotros (Aqui VA EL LINK DE CHAT )
+        No queremos que te vayas. Habla con nosotros.
       </h2>
       <button
         onClick={handleDeleteUser}
