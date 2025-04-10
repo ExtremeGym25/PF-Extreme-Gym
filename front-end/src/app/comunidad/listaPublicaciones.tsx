@@ -40,7 +40,7 @@ const ListaPublicaciones = () => {
 
   const fetchPublications = async () => {
     if (!user) {
-      toast.error("Inicia sesión para ver las publicaciones");
+      toast.success("Inicia sesión para ver las publicaciones");
       return;
     }
     try {

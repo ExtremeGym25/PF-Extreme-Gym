@@ -28,7 +28,6 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-  const loading = usePublic();
   const { saveUserData } = useAuth(); // JWT
   const router = useRouter();
 
@@ -51,14 +50,6 @@ const Login = () => {
       setSubmitting(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl font-bold text-foreground">Cargando...</p>
-      </div>
-    );
-  }
 
   return (
     <div>

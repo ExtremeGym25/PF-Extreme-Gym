@@ -25,6 +25,11 @@ const GetEventos = () => {
         const data = await getEvents(token);
         setEventos(data);
         console.log("Datos  recibidos eventos:", data);
+        console.log(
+          "Categorías desde backend:",
+          data.map((e: { category: any }) => e.category)
+        );
+        console.log("Datos  recibidos eventos:", data);
       } catch (error: any) {
         console.error("Error en eventos", error.message);
         toast.error(error.message);
@@ -39,12 +44,11 @@ const GetEventos = () => {
   }, []);
   const eventosFiltrados = useMemo(() => {
     if (!categoria) return eventos;
-    return eventos.filter(
-      (evento) =>
-        evento.isActive && (!categoria || evento.category === categoria)
-    );
+    return eventos.filter((evento) => evento.category === categoria);
   }, [categoria, eventos]);
 
+  console.log("Eventos filtrados:", eventosFiltrados);
+  eventos.forEach((evento) => console.log(evento.category));
   return (
     <div className="max-w-4xl p-4 mx-auto text-foreground">
       <h1 className="mb-6 text-4xl font-bold text-center">Nuestros Eventos</h1>
