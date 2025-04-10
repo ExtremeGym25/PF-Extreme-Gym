@@ -153,9 +153,15 @@ const CasosExito = () => {
             ¿Quieres Participar?
           </h2>
           <div>
-            <Link href="/tarifas">
-              <ButtonPrimary>Ver Tarifas </ButtonPrimary>
-            </Link>
+            {user ? (
+              <Link href="/tarifas">
+                <ButtonPrimary>Ver Tarifas </ButtonPrimary>
+              </Link>
+            ) : (
+              <Link href="/auth/registro">
+                <ButtonPrimary>Regístrate</ButtonPrimary>
+              </Link>
+            )}
           </div>
         </div>
       </motion.div>

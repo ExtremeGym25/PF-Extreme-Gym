@@ -21,6 +21,11 @@ const MiPerfil = () => {
   useEffect(() => {
     if (success === "true") {
       toast.success("¡Suscripción exitosa!");
+
+      // Evita el bucle: espera un poco y recarga
+      setTimeout(() => {
+        window.location.href = "/planesRutinas"; // recarga sin los parámetros
+      }, 2000);
     }
   }, [success]);
 
