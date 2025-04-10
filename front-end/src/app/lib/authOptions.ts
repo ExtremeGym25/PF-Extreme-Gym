@@ -3,7 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { Session, User } from "next-auth";
 
-// Interfaces extendidas
 export interface ExtendedUser extends User {
   id: string;
   role?: string;
@@ -53,7 +52,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google" && profile && account.access_token) {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/oauth/callback`,
+            `https://pf-extreme-gym.onrender.com/auth/oauth/callback`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
