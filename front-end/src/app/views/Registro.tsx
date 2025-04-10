@@ -92,7 +92,7 @@ const Registro = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast.error("Usuario Registrado");
       } else {
         toast.error("Ocurrió un error inesperado");
       }

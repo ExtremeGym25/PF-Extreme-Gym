@@ -90,8 +90,7 @@ const CreacionRutinas = () => {
                   imageUrlRef.current = uploadResponse.imageUrl;
                 } catch (error: any) {
                   console.error(" Error subiendo imagen:", error.message);
-                  toast.error(error.message);
-                  return;
+                  toast.error(" Error subiendo imagen");
                 }
               }
 
