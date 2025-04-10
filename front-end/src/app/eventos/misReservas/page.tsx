@@ -85,9 +85,9 @@ const MisReservas = () => {
       console.log(response, "respuesta");
     } catch (error: any) {
       console.error("Error en updateEvent:", error);
-      toast.error(error.message);
+      toast.error("Error al modificar reserva");
 
-      setError("Error al actualizar el evento");
+      setError("Error al actualizar el reserva");
     }
   };
   return (
