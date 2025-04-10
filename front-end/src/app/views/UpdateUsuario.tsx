@@ -18,7 +18,6 @@ const UpdatePerfilUsuario = () => {
     city: user?.city || "",
     address: user?.address || "",
     phone: user?.phone ? Number(user.phone) : "",
-    email: user?.email || "",
     password: "",
   });
 
@@ -130,14 +129,7 @@ const UpdatePerfilUsuario = () => {
           placeholder="Teléfono"
           className="w-full p-2 border-gray-300 rounded shadow-md "
         />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full p-2 border-gray-300 rounded shadow-md"
-        />
+
         <input
           type="text"
           name="password"

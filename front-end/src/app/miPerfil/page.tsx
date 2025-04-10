@@ -12,6 +12,7 @@ import DeleteUsuario from "../views/DeleteUsuario";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { signOut } from "next-auth/react";
 
 const MiPerfil = () => {
   const loading = usePrivate();
@@ -22,13 +23,24 @@ const MiPerfil = () => {
     if (success === "true") {
       toast.success("¡Suscripción exitosa!");
 
-      // Evita el bucle: espera un poco y recarga
       setTimeout(() => {
-        window.location.href = "/planesRutinas"; // recarga sin los parámetros
+        const authMethod = localStorage.getItem("authMethod");
+
+        if (authMethod === "nextauth") {
+          // Cierra sesión con NextAuth (Google, etc.)
+          signOut({
+            callbackUrl: "/auth/login",
+          });
+        } else {
+          // Cierra sesión local (elimina tokens, datos, etc.)
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("authMethod"); // Limpia también esto
+          window.location.href = "/auth/login";
+        }
       }, 2000);
     }
   }, [success]);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">

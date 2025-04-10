@@ -14,7 +14,8 @@ const UserAuth = () => {
   const { isAuth, resetUserData, user } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const authRef = useRef<HTMLDivElement>(null);
-
+  const isFree = user?.subscriptionType === "free";
+  const isPremium = user?.subscriptionType === "premium";
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (authRef.current && !authRef.current.contains(event.target as Node)) {
@@ -78,12 +79,21 @@ const UserAuth = () => {
                   <hr className="w-full my-2 border-t-1 border-verde" />
                   {[
                     { label: "Mi Perfil", route: routes.miPerfil },
-                    { label: "Rutinas", route: routes.planesRutinas },
-                    { label: "Mis Rutinas Favoritas", route: routes.favoritos },
-                    {
-                      label: "Mis Eventos Reservados",
-                      route: routes.misEventos,
-                    },
+
+                    ...(isPremium === true
+                      ? [
+                          { label: "Rutinas", route: routes.planesRutinas },
+                          {
+                            label: "Mis Rutinas Favoritas",
+                            route: routes.favoritos,
+                          },
+                          {
+                            label: "Mis Eventos Reservados",
+                            route: routes.misEventos,
+                          },
+                        ]
+                      : []),
+
                     { label: "Comunidad", route: routes.comunidad },
                     { label: "Ayuda y Soporte ", route: routes.chat },
                   ].map(({ label, route }) => (

@@ -40,8 +40,8 @@ const MisReservas = () => {
       setBookings(data);
       console.log(data);
     } catch (error: any) {
-      console.error("Error al obtener mis planes:", error);
-      toast.error(error.message);
+      console.error("Error al obtener mis rutinas:", error);
+      toast.error("No tienes reservas");
       setError(error.message);
     } finally {
       setLoading(false);

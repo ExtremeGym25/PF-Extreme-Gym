@@ -35,9 +35,10 @@ const MiPerfilUsuario = () => {
         <p className="text-center text-l">
           Tipo de Usuario: {!!user?.isActive ? "Activo" : "Desactivado"}
         </p>
+
         {user?.subscriptionExpirationDate && (
           <p className="text-center text-l">
-            Vence:
+            Vence Premiun:
             {new Date(user.subscriptionExpirationDate).toLocaleDateString(
               "es-ES",
               {

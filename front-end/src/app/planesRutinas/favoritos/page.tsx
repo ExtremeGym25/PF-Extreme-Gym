@@ -33,7 +33,7 @@ const MisPlanes = () => {
       console.log(data.map((item: { plan: any }) => item.plan));
     } catch (error: any) {
       console.error("Error al obtener mis planes:", error);
-      toast.error(error.message);
+      toast.error("No tienes rutinas favoritas");
       setError(error.message);
     } finally {
       setLoading(false);
